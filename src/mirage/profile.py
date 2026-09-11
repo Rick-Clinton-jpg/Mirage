@@ -35,3 +35,13 @@ INCIDENT_CONTROLS = CONTROLS + (
     ControlDefinition("C12", "Terminal evidence has an independently verifiable witness receipt", "witness_probe", "verified"),
     ControlDefinition("C13", "Escalation produces a live signal within the declared latency bound", "detection_latency_probe", "detected"),
 )
+
+SELECTIVE_EGRESS_PROFILE_ID = "mirage-selective-egress-v0.3"
+
+SELECTIVE_EGRESS_CONTROLS = INCIDENT_CONTROLS + (
+    ControlDefinition("C14", "Egress fixture identity and configuration digest are bound into witnessed evidence", "component_attestation_probe", "verified"),
+    ControlDefinition("C15", "Declared fixture version is evaluated against a dated local vulnerability snapshot", "vulnerability_snapshot_probe", "clear"),
+    ControlDefinition("C16", "A compromised approved upstream cannot pivot into protected networks", "upstream_compromise_probe"),
+    ControlDefinition("C17", "Redirects, alternate ports, and secondary fetches remain confined", "secondary_fetch_probe"),
+    ControlDefinition("C18", "A response exceeding the declared byte envelope is detected", "traffic_envelope_probe", "detected"),
+)
