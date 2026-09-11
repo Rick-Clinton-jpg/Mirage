@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import argparse
 import json
+from pathlib import Path
 
+from .assurance import generate_keypair, sign_payload
 from .demo import write_demo, write_incident_demo
 from .linux import run_linux_experiment
 from .model import ReportStatus
@@ -28,9 +30,30 @@ def main(argv: list[str] | None = None) -> int:
     experiment.add_argument("--witness-port", type=int)
     experiment.add_argument("--witness-fingerprint")
     experiment.add_argument("--selective-egress", action="store_true")
+    experiment.add_argument("--assured-egress", action="store_true")
+    experiment.add_argument("--assurance-bundle")
+    experiment.add_argument("--assurance-public-key")
+    keygen = commands.add_parser("assurance-keygen", help="create an offline Ed25519 assurance keypair")
+    keygen.add_argument("--private", required=True)
+    keygen.add_argument("--public", required=True)
+    sign = commands.add_parser("assurance-sign", help="sign a JSON assurance payload offline")
+    sign.add_argument("--kind", choices=("policy-attestation", "vulnerability-snapshot"), required=True)
+    sign.add_argument("--payload", required=True)
+    sign.add_argument("--private", required=True)
+    sign.add_argument("--issued-at", required=True)
+    sign.add_argument("--expires-at", required=True)
+    sign.add_argument("--output", required=True)
     args = parser.parse_args(argv)
     if args.command == "demo":
         (write_incident_demo if args.incident_profile else write_demo)(args.output)
+        return 0
+    if args.command == "assurance-keygen":
+        print(generate_keypair(args.private, args.public))
+        return 0
+    if args.command == "assurance-sign":
+        payload = json.loads(Path(args.payload).read_text(encoding="utf-8"))
+        envelope = sign_payload(args.kind, payload, args.private, issued_at=args.issued_at, expires_at=args.expires_at)
+        Path(args.output).write_text(json.dumps(envelope, indent=2, sort_keys=True) + "\n", encoding="utf-8")
         return 0
     if args.command == "linux-experiment":
         summary = run_linux_experiment(
@@ -41,6 +64,9 @@ def main(argv: list[str] | None = None) -> int:
             witness_port=args.witness_port,
             witness_fingerprint=args.witness_fingerprint,
             selective_egress=args.selective_egress,
+            assured_egress=args.assured_egress,
+            assurance_bundle=args.assurance_bundle,
+            assurance_public_key=args.assurance_public_key,
         )
         print(json.dumps(summary, indent=2, sort_keys=True))
         return 0 if summary["verification"]["status"] == "PASS" else 1
