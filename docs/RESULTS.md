@@ -1,5 +1,20 @@
 # Ubuntu validation results
 
+## v0.4 selective-egress development result
+
+The release candidate constructed workload, proxy, and approved-upstream
+network namespaces joined by two veth pairs. Package retrieval through the
+proxy succeeded. Before nftables activation, the alternate upstream port and
+proxy management service were both reachable. After activation, the same paths
+were blocked, as were arbitrary external TCP and redirect follow-up. An
+upstream reverse-pivot attempt also failed while the protected management
+service remained live.
+
+This is a purpose-built TCP fixture. It does not run Artifactory, claim that a
+real product is free from zero-days, or consume a live CVE feed. Final repeated
+campaign counts and artifact hashes are recorded in the external evidence
+bundle rather than embedded recursively in the tested source archive.
+
 ## v0.3 mediated-egress campaign
 
 The v0.3 candidate completed 100 matched trials on the environment documented
