@@ -17,7 +17,8 @@ import time
 
 from .authorization import AuthorizationGate
 from .evidence import EvidenceWriter
-from .profile import INCIDENT_PROFILE_ID
+from .profile import INCIDENT_PROFILE_ID, SELECTIVE_EGRESS_PROFILE_ID
+from .topology import run_selective_tcp_topology
 from .verifier import verify_file
 from .witness import decode_receipt, public_key_fingerprint, verify_receipt
 
@@ -168,11 +169,14 @@ def run_linux_experiment(
     witness_host: str | None = None,
     witness_port: int | None = None,
     witness_fingerprint: str | None = None,
+    selective_egress: bool = False,
 ) -> dict:
     if sys.platform != "linux" or os.geteuid() != 0:
         raise LinuxExperimentError("the Linux experiment must run as root on Linux")
     if type(trials) is not int or not 1 <= trials <= 100:
         raise ValueError("trials must be between 1 and 100")
+    if selective_egress:
+        incident_profile = True
     if incident_profile and (not witness_host or not witness_port or not witness_fingerprint):
         raise LinuxExperimentError("incident profile requires a pre-trusted remote witness endpoint and fingerprint")
 
@@ -276,6 +280,7 @@ def run_linux_experiment(
     for control_id, passed in checks.items():
         writer.append(event_types[control_id], control_id=control_id, outcome="blocked" if passed else "failed", detail=f"matched trials={trials}")
     mediated_summary = None
+    selective_summary = None
     witness_verified = False
     if incident_profile:
         witness_socket = socket.create_connection((witness_host, witness_port), timeout=5)
@@ -349,6 +354,40 @@ def run_linux_experiment(
                 outcome=expected if passed else "failed",
                 detail="isolated mediator process; matched Linux boundary",
             )
+        if selective_egress:
+            topology_runs = [run_selective_tcp_topology() for _ in range(min(trials, 10))]
+            selective_summary = {
+                "trials": len(topology_runs),
+                "checks": {
+                    control_id: all(run["checks"][control_id] for run in topology_runs)
+                    for control_id in ("C14", "C15", "C16", "C17", "C18")
+                },
+                "manifest": topology_runs[0]["manifest"],
+                "vulnerability_snapshot": topology_runs[0]["vulnerability_snapshot"],
+                "runs": topology_runs,
+            }
+            selective_events = {
+                "C14": ("component_attestation_probe", "verified"),
+                "C15": ("vulnerability_snapshot_probe", "clear"),
+                "C16": ("upstream_compromise_probe", "blocked"),
+                "C17": ("secondary_fetch_probe", "blocked"),
+                "C18": ("traffic_envelope_probe", "detected"),
+            }
+            for control_id, (event_type, expected) in selective_events.items():
+                passed = selective_summary["checks"][control_id]
+                if control_id == "C14":
+                    detail = json.dumps(selective_summary["manifest"], sort_keys=True, separators=(",", ":"))
+                elif control_id == "C15":
+                    detail = json.dumps(selective_summary["vulnerability_snapshot"], sort_keys=True, separators=(",", ":"))
+                else:
+                    detail = "three Linux network namespaces; selective TCP via nftables"
+                writer.append(
+                    event_type,
+                    control_id=control_id,
+                    outcome=expected if passed else "failed",
+                    detail=detail,
+                )
+                checks[control_id] = passed
         witness_input = bytes.fromhex(writer.previous_hash)
         receipt_text = ""
         try:
@@ -382,7 +421,6 @@ def run_linux_experiment(
             "control_runs": mediated_controls,
             "runs": mediated_runs,
         }
-
     writer.append("run_end", control_id="C6", outcome="complete" if all(checks.values()) else "failed")
 
     control_wall = sum(benchmark_control) / trials
@@ -408,10 +446,11 @@ def run_linux_experiment(
         "control": control_results,
         "isolated": isolated_results,
         "mediated_egress": mediated_summary,
+        "selective_egress": selective_summary,
         "witness_verified": witness_verified if incident_profile else None,
         "verification": verify_file(
             evidence_path,
-            profile=INCIDENT_PROFILE_ID if incident_profile else "mirage-minimum-v0.1",
+            profile=(SELECTIVE_EGRESS_PROFILE_ID if selective_egress else INCIDENT_PROFILE_ID) if incident_profile else "mirage-minimum-v0.1",
         ).as_dict(),
     }
     (destination / "results.json").write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8")
