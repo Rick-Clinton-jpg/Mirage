@@ -14,7 +14,7 @@ checks a bounded control profile against a complete, hash-linked evidence
 stream. Kernel vulnerabilities, a compromised recorder, and a compromised
 host remain outside that result unless independently measured.
 
-## Current milestone (v0.4)
+## Current milestone (v0.5)
 
 The toolkit provides:
 
@@ -51,6 +51,15 @@ that the alternate service and management service are live before the policy
 is applied. The experiment then tests alternate ports, arbitrary external TCP,
 redirect follow-up, an upstream reverse pivot, and a bounded response envelope.
 
+The assured-egress profile places a live `apt-cacher-ng` process in the proxy
+namespace, retrieves a package through it, and measures its package version,
+executable, configuration, and live endpoint. It also verifies an offline
+Ed25519-signed network-policy attestation against the policy constructed at
+runtime, evaluates the measured proxy version against a signed, pinned NVD CVE
+API response, tests TLS service identity, and attempts a rebound destination.
+Only the public assurance key enters the experiment; signing keys remain
+offline.
+
 ## Quick start
 
 ```bash
@@ -84,6 +93,28 @@ mirage verify --profile mirage-mediated-egress-v0.2 ./incident-run/evidence.json
 Add `--selective-egress` to construct the v0.4 three-zone topology and require
 the eighteen-control `mirage-selective-egress-v0.3` profile.
 
+For the 23-control assured profile, first create and sign policy and
+vulnerability payloads on an offline authority machine, combine the two
+envelopes into a bundle, and transfer only the bundle and raw public key:
+
+```bash
+mirage assurance-keygen --private authority.pem --public authority.raw
+mirage assurance-sign --kind policy-attestation --payload policy.json \
+  --private authority.pem --issued-at 2026-09-11T00:00:00Z \
+  --expires-at 2026-09-14T00:00:00Z --output policy-envelope.json
+
+sudo mirage linux-experiment --assured-egress --trials 100 \
+  --assurance-bundle assurance-bundle.json \
+  --assurance-public-key authority.raw \
+  --witness-host WITNESS_ADDRESS --witness-port PORT \
+  --witness-fingerprint SHA256_FINGERPRINT --output ./assured-run
+```
+
+`--assured-egress` intentionally fails if `apt-cacher-ng`, the assurance
+inputs, the remote witness, or any required Linux boundary mechanism is absent.
+
 See [the control standard](docs/CONTROL_STANDARD.md) and
 [threat model](docs/THREAT_MODEL.md) before interpreting a result. The first
 clean Ubuntu campaign is recorded in [validation results](docs/RESULTS.md).
+The steps for an outside operator are in the
+[independent reproduction protocol](docs/REPRODUCIBILITY.md).
