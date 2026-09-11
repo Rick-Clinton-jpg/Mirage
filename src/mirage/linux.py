@@ -16,9 +16,11 @@ import threading
 import time
 
 from .authorization import AuthorizationGate
+from .assurance import AssuranceError, verify_assurance_bundle
 from .evidence import EvidenceWriter
-from .profile import INCIDENT_PROFILE_ID, SELECTIVE_EGRESS_PROFILE_ID
+from .profile import ASSURED_EGRESS_PROFILE_ID, INCIDENT_PROFILE_ID, SELECTIVE_EGRESS_PROFILE_ID
 from .topology import run_selective_tcp_topology
+from .product_adapter import ProductAdapterError, probe_apt_cacher_ng
 from .verifier import verify_file
 from .witness import decode_receipt, public_key_fingerprint, verify_receipt
 
@@ -170,13 +172,20 @@ def run_linux_experiment(
     witness_port: int | None = None,
     witness_fingerprint: str | None = None,
     selective_egress: bool = False,
+    assured_egress: bool = False,
+    assurance_bundle: str | Path | None = None,
+    assurance_public_key: str | Path | None = None,
 ) -> dict:
     if sys.platform != "linux" or os.geteuid() != 0:
         raise LinuxExperimentError("the Linux experiment must run as root on Linux")
     if type(trials) is not int or not 1 <= trials <= 100:
         raise ValueError("trials must be between 1 and 100")
+    if assured_egress:
+        selective_egress = True
     if selective_egress:
         incident_profile = True
+    if assured_egress and (not assurance_bundle or not assurance_public_key):
+        raise LinuxExperimentError("assured egress requires a signed assurance bundle and public key")
     if incident_profile and (not witness_host or not witness_port or not witness_fingerprint):
         raise LinuxExperimentError("incident profile requires a pre-trusted remote witness endpoint and fingerprint")
 
@@ -355,12 +364,12 @@ def run_linux_experiment(
                 detail="isolated mediator process; matched Linux boundary",
             )
         if selective_egress:
-            topology_runs = [run_selective_tcp_topology() for _ in range(min(trials, 10))]
+            topology_runs = [run_selective_tcp_topology(product_proxy=assured_egress) for _ in range(min(trials, 10))]
             selective_summary = {
                 "trials": len(topology_runs),
                 "checks": {
                     control_id: all(run["checks"][control_id] for run in topology_runs)
-                    for control_id in ("C14", "C15", "C16", "C17", "C18")
+                    for control_id in ("C14", "C15", "C16", "C17", "C18", "C21", "C22")
                 },
                 "manifest": topology_runs[0]["manifest"],
                 "vulnerability_snapshot": topology_runs[0]["vulnerability_snapshot"],
@@ -372,6 +381,8 @@ def run_linux_experiment(
                 "C16": ("upstream_compromise_probe", "blocked"),
                 "C17": ("secondary_fetch_probe", "blocked"),
                 "C18": ("traffic_envelope_probe", "detected"),
+                "C21": ("tls_identity_probe", "blocked"),
+                "C22": ("dns_rebinding_probe", "blocked"),
             }
             for control_id, (event_type, expected) in selective_events.items():
                 passed = selective_summary["checks"][control_id]
@@ -388,6 +399,34 @@ def run_linux_experiment(
                     detail=detail,
                 )
                 checks[control_id] = passed
+            if assured_egress:
+                try:
+                    product = probe_apt_cacher_ng()
+                except ProductAdapterError as exc:
+                    product = {"live": False, "error": str(exc)}
+                product_verified = product.get("live") is True and all(run.get("product_proxy_in_topology") is True and run["workload_package"].get("connected") is True for run in topology_runs)
+                writer.append("product_adapter_probe", control_id="C23", outcome="verified" if product_verified else "failed", detail=json.dumps(product, sort_keys=True, separators=(",", ":")))
+                checks["C23"] = product_verified
+                selective_summary["product"] = product
+                try:
+                    bundle = json.loads(Path(assurance_bundle).read_text(encoding="utf-8"))
+                    public_bytes = Path(assurance_public_key).read_bytes()
+                    assurance = verify_assurance_bundle(
+                        bundle,
+                        public_bytes,
+                        selective_summary["manifest"]["config_sha256"],
+                        {"name": product.get("name"), "version": product.get("version")},
+                    )
+                except (OSError, json.JSONDecodeError, AssuranceError) as exc:
+                    assurance = {"policy_matches_runtime": False, "component_clear": False, "error": type(exc).__name__}
+                assurance_checks = {
+                    "C19": assurance.get("policy_signature_verified") is True and assurance.get("policy_matches_runtime") is True,
+                    "C20": assurance.get("snapshot_signature_verified") is True and assurance.get("component_clear") is True,
+                }
+                writer.append("signed_policy_probe", control_id="C19", outcome="verified" if assurance_checks["C19"] else "failed", detail=json.dumps(assurance, sort_keys=True, separators=(",", ":")))
+                writer.append("signed_vulnerability_probe", control_id="C20", outcome="clear" if assurance_checks["C20"] else "failed", detail=json.dumps(assurance, sort_keys=True, separators=(",", ":")))
+                checks.update(assurance_checks)
+                selective_summary["assurance"] = assurance
         witness_input = bytes.fromhex(writer.previous_hash)
         receipt_text = ""
         try:
@@ -450,7 +489,7 @@ def run_linux_experiment(
         "witness_verified": witness_verified if incident_profile else None,
         "verification": verify_file(
             evidence_path,
-            profile=(SELECTIVE_EGRESS_PROFILE_ID if selective_egress else INCIDENT_PROFILE_ID) if incident_profile else "mirage-minimum-v0.1",
+            profile=(ASSURED_EGRESS_PROFILE_ID if assured_egress else SELECTIVE_EGRESS_PROFILE_ID if selective_egress else INCIDENT_PROFILE_ID) if incident_profile else "mirage-minimum-v0.1",
         ).as_dict(),
     }
     (destination / "results.json").write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8")
