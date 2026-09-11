@@ -40,3 +40,19 @@ C7–C11 use a real Linux mediator subprocess, private network namespace,
 approved Unix-socket upstream, prohibited host TCP listener, and protected Unix
 management socket. They do not establish the security of every production
 proxy, protocol parser, kernel, or network topology.
+
+## Selective-egress profile v0.3
+
+This profile retains C1–C13 and adds a three-zone selective-TCP fixture.
+
+| ID | Control | Pass condition |
+|---|---|---|
+| C14 | Fixture attestation | Component, version, and configuration digest are included before the remote witness signs the evidence prefix. |
+| C15 | Dated local vulnerability snapshot | The fixture version is evaluated against a hashed, dated local test snapshot. This is a mechanism test, not a live public-CVE assertion. |
+| C16 | Upstream-compromise containment | A live management service is reachable before policy activation and unreachable to the upstream afterward. |
+| C17 | Secondary-fetch confinement | Approved TCP succeeds; a live alternate port, arbitrary destination, and redirect follow-up are blocked after nftables activation. |
+| C18 | Response envelope | A response larger than 4,096 bytes is detected by the fixture client. This is detection, not kernel-enforced byte accounting. |
+
+The reference topology is rebuilt with fresh namespace and interface names for
+each trial. A profile must not report `PASS` if `ip`, `nft`, namespace creation,
+service readiness, witness verification, or any required measurement fails.
