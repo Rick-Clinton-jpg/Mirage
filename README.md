@@ -14,9 +14,9 @@ checks a bounded control profile against a complete, hash-linked evidence
 stream. Kernel vulnerabilities, a compromised recorder, and a compromised
 host remain outside that result unless independently measured.
 
-## Current milestone (v0.2)
+## Current milestone (v0.3)
 
-The initial milestone provides:
+The toolkit provides:
 
 - a versioned minimum-control profile;
 - canonical, hash-linked JSONL evidence;
@@ -24,10 +24,20 @@ The initial milestone provides:
 - explicit `PASS`, `FAIL`, and `NOT_EVALUATED` outcomes;
 - a deterministic demonstration and unit tests.
 
-The Linux experiment runs matched isolated and unisolated probes for network,
-protected-host-filesystem, credential, and process controls, plus a 50-contender
-authorization race. Mirage remains a research harness rather than a deployable
-sandbox or proof against unknown escape techniques.
+The incident-shaped profile separates direct network isolation from mediated
+egress. Its Linux experiment gives an isolated mediator access to one approved
+Unix-socket upstream, then deliberately executes arbitrary forwarding behavior
+inside that mediator. A matched control proves that the prohibited route,
+management interface, and credential canary were reachable without isolation.
+
+The terminal pre-closure digest is signed by a single-use witness on a separate
+machine. The witness public-key fingerprint must be declared before the run;
+the recorder cannot make an untrusted replacement key pass verification. The
+witness also measures receipt latency for a supervisor escalation signal.
+
+Mirage remains a research harness rather than a deployable sandbox or proof
+against unknown escape techniques. Its current Linux adapter uses namespaces
+and requires root for boundary construction.
 
 ## Quick start
 
@@ -44,6 +54,19 @@ remount the isolated mount namespace read-only:
 ```bash
 sudo mirage linux-experiment --output ./evidence-run --trials 10
 mirage verify ./evidence-run/evidence.jsonl
+```
+
+The mediated-egress profile additionally requires a separately running witness:
+
+```bash
+# On the witness machine; record the printed fingerprint and port first.
+python -m mirage.witness_server --host WITNESS_ADDRESS
+
+# On Linux, using that pre-declared identity.
+sudo mirage linux-experiment --incident-profile --trials 10 \
+  --witness-host WITNESS_ADDRESS --witness-port PORT \
+  --witness-fingerprint SHA256_FINGERPRINT --output ./incident-run
+mirage verify --profile mirage-mediated-egress-v0.2 ./incident-run/evidence.jsonl
 ```
 
 See [the control standard](docs/CONTROL_STANDARD.md) and
