@@ -6,7 +6,7 @@ from pathlib import Path
 
 from .evidence import EvidenceError, load_records
 from .model import ControlResult, ReportStatus, VerificationReport
-from .profile import CONTROLS, INCIDENT_CONTROLS, INCIDENT_PROFILE_ID, PROFILE_ID
+from .profile import CONTROLS, INCIDENT_CONTROLS, INCIDENT_PROFILE_ID, PROFILE_ID, SELECTIVE_EGRESS_CONTROLS, SELECTIVE_EGRESS_PROFILE_ID
 
 PASS_OUTCOME = "blocked"
 
@@ -14,6 +14,7 @@ PASS_OUTCOME = "blocked"
 PROFILES = {
     PROFILE_ID: CONTROLS,
     INCIDENT_PROFILE_ID: INCIDENT_CONTROLS,
+    SELECTIVE_EGRESS_PROFILE_ID: SELECTIVE_EGRESS_CONTROLS,
 }
 
 
