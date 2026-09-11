@@ -5,15 +5,20 @@ from __future__ import annotations
 import argparse
 import json
 import socket
+import ssl
 
 
-def request(host: str, port: int, payload: bytes = b"GET package\n", limit: int = 4096) -> dict:
+def request(host: str, port: int, payload: bytes = b"GET package\n", limit: int = 4096, *, ca: str | None = None, server_name: str | None = None, timeout: float = 0.25) -> dict:
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client.settimeout(0.25)
+    client.settimeout(timeout)
     try:
         client.connect((host, port))
-        client.sendall(payload)
-        response = client.recv(limit + 1)
+        channel = client
+        if ca:
+            context = ssl.create_default_context(cafile=ca)
+            channel = context.wrap_socket(client, server_hostname=server_name)
+        channel.sendall(payload)
+        response = channel.recv(limit + 1)
         return {"connected": True, "response": response[:limit].decode("ascii", "replace"), "over_limit": len(response) > limit}
     except OSError as exc:
         return {"connected": False, "error": type(exc).__name__, "over_limit": False}
@@ -21,13 +26,21 @@ def request(host: str, port: int, payload: bytes = b"GET package\n", limit: int 
         client.close()
 
 
-def serve(bind: str, port: int, mode: str) -> None:
+def serve(bind: str, port: int, mode: str, *, cert: str | None = None, key: str | None = None) -> None:
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server.bind((bind, port))
     server.listen(16)
     while True:
         connection, _ = server.accept()
+        if cert and key:
+            context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+            context.load_cert_chain(cert, key)
+            try:
+                connection = context.wrap_socket(connection, server_side=True)
+            except ssl.SSLError:
+                connection.close()
+                continue
         with connection:
             payload = connection.recv(1024)
             if mode == "upstream":
@@ -37,6 +50,12 @@ def serve(bind: str, port: int, mode: str) -> None:
                     response = b"X" * 8192
                 else:
                     response = b"PACKAGE OK\n"
+            elif mode == "http-upstream":
+                if b"REDIRECT" in payload:
+                    response = b"HTTP/1.1 302 Found\r\nLocation: http://203.0.113.10/forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+                else:
+                    body = b"X" * 8192 if b"BULK" in payload else b"REAL PROXY PACKAGE OK\n"
+                    response = b"HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: " + str(len(body)).encode("ascii") + b"\r\nConnection: close\r\n\r\n" + body
             else:
                 response = b"UNEXPECTED SERVICE\n"
             connection.sendall(response)
@@ -62,6 +81,8 @@ def main() -> int:
     server.add_argument("--bind", required=True)
     server.add_argument("--port", required=True, type=int)
     server.add_argument("--mode", required=True)
+    server.add_argument("--cert")
+    server.add_argument("--key")
     forward = commands.add_parser("proxy")
     forward.add_argument("--bind", required=True)
     forward.add_argument("--port", required=True, type=int)
@@ -72,13 +93,19 @@ def main() -> int:
     client.add_argument("--port", required=True, type=int)
     client.add_argument("--payload", default="GET package")
     client.add_argument("--limit", default=4096, type=int)
+    client.add_argument("--ca")
+    client.add_argument("--server-name")
+    client.add_argument("--timeout", default=0.25, type=float)
     args = parser.parse_args()
     if args.command == "server":
-        serve(args.bind, args.port, args.mode)
+        serve(args.bind, args.port, args.mode, cert=args.cert, key=args.key)
     elif args.command == "proxy":
         proxy(args.bind, args.port, args.upstream_host, args.upstream_port)
     else:
-        print(json.dumps(request(args.host, args.port, (args.payload + "\n").encode("ascii"), args.limit), sort_keys=True))
+        payload = args.payload.encode("ascii")
+        if b"\r\n" not in payload:
+            payload += b"\n"
+        print(json.dumps(request(args.host, args.port, payload, args.limit, ca=args.ca, server_name=args.server_name, timeout=args.timeout), sort_keys=True))
     return 0
 
 
