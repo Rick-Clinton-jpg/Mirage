@@ -17,7 +17,9 @@ import time
 
 from .authorization import AuthorizationGate
 from .evidence import EvidenceWriter
+from .profile import INCIDENT_PROFILE_ID
 from .verifier import verify_file
+from .witness import decode_receipt, public_key_fingerprint, verify_receipt
 
 
 class LinuxExperimentError(RuntimeError):
@@ -53,6 +55,34 @@ def _listener() -> tuple[socket.socket, int, threading.Thread]:
     thread.stop_event = stop  # type: ignore[attr-defined]
     thread.start()
     return server, server.getsockname()[1], thread
+
+
+def _unix_listener(path: Path, *, mode: int, response: bytes) -> tuple[socket.socket, threading.Thread]:
+    server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    server.bind(str(path))
+    path.chmod(mode)
+    server.listen(8)
+    server.settimeout(0.2)
+    stop = threading.Event()
+
+    def serve() -> None:
+        while not stop.is_set():
+            try:
+                connection, _ = server.accept()
+            except (TimeoutError, OSError):
+                continue
+            try:
+                connection.recv(256)
+                connection.sendall(response)
+            except OSError:
+                pass
+            finally:
+                connection.close()
+
+    thread = threading.Thread(target=serve, daemon=True)
+    thread.stop_event = stop  # type: ignore[attr-defined]
+    thread.start()
+    return server, thread
 
 
 def _run(command: list[str], environment: dict[str, str]) -> tuple[dict, int]:
@@ -130,11 +160,21 @@ def _authorization_race(contenders: int = 50) -> tuple[int, int]:
     return successes, effects
 
 
-def run_linux_experiment(output_dir: str | Path, *, trials: int = 10) -> dict:
+def run_linux_experiment(
+    output_dir: str | Path,
+    *,
+    trials: int = 10,
+    incident_profile: bool = False,
+    witness_host: str | None = None,
+    witness_port: int | None = None,
+    witness_fingerprint: str | None = None,
+) -> dict:
     if sys.platform != "linux" or os.geteuid() != 0:
         raise LinuxExperimentError("the Linux experiment must run as root on Linux")
     if type(trials) is not int or not 1 <= trials <= 100:
         raise ValueError("trials must be between 1 and 100")
+    if incident_profile and (not witness_host or not witness_port or not witness_fingerprint):
+        raise LinuxExperimentError("incident profile requires a pre-trusted remote witness endpoint and fingerprint")
 
     destination = Path(output_dir).resolve()
     destination.mkdir(parents=True, exist_ok=False)
@@ -142,7 +182,12 @@ def run_linux_experiment(output_dir: str | Path, *, trials: int = 10) -> dict:
     writer = EvidenceWriter(evidence_path)
     writer.append("run_start", detail=f"linux matched experiment; trials={trials}")
     probe_source = Path(__file__).with_name("linux_probe.py").resolve()
-    environment = {"PATH": "/usr/sbin:/usr/bin:/sbin:/bin", "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8"}
+    environment = {
+        "PATH": "/usr/sbin:/usr/bin:/sbin:/bin",
+        "LANG": "C.UTF-8",
+        "LC_ALL": "C.UTF-8",
+        "PYTHONPATH": str(Path(__file__).resolve().parents[1]),
+    }
     canary_name = "MIRAGE_HOST_CANARY"
     canary_value = secrets.token_hex(24)
     control_environment = dict(environment, **{canary_name: canary_value})
@@ -230,6 +275,114 @@ def run_linux_experiment(output_dir: str | Path, *, trials: int = 10) -> dict:
     }
     for control_id, passed in checks.items():
         writer.append(event_types[control_id], control_id=control_id, outcome="blocked" if passed else "failed", detail=f"matched trials={trials}")
+    mediated_summary = None
+    witness_verified = False
+    if incident_profile:
+        witness_socket = socket.create_connection((witness_host, witness_port), timeout=5)
+        witness_stream = witness_socket.makefile("rwb", buffering=0)
+        mediated_probe = Path(__file__).with_name("mediated_probe.py").resolve()
+        mediated_controls: list[dict] = []
+        mediated_runs: list[dict] = []
+        with tempfile.TemporaryDirectory(prefix="mirage-mediator-") as mediator_directory:
+            mediator_path = Path(mediator_directory)
+            mediator_path.chmod(0o755)
+            upstream_path = mediator_path / "approved.sock"
+            management_path = mediator_path / "management.sock"
+            upstream_server, upstream_thread = _unix_listener(upstream_path, mode=0o777, response=b"APPROVED")
+            management_server, management_thread = _unix_listener(management_path, mode=0o600, response=b"ADMIN")
+            forbidden_server, forbidden_port, forbidden_thread = _listener()
+            try:
+                for trial_index in range(trials):
+                    control_result, control_wall = _run(
+                        [sys.executable, str(mediated_probe), str(upstream_path), str(management_path), str(forbidden_port), canary_name, canary_value],
+                        control_environment,
+                    )
+                    control_result["wall_ns"] = control_wall
+                    mediated_controls.append(control_result)
+                    if trial_index == 0:
+                        witness_stream.write(b"ARM\n")
+                        if witness_stream.readline(128) != b"ARMED\n":
+                            raise LinuxExperimentError("remote witness did not arm")
+                    result, wall = _run(
+                        _isolated_python_command(
+                            mediated_probe,
+                            [str(upstream_path), str(management_path), str(forbidden_port), canary_name, canary_value],
+                        ),
+                        isolated_environment,
+                    )
+                    result["wall_ns"] = wall
+                    mediated_runs.append(result)
+                    if trial_index == 0:
+                        witness_stream.write(b"ALERT\n")
+                        alert_response = witness_stream.readline(128).decode("ascii").strip()
+                        if not alert_response.startswith("ALERTED "):
+                            raise LinuxExperimentError("remote witness did not acknowledge alert")
+                        external_alert_latency_ns = int(alert_response.split()[1])
+            finally:
+                upstream_thread.stop_event.set()  # type: ignore[attr-defined]
+                management_thread.stop_event.set()  # type: ignore[attr-defined]
+                forbidden_thread.stop_event.set()  # type: ignore[attr-defined]
+                upstream_server.close()
+                management_server.close()
+                forbidden_server.close()
+        mediated_checks = {
+            "C7": all(item["approved_upstream"]["connected"] and not item["prohibited_external"]["connected"] for item in mediated_runs),
+            "C8": all(item["arbitrary_request_rejected"] for item in mediated_runs + mediated_controls),
+            "C9": all(not item["prohibited_external"]["connected"] for item in mediated_runs) and all(item["prohibited_external"]["connected"] for item in mediated_controls),
+            "C10": all(not item["credential_visible"] for item in mediated_runs) and all(item["credential_visible"] for item in mediated_controls),
+            "C11": all(not item["management_plane"]["connected"] for item in mediated_runs) and all(item["management_plane"]["connected"] for item in mediated_controls),
+            "C13": all(not item["prohibited_external"]["connected"] for item in mediated_runs) and external_alert_latency_ns <= 100_000_000,
+        }
+        mediated_events = {
+            "C7": "destination_confinement_probe",
+            "C8": "request_confinement_probe",
+            "C9": "mediator_compromise_probe",
+            "C10": "mediator_identity_probe",
+            "C11": "management_plane_probe",
+            "C13": "detection_latency_probe",
+        }
+        for control_id, passed in mediated_checks.items():
+            expected = "detected" if control_id == "C13" else "blocked"
+            writer.append(
+                mediated_events[control_id],
+                control_id=control_id,
+                outcome=expected if passed else "failed",
+                detail="isolated mediator process; matched Linux boundary",
+            )
+        witness_input = bytes.fromhex(writer.previous_hash)
+        receipt_text = ""
+        try:
+            witness_stream.write(("SIGN " + writer.previous_hash + "\n").encode("ascii"))
+            receipt_text = witness_stream.readline(128 * 1024).decode("utf-8")
+            wrapper = json.loads(receipt_text)
+            if set(wrapper) != {"alert_latency_ns", "receipt"}:
+                raise ValueError("unexpected witness wrapper")
+            if wrapper["alert_latency_ns"] != external_alert_latency_ns:
+                raise ValueError("witness alert latency changed")
+            public, signature = decode_receipt(json.dumps(wrapper["receipt"]))
+            signed_material = witness_input + external_alert_latency_ns.to_bytes(8, "big")
+            witness_verified = (
+                secrets.compare_digest(public_key_fingerprint(public), witness_fingerprint)
+                and verify_receipt(public, signed_material, signature)
+            )
+        except (OSError, UnicodeDecodeError, ValueError, json.JSONDecodeError):
+            witness_verified = False
+        finally:
+            witness_stream.close()
+            witness_socket.close()
+        if receipt_text:
+            (destination / "witness-receipt.json").write_text(receipt_text, encoding="utf-8")
+        writer.append("witness_probe", control_id="C12", outcome="verified" if witness_verified else "failed")
+        checks.update(mediated_checks)
+        checks["C12"] = witness_verified
+        mediated_summary = {
+            "semantic_model_only": False,
+            "checks": mediated_checks,
+            "external_alert_latency_ms": external_alert_latency_ns / 1_000_000,
+            "control_runs": mediated_controls,
+            "runs": mediated_runs,
+        }
+
     writer.append("run_end", control_id="C6", outcome="complete" if all(checks.values()) else "failed")
 
     control_wall = sum(benchmark_control) / trials
@@ -254,7 +407,12 @@ def run_linux_experiment(output_dir: str | Path, *, trials: int = 10) -> dict:
         },
         "control": control_results,
         "isolated": isolated_results,
-        "verification": verify_file(evidence_path).as_dict(),
+        "mediated_egress": mediated_summary,
+        "witness_verified": witness_verified if incident_profile else None,
+        "verification": verify_file(
+            evidence_path,
+            profile=INCIDENT_PROFILE_ID if incident_profile else "mirage-minimum-v0.1",
+        ).as_dict(),
     }
     (destination / "results.json").write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return summary
