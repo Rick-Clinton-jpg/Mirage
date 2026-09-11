@@ -4,10 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mirage-containment"
-version = "0.4.0"
+version = "0.5.0"
 description = "A verifier for bounded AI-agent containment evidence"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = ["cryptography>=43,<51"]
 
 [project.scripts]
 mirage = "mirage.cli:main"
