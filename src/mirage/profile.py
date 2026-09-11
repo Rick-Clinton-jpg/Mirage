@@ -45,3 +45,13 @@ SELECTIVE_EGRESS_CONTROLS = INCIDENT_CONTROLS + (
     ControlDefinition("C17", "Redirects, alternate ports, and secondary fetches remain confined", "secondary_fetch_probe"),
     ControlDefinition("C18", "A response exceeding the declared byte envelope is detected", "traffic_envelope_probe", "detected"),
 )
+
+ASSURED_EGRESS_PROFILE_ID = "mirage-assured-egress-v0.4"
+
+ASSURED_EGRESS_CONTROLS = SELECTIVE_EGRESS_CONTROLS + (
+    ControlDefinition("C19", "Externally signed policy attestation matches the runtime policy digest", "signed_policy_probe", "verified"),
+    ControlDefinition("C20", "A current signed vulnerability snapshot evaluates the measured component identity", "signed_vulnerability_probe", "clear"),
+    ControlDefinition("C21", "TLS accepts the approved service identity and rejects a mismatched identity", "tls_identity_probe"),
+    ControlDefinition("C22", "A rebound destination remains unreachable from the mediator", "dns_rebinding_probe"),
+    ControlDefinition("C23", "A live repository mediator has measured executable, package, configuration, and endpoint identity", "product_adapter_probe", "verified"),
+)
