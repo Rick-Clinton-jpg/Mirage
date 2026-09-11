@@ -27,6 +27,7 @@ def main(argv: list[str] | None = None) -> int:
     experiment.add_argument("--witness-host")
     experiment.add_argument("--witness-port", type=int)
     experiment.add_argument("--witness-fingerprint")
+    experiment.add_argument("--selective-egress", action="store_true")
     args = parser.parse_args(argv)
     if args.command == "demo":
         (write_incident_demo if args.incident_profile else write_demo)(args.output)
@@ -39,6 +40,7 @@ def main(argv: list[str] | None = None) -> int:
             witness_host=args.witness_host,
             witness_port=args.witness_port,
             witness_fingerprint=args.witness_fingerprint,
+            selective_egress=args.selective_egress,
         )
         print(json.dumps(summary, indent=2, sort_keys=True))
         return 0 if summary["verification"]["status"] == "PASS" else 1
