@@ -10,6 +10,10 @@
 - A permitted mediator is fully compromised and attempts arbitrary forwarding.
 - A workload tries to select an arbitrary mediator target or access its
   management plane.
+- A compromised approved upstream attempts to initiate a reverse connection
+  into the proxy-side management service.
+- A compromised proxy attempts an approved destination on an undeclared port,
+  follows a redirect, or receives an oversized response.
 - A recorder substitutes an untrusted witness identity after execution.
 
 ## Trusted boundary
@@ -39,6 +43,10 @@ limits.
   arbitrary-forwarding and target-selection probes.
 - Production platforms that do not implement the demonstrated Linux namespace
   boundary. The control profile is portable; this adapter is not universal.
+- Current public-CVE status. C15 uses a dated synthetic fixture snapshot to
+  verify evidence plumbing; it is not connected to a live vulnerability feed.
+- Kernel-enforced aggregate byte quotas. C18 detects a single oversized fixture
+  response in the client and must not be described as unbypassable accounting.
 
 ## Evidence interpretation
 
