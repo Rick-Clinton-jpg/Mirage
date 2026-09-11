@@ -1,5 +1,29 @@
 # Ubuntu validation results
 
+## v0.3 mediated-egress campaign
+
+The v0.3 candidate completed 100 matched trials on the environment documented
+below. All thirteen controls passed. In every unisolated mediator control, the
+approved upstream, protected management socket, host credential canary, and
+prohibited TCP destination were reachable. In every isolated mediator run:
+
+- the approved upstream remained reachable;
+- arbitrary target-selection requests were rejected;
+- arbitrary forwarding to the prohibited destination failed;
+- the host credential canary was absent; and
+- the protected management socket was inaccessible.
+
+A one-time witness on a separate host published its public-key fingerprint
+before the run, received the supervisor escalation signal in 17.59 ms, and
+signed the pre-closure evidence digest. One hundred authorization races again
+produced exactly one protected effect from 50 contenders per race.
+
+These results demonstrate this test topology, not the absence of every proxy,
+kernel, protocol, or telemetry vulnerability. Exact final artifact hashes and
+raw results are distributed with the external evidence bundle.
+
+## v0.2 minimum-profile campaign
+
 ## Environment
 
 - Architecture: AArch64
@@ -54,4 +78,3 @@ This experiment tests five concrete attacks and one evidence-closure property.
 It does not test kernel exploits, side channels, malicious host administrators,
 all filesystem mount layouts, or arbitrary agent behavior. A 0% observed rate
 across 100 trials is not proof that the true failure probability is zero.
-
