@@ -1,5 +1,38 @@
 # Ubuntu validation results
 
+## v0.5 assured-egress campaign
+
+The candidate completed 100 matched base trials and 10 freshly constructed
+three-zone network trials on Ubuntu 26.04.1 AArch64. The unit suite passed
+38/38 tests with zero skips, and the 23-control profile verified `PASS`.
+
+Every topology trial ran the Ubuntu `apt-cacher-ng` 3.7.5-1.1 package inside
+the proxy namespace. The workload received a package through that process,
+while nftables restricted the proxy to the declared upstream address and
+ports. Alternate ports, arbitrary external TCP, redirect follow-up, and the
+upstream-to-management reverse pivot failed. The approved TLS identity passed
+and the mismatched identity failed.
+
+The product adapter measured an `HTTP/1.1 200 OK` live endpoint, package
+version, executable SHA-256, and configuration SHA-256. An offline Ed25519
+authority signed the expected runtime-policy digest and a pinned NVD CVE API
+2.0 response for `apt-cacher-ng`. Both signatures verified under the public
+key supplied to the VM, the policy digest matched, and none of the six returned
+records identified the installed 3.7.5-1.1 version as affected. That last
+statement is a bounded manual applicability result, not a claim of universal
+vulnerability freedom.
+
+The independent witness verified the pre-closure digest and measured 17.45 ms
+from escalation arming to receipt. The narrow benign benchmark completed in
+100/100 isolated trials with a measured 0% false-positive rate. Mean matched
+wall time was 25.35 ms without isolation and 28.55 ms with isolation, a 3.19 ms
+mean addition (12.60%) for this launch-dominated benchmark.
+
+These results establish the supplied topology and evidence protocol. They do
+not establish resistance to unknown vulnerabilities, production-scale load,
+all DNS or TLS attacks, or a compromised kernel, recorder, witness, or offline
+assurance authority.
+
 ## v0.4 selective-egress development result
 
 The release candidate constructed workload, proxy, and approved-upstream
