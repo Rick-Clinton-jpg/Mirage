@@ -14,6 +14,12 @@ The host kernel, containment launcher, recorder, policy configuration, and
 verification software are trusted for the v0.1 result. The workload must not be
 able to modify them.
 
+The Linux experiment requires root only for namespace and mount construction.
+The probe itself runs as UID/GID 65534 with cleared groups, an empty capability
+bounding set, `no_new_privs`, a private network namespace, a read-only mount
+namespace, and explicit CPU, address-space, file-descriptor, process, and core
+limits.
+
 ## Out of scope
 
 - Kernel, hypervisor, hardware, or host-administrator compromise.
@@ -27,4 +33,3 @@ able to modify them.
 A passing report means only that every required probe in the named profile
 produced its expected result in the supplied complete stream. It is not proof
 that no other escape path exists.
-
