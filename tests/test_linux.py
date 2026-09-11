@@ -18,6 +18,12 @@ class LinuxTests(unittest.TestCase):
                 with self.assertRaisesRegex(LinuxExperimentError, "root on Linux"):
                     run_linux_experiment(Path(temporary) / "out")
 
+    def test_incident_profile_requires_pretrusted_remote_witness(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            with mock.patch("mirage.linux.sys.platform", "linux"), mock.patch("mirage.linux.os.geteuid", return_value=0):
+                with self.assertRaisesRegex(LinuxExperimentError, "pre-trusted remote witness"):
+                    run_linux_experiment(Path(temporary) / "out", incident_profile=True)
+
 
 if __name__ == "__main__":
     unittest.main()
