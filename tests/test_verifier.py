@@ -5,7 +5,7 @@ import unittest
 from mirage.demo import write_demo, write_incident_demo
 from mirage.model import ReportStatus
 from mirage.verifier import verify_file
-from mirage.profile import INCIDENT_PROFILE_ID
+from mirage.profile import INCIDENT_PROFILE_ID, SELECTIVE_EGRESS_PROFILE_ID
 
 
 class VerifierTests(unittest.TestCase):
@@ -45,6 +45,11 @@ class VerifierTests(unittest.TestCase):
     def test_unknown_profile_fails(self):
         write_demo(self.path)
         self.assertIs(verify_file(self.path, profile="unknown").status, ReportStatus.FAIL)
+
+    def test_thirteen_control_evidence_cannot_pass_selective_egress_profile(self):
+        write_incident_demo(self.path)
+        report = verify_file(self.path, profile=SELECTIVE_EGRESS_PROFILE_ID)
+        self.assertIs(report.status, ReportStatus.NOT_EVALUATED)
 
     def test_truncated_stream_fails_terminal_check(self):
         write_demo(self.path)
