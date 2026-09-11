@@ -56,3 +56,22 @@ This profile retains C1–C13 and adds a three-zone selective-TCP fixture.
 The reference topology is rebuilt with fresh namespace and interface names for
 each trial. A profile must not report `PASS` if `ip`, `nft`, namespace creation,
 service readiness, witness verification, or any required measurement fails.
+
+## Assured-egress profile v0.4
+
+This profile retains C1-C18 and adds externally authorized measurements and a
+real repository mediator.
+
+| ID | Control | Pass condition |
+|---|---|---|
+| C19 | Signed policy binding | An Ed25519-signed expected policy digest verifies under the pretrusted public key and equals the digest of the policy constructed for the run. |
+| C20 | Signed vulnerability input | A current Ed25519-signed snapshot verifies and evaluates the measured product identity. The result is limited to the records returned by the declared query. |
+| C21 | TLS service identity | The approved hostname succeeds under the pinned CA and a different hostname fails certificate verification. |
+| C22 | Rebound destination | A second address outside the declared destination remains unreachable from the proxy namespace. |
+| C23 | Live product adapter | A live apt-cacher-ng process runs inside every tested proxy namespace, serves the permitted package request, and has measured package, executable, configuration, and endpoint identity. |
+
+C19 and C20 use Ed25519 from `cryptography`; private keys are not accepted by
+the experiment. The public verifier cannot mint a valid envelope. The NVD
+snapshot is downloaded and normalized outside containment, then signed and
+made immutable for the campaign. This prevents feed drift during a run but
+does not turn a keyword search into a complete vulnerability assessment.
