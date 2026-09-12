@@ -14,7 +14,7 @@ checks a bounded control profile against a complete, hash-linked evidence
 stream. Kernel vulnerabilities, a compromised recorder, and a compromised
 host remain outside that result unless independently measured.
 
-## Current milestone (v0.5)
+## Current milestone (v0.5.2)
 
 The toolkit provides:
 
@@ -65,7 +65,7 @@ offline.
 ```bash
 python -m pip install -e .
 mirage demo --output evidence.jsonl
-mirage verify evidence.jsonl
+mirage verify --profile mirage-minimum-v0.1 --integrity-only evidence.jsonl
 python -m unittest discover -s tests -v
 ```
 
@@ -74,7 +74,7 @@ remount the isolated mount namespace read-only:
 
 ```bash
 sudo mirage linux-experiment --output ./evidence-run --trials 10
-mirage verify ./evidence-run/evidence.jsonl
+mirage verify --profile mirage-minimum-v0.1 --integrity-only ./evidence-run/evidence.jsonl
 ```
 
 The mediated-egress profile additionally requires a separately running witness:
@@ -87,7 +87,9 @@ python -m mirage.witness_server --host WITNESS_ADDRESS
 sudo mirage linux-experiment --incident-profile --trials 10 \
   --witness-host WITNESS_ADDRESS --witness-port PORT \
   --witness-fingerprint SHA256_FINGERPRINT --output ./incident-run
-mirage verify --profile mirage-mediated-egress-v0.2 ./incident-run/evidence.jsonl
+mirage verify --profile mirage-mediated-egress-v0.2 \
+  --witness-receipt ./incident-run/witness-receipt.json \
+  --witness-fingerprint SHA256_FINGERPRINT ./incident-run/evidence.jsonl
 ```
 
 Add `--selective-egress` to construct the v0.4 three-zone topology and require
@@ -112,6 +114,17 @@ sudo mirage linux-experiment --assured-egress --trials 100 \
 
 `--assured-egress` intentionally fails if `apt-cacher-ng`, the assurance
 inputs, the remote witness, or any required Linux boundary mechanism is absent.
+The mediated, selective, and assured profiles fail verification unless the
+matching receipt and pre-trusted witness fingerprint are supplied. Recomputing
+an altered JSONL hash chain cannot produce an authenticated `PASS`.
+For the assured profile, `mirage verify` additionally requires
+`--assurance-bundle` and `--assurance-public-key`; it independently checks the
+signatures against the measured policy digest and component identity.
+
+There is deliberately no default verification profile. The minimum profile is
+an unauthenticated format/integrity demonstration and only runs when the caller
+explicitly supplies `--integrity-only`; without that acknowledgement it returns
+`FAIL`. Compliance claims must use a witnessed profile.
 
 See [the control standard](docs/CONTROL_STANDARD.md) and
 [threat model](docs/THREAT_MODEL.md) before interpreting a result. The first
