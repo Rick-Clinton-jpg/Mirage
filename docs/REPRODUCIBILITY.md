@@ -32,7 +32,8 @@ key, and possession of the verifier must not confer signing authority.
    fingerprint. Run Mirage with `--assured-egress`, at least 100 base trials,
    at least 10 topology trials, the signed assurance bundle, and the matching
    public key.
-5. Run `mirage verify` against the exported result and witness receipt.
+5. Run `mirage verify` with the explicit assured profile, exported result,
+   witness receipt and fingerprint, assurance bundle, and assurance public key.
 6. Confirm all C1-C23 controls pass, the witness receipt verifies, the runtime
    policy digest matches the signed declaration, and the live product identity
    matches the signed vulnerability assessment.
