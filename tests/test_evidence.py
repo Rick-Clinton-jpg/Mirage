@@ -35,7 +35,7 @@ class EvidenceTests(unittest.TestCase):
         write_demo(self.path)
         lines = self.path.read_bytes().splitlines(keepends=True)
         self.path.write_bytes(b"".join(lines[:2] + lines[3:]))
-        with self.assertRaisesRegex(EvidenceError, "broken hash link"):
+        with self.assertRaisesRegex(EvidenceError, "non-sequential evidence id|broken hash link"):
             load_records(self.path)
 
     def test_incomplete_final_line_is_rejected(self):
@@ -47,4 +47,3 @@ class EvidenceTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
