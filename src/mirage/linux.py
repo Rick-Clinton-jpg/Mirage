@@ -490,6 +490,11 @@ def run_linux_experiment(
         "verification": verify_file(
             evidence_path,
             profile=(ASSURED_EGRESS_PROFILE_ID if assured_egress else SELECTIVE_EGRESS_PROFILE_ID if selective_egress else INCIDENT_PROFILE_ID) if incident_profile else "mirage-minimum-v0.1",
+            witness_receipt=(destination / "witness-receipt.json") if incident_profile else None,
+            witness_fingerprint=witness_fingerprint if incident_profile else None,
+            assurance_bundle=assurance_bundle if assured_egress else None,
+            assurance_public_key=assurance_public_key if assured_egress else None,
+            allow_unauthenticated=not incident_profile,
         ).as_dict(),
     }
     (destination / "results.json").write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8")
