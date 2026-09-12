@@ -21,7 +21,12 @@ def main(argv: list[str] | None = None) -> int:
     demo.add_argument("--incident-profile", action="store_true")
     verify = commands.add_parser("verify", help="verify an evidence JSONL file")
     verify.add_argument("evidence")
-    verify.add_argument("--profile", default="mirage-minimum-v0.1")
+    verify.add_argument("--profile", required=True, help="control profile; no security-sensitive default is assumed")
+    verify.add_argument("--witness-receipt")
+    verify.add_argument("--witness-fingerprint")
+    verify.add_argument("--assurance-bundle")
+    verify.add_argument("--assurance-public-key")
+    verify.add_argument("--integrity-only", action="store_true", help="explicitly permit unauthenticated minimum-profile format checking")
     experiment = commands.add_parser("linux-experiment", help="run matched Linux containment trials")
     experiment.add_argument("--output", required=True)
     experiment.add_argument("--trials", type=int, default=10)
@@ -70,7 +75,15 @@ def main(argv: list[str] | None = None) -> int:
         )
         print(json.dumps(summary, indent=2, sort_keys=True))
         return 0 if summary["verification"]["status"] == "PASS" else 1
-    report = verify_file(args.evidence, profile=args.profile)
+    report = verify_file(
+        args.evidence,
+        profile=args.profile,
+        witness_receipt=args.witness_receipt,
+        witness_fingerprint=args.witness_fingerprint,
+        assurance_bundle=args.assurance_bundle,
+        assurance_public_key=args.assurance_public_key,
+        allow_unauthenticated=args.integrity_only,
+    )
     print(json.dumps(report.as_dict(), indent=2, sort_keys=True))
     return 0 if report.status is ReportStatus.PASS else 1
 
