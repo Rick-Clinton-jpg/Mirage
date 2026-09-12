@@ -16,6 +16,7 @@ from typing import Iterable, Mapping
 
 GENESIS = "0" * 64
 MAX_LINE_BYTES = 64 * 1024
+MAX_RECORDS = 10_000
 ALLOWED_KEYS = frozenset({"id", "type", "control_id", "outcome", "detail", "prev_hash", "hash"})
 
 
@@ -70,6 +71,8 @@ def load_records(path: str | Path) -> tuple[dict, ...]:
     seen_ids: set[str] = set()
     with source.open("rb") as stream:
         for line_number, raw in enumerate(stream, 1):
+            if line_number > MAX_RECORDS:
+                raise EvidenceError(f"evidence stream exceeds {MAX_RECORDS} records")
             if not raw.endswith(b"\n"):
                 raise EvidenceError(f"line {line_number}: incomplete record")
             if len(raw) > MAX_LINE_BYTES:
@@ -84,6 +87,8 @@ def load_records(path: str | Path) -> tuple[dict, ...]:
                 raise EvidenceError(f"line {line_number}: fields must be strings")
             if record["id"] in seen_ids:
                 raise EvidenceError(f"line {line_number}: duplicate evidence id")
+            if record["id"] != f"e{line_number:06d}":
+                raise EvidenceError(f"line {line_number}: non-sequential evidence id")
             if record["prev_hash"] != previous:
                 raise EvidenceError(f"line {line_number}: broken hash link")
             supplied = record["hash"]
@@ -96,4 +101,3 @@ def load_records(path: str | Path) -> tuple[dict, ...]:
     if not records:
         raise EvidenceError("empty evidence stream")
     return tuple(records)
-
