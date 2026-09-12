@@ -29,11 +29,13 @@ def write_incident_demo(path: str | Path) -> None:
         raise FileExistsError(f"refusing to overwrite {target}")
     writer = EvidenceWriter(target)
     writer.append("run_start", detail="deterministic mediated-egress verifier demonstration")
-    for control in (item for item in INCIDENT_CONTROLS if item.control_id != "C6"):
+    for control in (item for item in INCIDENT_CONTROLS if item.control_id not in {"C6", "C12"}):
         writer.append(
             control.required_event,
             control_id=control.control_id,
             outcome=control.expected_outcome,
         )
+    witness = next(item for item in INCIDENT_CONTROLS if item.control_id == "C12")
+    writer.append(witness.required_event, control_id=witness.control_id, outcome=witness.expected_outcome)
     terminal = next(item for item in INCIDENT_CONTROLS if item.control_id == "C6")
     writer.append(terminal.required_event, control_id=terminal.control_id, outcome=terminal.expected_outcome)
