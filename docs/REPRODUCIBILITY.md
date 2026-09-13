@@ -23,11 +23,14 @@ key, and possession of the verifier must not confer signing authority.
 3. Extract into a new directory and run:
 
    ```sh
-   PYTHONPATH=src python3 -m unittest discover -s tests -v
+   python3 -m venv .venv
+   .venv/bin/python -m pip install .
+   .venv/bin/python -m unittest discover -s tests -v
+   .venv/bin/python -m pip check
    ```
 
-   The v0.5 release contains 38 tests. The run is invalid if any test fails or
-   is skipped.
+   The v0.5.2 release contains 41 tests. The run is invalid if any test fails
+   or is skipped. The dependency check must report no broken requirements.
 4. Start a witness on a different trust boundary and retain its public-key
    fingerprint. Run Mirage with `--assured-egress`, at least 100 base trials,
    at least 10 topology trials, the signed assurance bundle, and the matching
