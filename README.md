@@ -63,11 +63,16 @@ offline.
 ## Quick start
 
 ```bash
-python -m pip install -e .
+python -m pip install .
 mirage demo --output evidence.jsonl
 mirage verify --profile mirage-minimum-v0.1 --integrity-only evidence.jsonl
 python -m unittest discover -s tests -v
 ```
+
+Run the test command after installation. Mirage uses a `src/` package layout,
+so importing it directly from an uninstalled source directory is intentionally
+not supported. For source-only testing, use
+`PYTHONPATH=src python -m unittest discover -s tests -v`.
 
 On a disposable Linux machine where the operator can create namespaces and
 remount the isolated mount namespace read-only:
