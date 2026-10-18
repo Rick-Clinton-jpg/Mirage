@@ -117,7 +117,7 @@ def run_selective_tcp_topology(*, product_proxy: bool = False) -> dict:
             path.mkdir()
         product_config.chmod(0o755)
         for path in (product_cache, product_log):
-            path.chown(65534, 65534)
+            os.chown(path, 65534, 65534)
             path.chmod(0o700)
         product_pid = product_cache / "apt-cacher-ng.pid"
         if product_proxy:
