@@ -43,7 +43,7 @@ def measured_policy(raw: str, workload_interface: str) -> tuple[dict, str]:
     tables = [item["table"] for item in entries if "table" in item]
     chains = [item["chain"] for item in entries if "chain" in item]
     rules = [item["rule"] for item in entries if "rule" in item]
-    if len(entries) != 1 + 2 + 5 or len(tables) != 1 or len(chains) != 2 or len(rules) != 5:
+    if len(entries) != 1 + 2 + 7 or len(tables) != 1 or len(chains) != 2 or len(rules) != 7:
         raise PolicyError("unexpected nft table, chain, or rule count")
     if tables[0].get("family") != "inet" or tables[0].get("name") != "mirage":
         raise PolicyError("unexpected nft table identity")

@@ -21,4 +21,4 @@ jobs:
       - name: Verify live policy, privileges, and process identity
         run: |
           sudo /tmp/mirage-venv/bin/mirage policy-reference --output /tmp/mirage-policy.json
-          /tmp/mirage-venv/bin/python -c 'import json; x=json.load(open("/tmp/mirage-policy.json")); assert len(x["config_sha256"]) == 64; assert len(x["policy_snapshot"]["nftables"]) == 8'
+          /tmp/mirage-venv/bin/python -c 'import json; x=json.load(open("/tmp/mirage-policy.json")); assert len(x["config_sha256"]) == 64; assert len(x["policy_snapshot"]["nftables"]) == 10'

@@ -173,6 +173,10 @@ def run_selective_tcp_topology(*, product_proxy: bool = False) -> dict:
         _ns(proxy, [_tool("nft"), "add", "rule", "inet", "mirage", "output", "ip", "daddr", "10.77.2.2", "tcp", "dport", "18081", "accept"])
         _ns(proxy, [_tool("nft"), "add", "rule", "inet", "mirage", "output", "ip", "daddr", "10.77.2.2", "tcp", "dport", "18443", "accept"])
         _ns(proxy, [_tool("nft"), "add", "rule", "inet", "mirage", "input", "iifname", pw_proxy, "tcp", "dport", "18080", "accept"])
+        # Permit a local identity probe of the exact listening process without
+        # opening the proxy namespace's management or upstream interfaces.
+        _ns(proxy, [_tool("nft"), "add", "rule", "inet", "mirage", "output", "oifname", "lo", "ip", "daddr", "10.77.1.1", "tcp", "dport", "18080", "accept"])
+        _ns(proxy, [_tool("nft"), "add", "rule", "inet", "mirage", "input", "iifname", "lo", "ip", "daddr", "10.77.1.1", "tcp", "dport", "18080", "accept"])
         policy_snapshot, policy_digest = _policy_snapshot(proxy, pw_proxy)
         tamper_attempt = _ns(proxy, _unprivileged_command([_tool("nft"), "flush", "table", "inet", "mirage"]), check=False)
         _, policy_after_tamper = _policy_snapshot(proxy, pw_proxy)

@@ -12,7 +12,7 @@ def sample_ruleset(interface="p123w"):
         {"chain": {"family": "inet", "table": "mirage", "name": "output", "policy": "drop", "handle": 2}},
         {"chain": {"family": "inet", "table": "mirage", "name": "input", "policy": "drop", "handle": 3}},
     ]
-    for number in range(5):
+    for number in range(7):
         expression = [{"match": {"left": {"meta": {"key": "iifname"}}, "right": interface if number == 4 else "10.77.2.2", "op": "=="}}, {"accept": None}]
         entries.append({"rule": {"family": "inet", "table": "mirage", "chain": "input" if number == 4 else "output", "expr": expression, "handle": 10 + number}})
     return {"nftables": entries}
