@@ -46,7 +46,7 @@ SELECTIVE_EGRESS_CONTROLS = INCIDENT_CONTROLS + (
     ControlDefinition("C18", "A response exceeding the declared byte envelope is detected", "traffic_envelope_probe", "detected"),
 )
 
-ASSURED_EGRESS_PROFILE_ID = "mirage-assured-egress-v0.4"
+ASSURED_EGRESS_PROFILE_ID = "mirage-assured-egress-v0.5"
 
 ASSURED_EGRESS_CONTROLS = SELECTIVE_EGRESS_CONTROLS + (
     ControlDefinition("C19", "Externally signed policy attestation matches the runtime policy digest", "signed_policy_probe", "verified"),

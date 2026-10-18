@@ -8,6 +8,10 @@ but it is not independent reproduction.
 
 - The release ZIP and its published SHA-256 digest.
 - The assurance bundle and verification-only Ed25519 public key.
+- A reviewed policy reference collected on the intended Linux platform with
+  `sudo mirage policy-reference --output policy.json` and signed offline before
+  the campaign. The payload includes the normalized installed nftables table
+  and its digest.
 - A one-time witness endpoint controlled by the reproducing operator.
 - Ubuntu on ARM64 or AMD64 with Python 3.11+, `unshare`, `setpriv`, and
   `apt-cacher-ng` installed from the distribution's signed package repository.
@@ -29,7 +33,8 @@ key, and possession of the verifier must not confer signing authority.
    .venv/bin/python -m pip check
    ```
 
-   The v0.5.2 release contains 41 tests. The run is invalid if any test fails
+   The v0.5.2 release contains 41 tests; this development branch contains 45.
+   The run is invalid if any test fails
    or is skipped. The dependency check must report no broken requirements.
 4. Start a witness on a different trust boundary and retain its public-key
    fingerprint. Run Mirage with `--assured-egress`, at least 100 base trials,
@@ -37,9 +42,11 @@ key, and possession of the verifier must not confer signing authority.
    public key.
 5. Run `mirage verify` with the explicit assured profile, exported result,
    witness receipt and fingerprint, assurance bundle, and assurance public key.
-6. Confirm all C1-C23 controls pass, the witness receipt verifies, the runtime
-   policy digest matches the signed declaration, and the live product identity
-   matches the signed vulnerability assessment.
+6. Confirm all C1-C23 controls pass, the witness receipt verifies, every
+   runtime policy digest matches the signed nftables reference, the proxy's
+   policy-tamper attempt fails, and each live product process has UID 65534,
+   zero effective capabilities, and the tested namespace and configuration.
+   Confirm its version matches the signed vulnerability assessment.
 7. Preserve the JSONL evidence, result, witness receipt, command output,
    environment record, and SHA-256 manifest. Report failures as failures; do
    not edit or regenerate an unsuccessful record.

@@ -33,6 +33,13 @@ bounding set, `no_new_privs`, a private network namespace, a read-only mount
 namespace, and explicit CPU, address-space, file-descriptor, process, and core
 limits.
 
+In the three-zone topology the live repository proxy runs as UID/GID 65534
+with its capability sets removed. The parent reads back the installed
+nftables table, attempts a policy flush under the proxy identity, and checks
+the policy again after probes. The signer must review a reference snapshot
+before approving its digest. This does not defend against host root or kernel
+compromise.
+
 ## Out of scope
 
 - Kernel, hypervisor, hardware, or host-administrator compromise.

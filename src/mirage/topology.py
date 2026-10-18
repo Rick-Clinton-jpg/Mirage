@@ -19,6 +19,8 @@ from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.x509.oid import NameOID
 
+from .policy import PolicyError, measured_policy
+
 
 class TopologyError(RuntimeError):
     pass
@@ -77,6 +79,22 @@ def _certificate_files(directory: Path) -> tuple[Path, Path, Path]:
     return key_path, cert_path, ca_path
 
 
+def _unprivileged_command(arguments: list[str]) -> list[str]:
+    return [
+        _tool("setpriv"), "--reuid", "65534", "--regid", "65534",
+        "--clear-groups", "--inh-caps=-all", "--ambient-caps=-all",
+        "--bounding-set=-all", "--no-new-privs", "--", *arguments,
+    ]
+
+
+def _policy_snapshot(namespace: str, workload_interface: str) -> tuple[dict, str]:
+    ruleset = _ns(namespace, [_tool("nft"), "-j", "list", "table", "inet", "mirage"])
+    try:
+        return measured_policy(ruleset.stdout, workload_interface)
+    except PolicyError as exc:
+        raise TopologyError(str(exc)) from exc
+
+
 def run_selective_tcp_topology(*, product_proxy: bool = False) -> dict:
     if sys.platform != "linux" or os.geteuid() != 0:
         raise TopologyError("selective TCP topology requires root on Linux")
@@ -97,8 +115,11 @@ def run_selective_tcp_topology(*, product_proxy: bool = False) -> dict:
         product_log = Path(tls_directory) / "log"
         for path in (product_config, product_cache, product_log):
             path.mkdir()
-            path.chmod(0o777)
-        product_pid = Path(tls_directory) / "apt-cacher-ng.pid"
+        product_config.chmod(0o755)
+        for path in (product_cache, product_log):
+            path.chown(65534, 65534)
+            path.chmod(0o700)
+        product_pid = product_cache / "apt-cacher-ng.pid"
         if product_proxy:
             product_executable = _tool("apt-cacher-ng")
             (product_config / "acng.conf").write_text(
@@ -127,11 +148,12 @@ def run_selective_tcp_topology(*, product_proxy: bool = False) -> dict:
         upstream_server = subprocess.Popen([_tool("ip"), "netns", "exec", upstream, sys.executable, str(fixture), "server", "--bind", "10.77.2.2", "--port", "18081", "--mode", upstream_mode], stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
         tls_server = subprocess.Popen([_tool("ip"), "netns", "exec", upstream, sys.executable, str(fixture), "server", "--bind", "10.77.2.2", "--port", "18443", "--mode", "upstream", "--cert", str(cert_path), "--key", str(key_path)], stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
         alternate_server = subprocess.Popen([_tool("ip"), "netns", "exec", upstream, sys.executable, str(fixture), "server", "--bind", "10.77.2.2", "--port", "18082", "--mode", "alternate"], stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
-        proxy_command = (
-            [_tool("ip"), "netns", "exec", proxy, product_executable, "-c", str(product_config), "ForeGround=1"]
+        proxy_program = (
+            [product_executable, "-c", str(product_config), "ForeGround=1"]
             if product_proxy else
-            [_tool("ip"), "netns", "exec", proxy, sys.executable, str(fixture), "proxy", "--bind", "10.77.1.1", "--port", "18080", "--upstream-host", "10.77.2.2", "--upstream-port", "18081"]
+            [sys.executable, str(fixture), "proxy", "--bind", "10.77.1.1", "--port", "18080", "--upstream-host", "10.77.2.2", "--upstream-port", "18081"]
         )
+        proxy_command = [_tool("ip"), "netns", "exec", proxy, *_unprivileged_command(proxy_program)]
         proxy_server = subprocess.Popen(proxy_command, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
         management_server = subprocess.Popen([_tool("ip"), "netns", "exec", proxy, sys.executable, str(fixture), "server", "--bind", "10.77.2.1", "--port", "19090", "--mode", "alternate"], stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
         processes.extend((upstream_server, tls_server, alternate_server, proxy_server, management_server))
@@ -151,6 +173,12 @@ def run_selective_tcp_topology(*, product_proxy: bool = False) -> dict:
         _ns(proxy, [_tool("nft"), "add", "rule", "inet", "mirage", "output", "ip", "daddr", "10.77.2.2", "tcp", "dport", "18081", "accept"])
         _ns(proxy, [_tool("nft"), "add", "rule", "inet", "mirage", "output", "ip", "daddr", "10.77.2.2", "tcp", "dport", "18443", "accept"])
         _ns(proxy, [_tool("nft"), "add", "rule", "inet", "mirage", "input", "iifname", pw_proxy, "tcp", "dport", "18080", "accept"])
+        policy_snapshot, policy_digest = _policy_snapshot(proxy, pw_proxy)
+        tamper_attempt = _ns(proxy, _unprivileged_command([_tool("nft"), "flush", "table", "inet", "mirage"]), check=False)
+        _, policy_after_tamper = _policy_snapshot(proxy, pw_proxy)
+        policy_guard = tamper_attempt.returncode != 0 and policy_digest == policy_after_tamper
+        if not policy_guard:
+            raise TopologyError("unprivileged proxy identity could change the nftables policy")
         workload_payload = "GET http://10.77.2.2:18081/package.deb HTTP/1.1\r\nHost: 10.77.2.2:18081\r\nConnection: close\r\n\r\n" if product_proxy else "GET package"
         workload_package = _client(workload, fixture, "10.77.1.1", 18080, workload_payload, timeout=3.0)
         if product_proxy and not workload_package["connected"]:
@@ -164,8 +192,8 @@ def run_selective_tcp_topology(*, product_proxy: bool = False) -> dict:
         redirect = _client(proxy, fixture, "10.77.2.2", 18081, "REDIRECT")
         redirected_fetch = _client(proxy, fixture, "203.0.113.10", 80)
         bulk = _client(proxy, fixture, "10.77.2.2", 18081, "BULK", 4096)
-        policy_material = b"output:10.77.2.2/tcp/{18081,18443};input:workload/tcp/18080;default:drop"
-        policy_digest = hashlib.sha256(policy_material).hexdigest()
+        _, policy_after_probes = _policy_snapshot(proxy, pw_proxy)
+        policy_guard = policy_guard and policy_digest == policy_after_probes
         manifest = {"component": "mirage-fixture-proxy", "version": "0.5.0", "config_sha256": policy_digest}
         snapshot_core = {
             "as_of": "2026-09-11",
@@ -177,7 +205,7 @@ def run_selective_tcp_topology(*, product_proxy: bool = False) -> dict:
             snapshot_sha256=hashlib.sha256(json.dumps(snapshot_core, sort_keys=True, separators=(",", ":")).encode("ascii")).hexdigest(),
         )
         checks = {
-            "C14": bool(manifest["component"] and manifest["version"] and len(manifest["config_sha256"]) == 64),
+            "C14": bool(manifest["component"] and manifest["version"] and len(manifest["config_sha256"]) == 64 and policy_guard),
             "C15": manifest["version"] not in vulnerability_snapshot["affected"],
             "C16": management_server.poll() is None and management_control["connected"] and not upstream_pivot["connected"],
             "C17": proxy_approved["connected"] and alternate_control["connected"] and proxy_alt_control["connected"] and not proxy_alt_port["connected"] and not proxy_external["connected"] and redirect["connected"] and not redirected_fetch["connected"],
@@ -185,7 +213,15 @@ def run_selective_tcp_topology(*, product_proxy: bool = False) -> dict:
             "C21": tls_identity_control["connected"] and not tls_wrong_identity["connected"],
             "C22": not proxy_external["connected"],
         }
-        return {"checks": checks, "product_proxy_in_topology": product_proxy, "workload_package": workload_package, "proxy_approved": proxy_approved, "alternate_control": alternate_control, "proxy_alt_control": proxy_alt_control, "proxy_alt_port": proxy_alt_port, "proxy_external": proxy_external, "management_control": management_control, "upstream_pivot": upstream_pivot, "management_service_live": management_server.poll() is None, "redirect": redirect, "redirected_fetch": redirected_fetch, "bulk": {"connected": bulk["connected"], "over_limit": bulk["over_limit"]}, "tls": {"approved_identity": tls_identity_control["connected"], "wrong_identity": tls_wrong_identity["connected"]}, "dns_rebinding": {"initial_address": "10.77.2.2", "rebound_address": "203.0.113.10", "rebound_connection": proxy_external["connected"]}, "manifest": manifest, "policy_digest": policy_digest, "vulnerability_snapshot": vulnerability_snapshot}
+        product = None
+        if product_proxy:
+            adapter = Path(__file__).with_name("product_adapter.py").resolve()
+            measured = _ns(proxy, [sys.executable, str(adapter), "--pid", str(proxy_server.pid), "--configuration", str(product_config / "acng.conf"), "--host", "10.77.1.1", "--port", "18080"])
+            try:
+                product = json.loads(measured.stdout)
+            except json.JSONDecodeError as exc:
+                raise TopologyError("product adapter returned invalid JSON") from exc
+        return {"checks": checks, "product_proxy_in_topology": product_proxy, "product": product, "workload_package": workload_package, "proxy_approved": proxy_approved, "alternate_control": alternate_control, "proxy_alt_control": proxy_alt_control, "proxy_alt_port": proxy_alt_port, "proxy_external": proxy_external, "management_control": management_control, "upstream_pivot": upstream_pivot, "management_service_live": management_server.poll() is None, "redirect": redirect, "redirected_fetch": redirected_fetch, "bulk": {"connected": bulk["connected"], "over_limit": bulk["over_limit"]}, "tls": {"approved_identity": tls_identity_control["connected"], "wrong_identity": tls_wrong_identity["connected"]}, "dns_rebinding": {"initial_address": "10.77.2.2", "rebound_address": "203.0.113.10", "rebound_connection": proxy_external["connected"]}, "manifest": manifest, "policy_snapshot": policy_snapshot, "policy_guard": policy_guard, "policy_digest": policy_digest, "vulnerability_snapshot": vulnerability_snapshot}
       finally:
         for process in processes:
             process.terminate()

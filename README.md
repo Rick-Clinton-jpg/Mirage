@@ -14,7 +14,7 @@ checks a bounded control profile against a complete, hash-linked evidence
 stream. Kernel vulnerabilities, a compromised recorder, and a compromised
 host remain outside that result unless independently measured.
 
-## Current milestone (v0.5.2)
+## Current development milestone (after v0.5.2)
 
 The toolkit provides:
 
@@ -53,9 +53,13 @@ redirect follow-up, an upstream reverse pivot, and a bounded response envelope.
 
 The assured-egress profile places a live `apt-cacher-ng` process in the proxy
 namespace, retrieves a package through it, and measures its package version,
-executable, configuration, and live endpoint. It also verifies an offline
-Ed25519-signed network-policy attestation against the policy constructed at
-runtime, evaluates the measured proxy version against a signed, pinned NVD CVE
+executable, configuration, live endpoint, UID, capabilities, and namespace from
+that same process in every topology trial. The proxy runs as UID/GID 65534 with
+no effective capabilities, and a matched policy-tamper attempt must fail.
+The network-policy digest is computed from the installed nftables table, with
+volatile handles and trial-specific interface names normalized. An offline
+Ed25519-signed reference snapshot must match that measurement. Mirage also
+evaluates the measured proxy version against a signed, pinned NVD CVE
 API response, tests TLS service identity, and attempts a rebound destination.
 Only the public assurance key enters the experiment; signing keys remain
 offline.
@@ -100,16 +104,23 @@ mirage verify --profile mirage-mediated-egress-v0.2 \
 Add `--selective-egress` to construct the v0.4 three-zone topology and require
 the eighteen-control `mirage-selective-egress-v0.3` profile.
 
-For the 23-control assured profile, first create and sign policy and
+For the 23-control assured profile, first measure a disposable reference
+topology on the intended Linux platform. Review its `policy_snapshot`, then
+transfer `policy.json` to the offline authority. Create and sign policy and
 vulnerability payloads on an offline authority machine, combine the two
 envelopes into a bundle, and transfer only the bundle and raw public key:
 
 ```bash
+# On the Linux reference host, before the assured campaign:
+sudo mirage policy-reference --output policy.json
+
+# On the offline authority, after reviewing policy.json:
 mirage assurance-keygen --private authority.pem --public authority.raw
 mirage assurance-sign --kind policy-attestation --payload policy.json \
-  --private authority.pem --issued-at 2026-09-11T00:00:00Z \
-  --expires-at 2026-09-14T00:00:00Z --output policy-envelope.json
+  --private authority.pem --issued-at ISSUED_AT_UTC \
+  --expires-at EXPIRES_AT_UTC --output policy-envelope.json
 
+# Back on Linux with the combined signed bundle and public key:
 sudo mirage linux-experiment --assured-egress --trials 100 \
   --assurance-bundle assurance-bundle.json \
   --assurance-public-key authority.raw \

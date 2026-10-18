@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import os
 from pathlib import Path
 import secrets
@@ -20,7 +21,6 @@ from .assurance import AssuranceError, verify_assurance_bundle
 from .evidence import EvidenceWriter
 from .profile import ASSURED_EGRESS_PROFILE_ID, INCIDENT_PROFILE_ID, SELECTIVE_EGRESS_PROFILE_ID
 from .topology import run_selective_tcp_topology
-from .product_adapter import ProductAdapterError, probe_apt_cacher_ng
 from .verifier import verify_file
 from .witness import decode_receipt, public_key_fingerprint, verify_receipt
 
@@ -375,6 +375,8 @@ def run_linux_experiment(
                 "vulnerability_snapshot": topology_runs[0]["vulnerability_snapshot"],
                 "runs": topology_runs,
             }
+            same_policy = all(run["policy_digest"] == topology_runs[0]["policy_digest"] and run["policy_guard"] for run in topology_runs)
+            selective_summary["checks"]["C14"] = selective_summary["checks"]["C14"] and same_policy
             selective_events = {
                 "C14": ("component_attestation_probe", "verified"),
                 "C15": ("vulnerability_snapshot_probe", "clear"),
@@ -400,11 +402,19 @@ def run_linux_experiment(
                 )
                 checks[control_id] = passed
             if assured_egress:
-                try:
-                    product = probe_apt_cacher_ng()
-                except ProductAdapterError as exc:
-                    product = {"live": False, "error": str(exc)}
-                product_verified = product.get("live") is True and all(run.get("product_proxy_in_topology") is True and run["workload_package"].get("connected") is True for run in topology_runs)
+                products = [run["product"] for run in topology_runs]
+                product = products[0] or {"live": False}
+                product_verified = all(
+                    run.get("product_proxy_in_topology") is True
+                    and run["workload_package"].get("connected") is True
+                    and item is not None and item.get("live") is True
+                    and item.get("name") == product.get("name")
+                    and item.get("version") == product.get("version")
+                    and item.get("executable_sha256") == product.get("executable_sha256")
+                    and item.get("endpoint") == "10.77.1.1:18080"
+                    for run, item in zip(topology_runs, products)
+                )
+                product = dict(product, instances_checked=len(products), instances_sha256=hashlib.sha256(json.dumps(products, sort_keys=True, separators=(",", ":")).encode("ascii")).hexdigest())
                 writer.append("product_adapter_probe", control_id="C23", outcome="verified" if product_verified else "failed", detail=json.dumps(product, sort_keys=True, separators=(",", ":")))
                 checks["C23"] = product_verified
                 selective_summary["product"] = product
