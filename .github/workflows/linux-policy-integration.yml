@@ -7,6 +7,7 @@ on:
 jobs:
   policy-reference:
     runs-on: ubuntu-24.04
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v5
       - name: Install Linux boundary tools and repository proxy
@@ -22,3 +23,13 @@ jobs:
         run: |
           sudo /tmp/mirage-venv/bin/mirage policy-reference --output /tmp/mirage-policy.json
           /tmp/mirage-venv/bin/python -c 'import json; x=json.load(open("/tmp/mirage-policy.json")); assert len(x["config_sha256"]) == 64; assert len(x["policy_snapshot"]["nftables"]) == 10'
+      - name: Run 100-trial assured campaign with synthetic CI authority
+        run: |
+          sudo /tmp/mirage-venv/bin/python scripts/ci_assured_campaign.py --policy /tmp/mirage-policy.json --output /tmp/mirage-campaign
+      - name: Preserve campaign evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mirage-assured-ci-campaign
+          path: /tmp/mirage-campaign/
+          if-no-files-found: ignore
