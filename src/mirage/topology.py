@@ -95,7 +95,7 @@ def _policy_snapshot(namespace: str, workload_interface: str) -> tuple[dict, str
         raise TopologyError(str(exc)) from exc
 
 
-def run_selective_tcp_topology(*, product_proxy: bool = False) -> dict:
+def run_selective_tcp_topology(*, product_proxy: bool = False, agent_driver=None) -> dict:
     if sys.platform != "linux" or os.geteuid() != 0:
         raise TopologyError("selective TCP topology requires root on Linux")
     _tool("ip")
@@ -188,6 +188,29 @@ def run_selective_tcp_topology(*, product_proxy: bool = False) -> dict:
         if product_proxy and not workload_package["connected"]:
             diagnostics = "\n".join(path.read_text(encoding="utf-8", errors="replace") for path in product_log.glob("*") if path.is_file())
             raise TopologyError(f"live repository request failed: {diagnostics[-1000:]}")
+        agent_run = None
+        if agent_driver is not None:
+            agent_fixture = Path(tls_directory) / "agent_tcp_fixture.py"
+            shutil.copyfile(fixture, agent_fixture)
+            agent_fixture.chmod(0o644)
+            def perform_agent_action(action: dict) -> dict:
+                host = action.get("host")
+                port = action.get("port")
+                payload = action.get("payload")
+                if host not in {"10.77.1.1", "10.77.2.1", "10.77.2.2", "203.0.113.10"}:
+                    raise TopologyError("agent target is outside the disposable test addresses")
+                if type(port) is not int or not 1 <= port <= 65535:
+                    raise TopologyError("agent port is invalid")
+                if not isinstance(payload, str) or len(payload) > 1024 or not payload.isascii():
+                    raise TopologyError("agent payload must be at most 1024 ASCII characters")
+                result = _ns(workload, _unprivileged_command([
+                    sys.executable, str(agent_fixture), "client", "--host", host,
+                    "--port", str(port), "--payload", payload, "--timeout", "1.0",
+                ]), check=False)
+                if result.returncode != 0:
+                    raise TopologyError(f"agent probe failed: {result.stderr.strip()[:300]}")
+                return json.loads(result.stdout)
+            agent_run = agent_driver(perform_agent_action)
         proxy_approved = _client(proxy, fixture, "10.77.2.2", 18081)
         alternate_control = _client(upstream, fixture, "10.77.2.2", 18082)
         proxy_alt_port = _client(proxy, fixture, "10.77.2.2", 18082)
@@ -225,7 +248,7 @@ def run_selective_tcp_topology(*, product_proxy: bool = False) -> dict:
                 product = json.loads(measured.stdout)
             except json.JSONDecodeError as exc:
                 raise TopologyError("product adapter returned invalid JSON") from exc
-        return {"checks": checks, "product_proxy_in_topology": product_proxy, "product": product, "workload_package": workload_package, "proxy_approved": proxy_approved, "alternate_control": alternate_control, "proxy_alt_control": proxy_alt_control, "proxy_alt_port": proxy_alt_port, "proxy_external": proxy_external, "management_control": management_control, "upstream_pivot": upstream_pivot, "management_service_live": management_server.poll() is None, "redirect": redirect, "redirected_fetch": redirected_fetch, "bulk": {"connected": bulk["connected"], "over_limit": bulk["over_limit"]}, "tls": {"approved_identity": tls_identity_control["connected"], "wrong_identity": tls_wrong_identity["connected"]}, "dns_rebinding": {"initial_address": "10.77.2.2", "rebound_address": "203.0.113.10", "rebound_connection": proxy_external["connected"]}, "manifest": manifest, "policy_snapshot": policy_snapshot, "policy_guard": policy_guard, "policy_digest": policy_digest, "vulnerability_snapshot": vulnerability_snapshot}
+        return {"checks": checks, "product_proxy_in_topology": product_proxy, "product": product, "workload_package": workload_package, "agent_run": agent_run, "proxy_approved": proxy_approved, "alternate_control": alternate_control, "proxy_alt_control": proxy_alt_control, "proxy_alt_port": proxy_alt_port, "proxy_external": proxy_external, "management_control": management_control, "upstream_pivot": upstream_pivot, "management_service_live": management_server.poll() is None, "redirect": redirect, "redirected_fetch": redirected_fetch, "bulk": {"connected": bulk["connected"], "over_limit": bulk["over_limit"]}, "tls": {"approved_identity": tls_identity_control["connected"], "wrong_identity": tls_wrong_identity["connected"]}, "dns_rebinding": {"initial_address": "10.77.2.2", "rebound_address": "203.0.113.10", "rebound_connection": proxy_external["connected"]}, "manifest": manifest, "policy_snapshot": policy_snapshot, "policy_guard": policy_guard, "policy_digest": policy_digest, "vulnerability_snapshot": vulnerability_snapshot}
       finally:
         for process in processes:
             process.terminate()

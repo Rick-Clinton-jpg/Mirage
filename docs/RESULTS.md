@@ -1,5 +1,11 @@
 # Ubuntu validation results
 
+The post-sprint work follows the two external reviews on the
+[Mirage sprint project page](https://apartresearch.com/sprints/projects/mirage-verifiable-containment-evidence-for-mediated-ai-agent-sandboxes-ll9o):
+one path strengthens the fixed-probe assured campaign below, and a second
+path runs [bounded live-model actions](LIVE_MODEL_PILOT.md) through the live
+proxy topology. The latter is a pilot, not a witnessed assurance campaign.
+
 ## v0.5 assured-egress campaign
 
 The candidate completed 100 matched base trials and 10 freshly constructed

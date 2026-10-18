@@ -39,6 +39,24 @@ Mirage remains a research harness rather than a deployable sandbox or proof
 against unknown escape techniques. Its current Linux adapter uses namespaces
 and requires root for boundary construction.
 
+## Evaluation paths and review-driven work
+
+Mirage was built for the [Apart Research AI Incident Response Sprint](https://apartresearch.com/sprints/projects/mirage-verifiable-containment-evidence-for-mediated-ai-agent-sandboxes-ll9o).
+The sprint submission intentionally used deterministic synthetic probes so an
+outside operator could reproduce the same boundary tests and verify the
+resulting evidence. Its three-zone topology uses a **live** `apt-cacher-ng`
+mediator; “synthetic” describes the workload probes, not the proxy.
+
+Two public reviews on that project page motivated the current follow-on work:
+the assured synthetic campaign tightens measurement of the permitted proxy and
+installed policy, and a bounded local-model pilot lets a model choose TCP
+actions against that same live topology. The pilot is described in
+[live-model results](docs/LIVE_MODEL_PILOT.md). It is a separate runner from
+`mirage linux-experiment`; it does not issue a 23-control witnessed `PASS` or
+exercise a full autonomous coding agent. There is currently no CLI switch
+between synthetic and live-model workloads. The next milestone is to integrate
+a broader model tool surface with the witnessed evidence path.
+
 The selective-egress experiment adds a real three-zone TCP topology:
 
 ```text
