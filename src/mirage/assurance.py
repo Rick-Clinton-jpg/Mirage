@@ -13,6 +13,8 @@ from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey, Ed25519PublicKey
 
+from .policy import policy_digest
+
 
 class AssuranceError(ValueError):
     pass
@@ -102,7 +104,13 @@ def verify_assurance_bundle(bundle: dict, public_bytes: bytes, actual_policy_dig
         raise AssuranceError("unexpected assurance bundle schema")
     policy = verify_envelope(bundle["policy"], public_bytes, expected_kind="policy-attestation", now=now)
     snapshot = verify_envelope(bundle["vulnerabilities"], public_bytes, expected_kind="vulnerability-snapshot", now=now)
-    policy_match = policy.get("config_sha256") == actual_policy_digest
+    policy_snapshot = policy.get("policy_snapshot")
+    if type(policy_snapshot) is not dict or type(policy_snapshot.get("nftables")) is not list:
+        raise AssuranceError("signed policy snapshot is absent")
+    signed_digest = policy_digest(policy_snapshot)
+    if policy.get("config_sha256") != signed_digest:
+        raise AssuranceError("signed policy digest does not match its snapshot")
+    policy_match = signed_digest == actual_policy_digest
     identity = f"{component.get('name')}@{component.get('version')}"
     affected = snapshot.get("affected_components")
     if type(affected) is not list or not all(type(item) is str for item in affected):

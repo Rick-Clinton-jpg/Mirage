@@ -9,6 +9,7 @@ from pathlib import Path
 from .assurance import generate_keypair, sign_payload
 from .demo import write_demo, write_incident_demo
 from .linux import run_linux_experiment
+from .topology import run_selective_tcp_topology
 from .model import ReportStatus
 from .verifier import verify_file
 
@@ -26,6 +27,8 @@ def main(argv: list[str] | None = None) -> int:
     verify.add_argument("--witness-fingerprint")
     verify.add_argument("--assurance-bundle")
     verify.add_argument("--assurance-public-key")
+    verify.add_argument("--live-transcript")
+    verify.add_argument("--session-spec")
     verify.add_argument("--integrity-only", action="store_true", help="explicitly permit unauthenticated minimum-profile format checking")
     experiment = commands.add_parser("linux-experiment", help="run matched Linux containment trials")
     experiment.add_argument("--output", required=True)
@@ -38,6 +41,8 @@ def main(argv: list[str] | None = None) -> int:
     experiment.add_argument("--assured-egress", action="store_true")
     experiment.add_argument("--assurance-bundle")
     experiment.add_argument("--assurance-public-key")
+    reference = commands.add_parser("policy-reference", help="measure a disposable live topology before offline policy approval")
+    reference.add_argument("--output", required=True)
     keygen = commands.add_parser("assurance-keygen", help="create an offline Ed25519 assurance keypair")
     keygen.add_argument("--private", required=True)
     keygen.add_argument("--public", required=True)
@@ -75,6 +80,14 @@ def main(argv: list[str] | None = None) -> int:
         )
         print(json.dumps(summary, indent=2, sort_keys=True))
         return 0 if summary["verification"]["status"] == "PASS" else 1
+    if args.command == "policy-reference":
+        run = run_selective_tcp_topology(product_proxy=True)
+        if not run["checks"]["C14"] or not run["product"]["live"]:
+            return 1
+        payload = {"config_sha256": run["policy_digest"], "policy_snapshot": run["policy_snapshot"]}
+        Path(args.output).write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        print(run["policy_digest"])
+        return 0
     report = verify_file(
         args.evidence,
         profile=args.profile,
@@ -82,6 +95,8 @@ def main(argv: list[str] | None = None) -> int:
         witness_fingerprint=args.witness_fingerprint,
         assurance_bundle=args.assurance_bundle,
         assurance_public_key=args.assurance_public_key,
+        live_transcript=args.live_transcript,
+        session_spec=args.session_spec,
         allow_unauthenticated=args.integrity_only,
     )
     print(json.dumps(report.as_dict(), indent=2, sort_keys=True))

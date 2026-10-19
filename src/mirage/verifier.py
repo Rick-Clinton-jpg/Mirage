@@ -9,7 +9,8 @@ from pathlib import Path
 from .assurance import AssuranceError, verify_assurance_bundle
 from .evidence import EvidenceError, load_records
 from .model import ControlResult, ReportStatus, VerificationReport
-from .profile import ASSURED_EGRESS_CONTROLS, ASSURED_EGRESS_PROFILE_ID, CONTROLS, INCIDENT_CONTROLS, INCIDENT_PROFILE_ID, PROFILE_ID, SELECTIVE_EGRESS_CONTROLS, SELECTIVE_EGRESS_PROFILE_ID
+from .profile import ASSURED_EGRESS_CONTROLS, ASSURED_EGRESS_PROFILE_ID, ATTRIBUTED_SESSION_CONTROLS, ATTRIBUTED_SESSION_PROFILE_ID, CONTROLS, INCIDENT_CONTROLS, INCIDENT_PROFILE_ID, LIVE_SESSION_CONTROLS, LIVE_SESSION_PROFILE_ID, PACKAGE_SESSION_CONTROLS, PACKAGE_SESSION_PROFILE_ID, PROFILE_ID, SELECTIVE_EGRESS_CONTROLS, SELECTIVE_EGRESS_PROFILE_ID
+from .live_verify import verify_live
 from .witness import decode_receipt, public_key_fingerprint, verify_receipt
 
 PASS_OUTCOME = "blocked"
@@ -20,10 +21,13 @@ PROFILES = {
     INCIDENT_PROFILE_ID: INCIDENT_CONTROLS,
     SELECTIVE_EGRESS_PROFILE_ID: SELECTIVE_EGRESS_CONTROLS,
     ASSURED_EGRESS_PROFILE_ID: ASSURED_EGRESS_CONTROLS,
+    LIVE_SESSION_PROFILE_ID: LIVE_SESSION_CONTROLS,
+    PACKAGE_SESSION_PROFILE_ID: PACKAGE_SESSION_CONTROLS,
+    ATTRIBUTED_SESSION_PROFILE_ID: ATTRIBUTED_SESSION_CONTROLS,
 }
 
 
-AUTHENTICATED_PROFILES = frozenset({INCIDENT_PROFILE_ID, SELECTIVE_EGRESS_PROFILE_ID, ASSURED_EGRESS_PROFILE_ID})
+AUTHENTICATED_PROFILES = frozenset({INCIDENT_PROFILE_ID, SELECTIVE_EGRESS_PROFILE_ID, ASSURED_EGRESS_PROFILE_ID, LIVE_SESSION_PROFILE_ID, PACKAGE_SESSION_PROFILE_ID, ATTRIBUTED_SESSION_PROFILE_ID})
 
 
 def verify_file(
@@ -34,6 +38,8 @@ def verify_file(
     witness_fingerprint: str | None = None,
     assurance_bundle: str | Path | None = None,
     assurance_public_key: str | Path | None = None,
+    live_transcript: str | Path | None = None,
+    session_spec: str | Path | None = None,
     allow_unauthenticated: bool = False,
 ) -> VerificationReport:
     controls = PROFILES.get(profile)
@@ -93,7 +99,7 @@ def verify_file(
             except (OSError, UnicodeDecodeError, json.JSONDecodeError, TypeError, ValueError) as exc:
                 results.append(ControlResult("AUTHENTICITY", ReportStatus.FAIL, str(exc)))
 
-    if profile == ASSURED_EGRESS_PROFILE_ID:
+    if profile in (ASSURED_EGRESS_PROFILE_ID, LIVE_SESSION_PROFILE_ID, PACKAGE_SESSION_PROFILE_ID, ATTRIBUTED_SESSION_PROFILE_ID):
         if assurance_bundle is None or assurance_public_key is None:
             results.append(ControlResult("ASSURANCE", ReportStatus.FAIL, "assured profile requires the signed assurance bundle and public key"))
         else:
@@ -114,6 +120,10 @@ def verify_file(
                 )
                 if assurance.get("policy_matches_runtime") is not True or assurance.get("component_clear") is not True:
                     raise AssuranceError("signed assurance does not approve the measured runtime")
+                c19 = [r for r in records if r["control_id"] == "C19" and r["type"] == "signed_policy_probe"]
+                c20 = [r for r in records if r["control_id"] == "C20" and r["type"] == "signed_vulnerability_probe"]
+                if len(c19) != 1 or len(c20) != 1 or json.loads(c19[0]["detail"]) != assurance or json.loads(c20[0]["detail"]) != assurance:
+                    raise AssuranceError("supplied assurance differs from witnessed C19/C20 result")
                 results.append(ControlResult("ASSURANCE", ReportStatus.PASS, "signed policy and vulnerability inputs match the measured runtime", (c14[0]["id"], c23[0]["id"])))
             except (OSError, UnicodeDecodeError, json.JSONDecodeError, TypeError, ValueError, AssuranceError) as exc:
                 results.append(ControlResult("ASSURANCE", ReportStatus.FAIL, str(exc)))
@@ -130,6 +140,9 @@ def verify_file(
         status = ReportStatus.PASS if record["outcome"] == expected else ReportStatus.FAIL
         reason = "control produced the expected outcome" if status is ReportStatus.PASS else f"unexpected outcome: {record['outcome']!r}"
         results.append(ControlResult(control.control_id, status, reason, (record["id"],)))
+
+    if profile in (LIVE_SESSION_PROFILE_ID, PACKAGE_SESSION_PROFILE_ID, ATTRIBUTED_SESSION_PROFILE_ID):
+        results.extend(verify_live(records, live_transcript, session_spec, profile))
 
     starts = [record for record in records if record["type"] == "run_start"]
     ends = [record for record in records if record["type"] == "run_end"]

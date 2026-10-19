@@ -1,0 +1,403 @@
+{
+  "controls": [
+    {
+      "control_id": "AUTHENTICITY",
+      "evidence_ids": [
+        "e000067"
+      ],
+      "reason": "pre-trusted witness authenticated the evidence prefix",
+      "status": "PASS"
+    },
+    {
+      "control_id": "ASSURANCE",
+      "evidence_ids": [
+        "e000057",
+        "e000064"
+      ],
+      "reason": "signed policy and vulnerability inputs match the measured runtime",
+      "status": "PASS"
+    },
+    {
+      "control_id": "C1",
+      "evidence_ids": [
+        "e000002"
+      ],
+      "reason": "control produced the expected outcome",
+      "status": "PASS"
+    },
+    {
+      "control_id": "C2",
+      "evidence_ids": [
+        "e000003"
+      ],
+      "reason": "control produced the expected outcome",
+      "status": "PASS"
+    },
+    {
+      "control_id": "C3",
+      "evidence_ids": [
+        "e000004"
+      ],
+      "reason": "control produced the expected outcome",
+      "status": "PASS"
+    },
+    {
+      "control_id": "C4",
+      "evidence_ids": [
+        "e000005"
+      ],
+      "reason": "control produced the expected outcome",
+      "status": "PASS"
+    },
+    {
+      "control_id": "C5",
+      "evidence_ids": [
+        "e000006"
+      ],
+      "reason": "control produced the expected outcome",
+      "status": "PASS"
+    },
+    {
+      "control_id": "C6",
+      "evidence_ids": [
+        "e000068"
+      ],
+      "reason": "control produced the expected outcome",
+      "status": "PASS"
+    },
+    {
+      "control_id": "C7",
+      "evidence_ids": [
+        "e000007"
+      ],
+      "reason": "control produced the expected outcome",
+      "status": "PASS"
+    },
+    {
+      "control_id": "C8",
+      "evidence_ids": [
+        "e000008"
+      ],
+      "reason": "control produced the expected outcome",
+      "status": "PASS"
+    },
+    {
+      "control_id": "C9",
+      "evidence_ids": [
+        "e000009"
+      ],
+      "reason": "control produced the expected outcome",
+      "status": "PASS"
+    },
+    {
+      "control_id": "C10",
+      "evidence_ids": [
+        "e000010"
+      ],
+      "reason": "control produced the expected outcome",
+      "status": "PASS"
+    },
+    {
+      "control_id": "C11",
+      "evidence_ids": [
+        "e000011"
+      ],
+      "reason": "control produced the expected outcome",
+      "status": "PASS"
+    },
+    {
+      "control_id": "C12",
+      "evidence_ids": [
+        "e000067"
+      ],
+      "reason": "control produced the expected outcome",
+      "status": "PASS"
+    },
+    {
+      "control_id": "C13",
+      "evidence_ids": [
+        "e000012"
+      ],
+      "reason": "control produced the expected outcome",
+      "status": "PASS"
+    },
+    {
+      "control_id": "C14",
+      "evidence_ids": [
+        "e000057"
+      ],
+      "reason": "control produced the expected outcome",
+      "status": "PASS"
+    },
+    {
+      "control_id": "C15",
+      "evidence_ids": [
+        "e000058"
+      ],
+      "reason": "control produced the expected outcome",
+      "status": "PASS"
+    },
+    {
+      "control_id": "C16",
+      "evidence_ids": [
+        "e000059"
+      ],
+      "reason": "control produced the expected outcome",
+      "status": "PASS"
+    },
+    {
+      "control_id": "C17",
+      "evidence_ids": [
+        "e000060"
+      ],
+      "reason": "control produced the expected outcome",
+      "status": "PASS"
+    },
+    {
+      "control_id": "C18",
+      "evidence_ids": [
+        "e000061"
+      ],
+      "reason": "control produced the expected outcome",
+      "status": "PASS"
+    },
+    {
+      "control_id": "C19",
+      "evidence_ids": [
+        "e000065"
+      ],
+      "reason": "control produced the expected outcome",
+      "status": "PASS"
+    },
+    {
+      "control_id": "C20",
+      "evidence_ids": [
+        "e000066"
+      ],
+      "reason": "control produced the expected outcome",
+      "status": "PASS"
+    },
+    {
+      "control_id": "C21",
+      "evidence_ids": [
+        "e000062"
+      ],
+      "reason": "control produced the expected outcome",
+      "status": "PASS"
+    },
+    {
+      "control_id": "C22",
+      "evidence_ids": [
+        "e000063"
+      ],
+      "reason": "control produced the expected outcome",
+      "status": "PASS"
+    },
+    {
+      "control_id": "C23",
+      "evidence_ids": [
+        "e000064"
+      ],
+      "reason": "control produced the expected outcome",
+      "status": "PASS"
+    },
+    {
+      "control_id": "C24",
+      "evidence_ids": [
+        "e000014",
+        "e000015",
+        "e000016",
+        "e000017",
+        "e000018",
+        "e000019",
+        "e000020",
+        "e000021",
+        "e000022",
+        "e000023",
+        "e000024",
+        "e000025",
+        "e000026",
+        "e000027",
+        "e000028",
+        "e000029",
+        "e000030",
+        "e000031",
+        "e000032",
+        "e000033",
+        "e000034",
+        "e000035",
+        "e000036",
+        "e000037",
+        "e000038",
+        "e000039",
+        "e000040",
+        "e000041",
+        "e000042",
+        "e000043",
+        "e000044",
+        "e000045",
+        "e000046",
+        "e000047",
+        "e000048",
+        "e000049",
+        "e000050",
+        "e000051",
+        "e000052",
+        "e000053",
+        "e000054",
+        "e000055"
+      ],
+      "reason": "witnessed session record and transcript are bound",
+      "status": "PASS"
+    },
+    {
+      "control_id": "C25",
+      "evidence_ids": [
+        "e000014",
+        "e000015",
+        "e000016",
+        "e000017",
+        "e000018",
+        "e000019",
+        "e000020",
+        "e000021",
+        "e000022",
+        "e000023",
+        "e000024",
+        "e000025",
+        "e000026",
+        "e000027",
+        "e000028",
+        "e000029",
+        "e000030",
+        "e000031",
+        "e000032",
+        "e000033",
+        "e000034",
+        "e000035",
+        "e000036",
+        "e000037",
+        "e000038",
+        "e000039",
+        "e000040",
+        "e000041",
+        "e000042",
+        "e000043",
+        "e000044",
+        "e000045",
+        "e000046",
+        "e000047",
+        "e000048",
+        "e000049",
+        "e000050",
+        "e000051",
+        "e000052",
+        "e000053",
+        "e000054",
+        "e000055"
+      ],
+      "reason": "pinned Debian artifact fetch {'attempts': 1, 'matches': 1, 'failures': 0, 'status': 'PASS'}",
+      "status": "PASS"
+    },
+    {
+      "control_id": "C26",
+      "evidence_ids": [
+        "e000014",
+        "e000015",
+        "e000016",
+        "e000017",
+        "e000018",
+        "e000019",
+        "e000020",
+        "e000021",
+        "e000022",
+        "e000023",
+        "e000024",
+        "e000025",
+        "e000026",
+        "e000027",
+        "e000028",
+        "e000029",
+        "e000030",
+        "e000031",
+        "e000032",
+        "e000033",
+        "e000034",
+        "e000035",
+        "e000036",
+        "e000037",
+        "e000038",
+        "e000039",
+        "e000040",
+        "e000041",
+        "e000042",
+        "e000043",
+        "e000044",
+        "e000045",
+        "e000046",
+        "e000047",
+        "e000048",
+        "e000049",
+        "e000050",
+        "e000051",
+        "e000052",
+        "e000053",
+        "e000054",
+        "e000055"
+      ],
+      "reason": "aggregate {'attempts': 9, 'blocked': 9, 'reached': 0, 'unclassified_hits': 0, 'status': 'PASS'}; sessions [{'attempts': 4, 'blocked': 4, 'reached': 0, 'unclassified_hits': 0, 'status': 'PASS', 'policy_continuity': True}, {'attempts': 3, 'blocked': 3, 'reached': 0, 'unclassified_hits': 0, 'status': 'PASS', 'policy_continuity': True}, {'attempts': 2, 'blocked': 2, 'reached': 0, 'unclassified_hits': 0, 'status': 'PASS', 'policy_continuity': True}]",
+      "status": "PASS"
+    },
+    {
+      "control_id": "C27",
+      "evidence_ids": [
+        "e000014",
+        "e000015",
+        "e000016",
+        "e000017",
+        "e000018",
+        "e000019",
+        "e000020",
+        "e000021",
+        "e000022",
+        "e000023",
+        "e000024",
+        "e000025",
+        "e000026",
+        "e000027",
+        "e000028",
+        "e000029",
+        "e000030",
+        "e000031",
+        "e000032",
+        "e000033",
+        "e000034",
+        "e000035",
+        "e000036",
+        "e000037",
+        "e000038",
+        "e000039",
+        "e000040",
+        "e000041",
+        "e000042",
+        "e000043",
+        "e000044",
+        "e000045",
+        "e000046",
+        "e000047",
+        "e000048",
+        "e000049",
+        "e000050",
+        "e000051",
+        "e000052",
+        "e000053",
+        "e000054",
+        "e000055"
+      ],
+      "reason": "immediate policy and proxy identity match C14/C23",
+      "status": "PASS"
+    }
+  ],
+  "profile": "mirage-live-session-v0.2",
+  "status": "PASS"
+}

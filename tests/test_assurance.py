@@ -4,6 +4,7 @@ import tempfile
 import unittest
 
 from mirage.assurance import AssuranceError, generate_keypair, sign_payload, verify_assurance_bundle, verify_envelope
+from mirage.policy import policy_digest
 
 
 class AssuranceTests(unittest.TestCase):
@@ -40,13 +41,24 @@ class AssuranceTests(unittest.TestCase):
             verify_envelope(envelope, self.public.read_bytes(), expected_kind="policy-attestation", now=self.now)
 
     def test_bundle_binds_policy_and_component(self):
+        snapshot = {"nftables": [{"table": {"family": "inet", "name": "mirage"}}]}
+        digest = policy_digest(snapshot)
         bundle = {
-            "policy": self.envelope("policy-attestation", {"config_sha256": "a" * 64}),
+            "policy": self.envelope("policy-attestation", {"config_sha256": digest, "policy_snapshot": snapshot}),
             "vulnerabilities": self.envelope("vulnerability-snapshot", {"source": "NVD JSON 2.0 pinned export", "affected_components": ["proxy@0.4.0"]}),
         }
-        result = verify_assurance_bundle(bundle, self.public.read_bytes(), "a" * 64, {"name": "proxy", "version": "0.5.0"}, now=self.now)
+        result = verify_assurance_bundle(bundle, self.public.read_bytes(), digest, {"name": "proxy", "version": "0.5.0"}, now=self.now)
         self.assertTrue(result["policy_matches_runtime"])
         self.assertTrue(result["component_clear"])
+        self.assertFalse(verify_assurance_bundle(bundle, self.public.read_bytes(), "0" * 64, {"name": "proxy", "version": "0.5.0"}, now=self.now)["policy_matches_runtime"])
+
+    def test_signed_policy_digest_must_match_signed_snapshot(self):
+        bundle = {
+            "policy": self.envelope("policy-attestation", {"config_sha256": "a" * 64, "policy_snapshot": {"nftables": []}}),
+            "vulnerabilities": self.envelope("vulnerability-snapshot", {"affected_components": []}),
+        }
+        with self.assertRaisesRegex(AssuranceError, "does not match"):
+            verify_assurance_bundle(bundle, self.public.read_bytes(), "a" * 64, {"name": "proxy", "version": "0.5.0"}, now=self.now)
 
 
 if __name__ == "__main__":

@@ -46,7 +46,7 @@ SELECTIVE_EGRESS_CONTROLS = INCIDENT_CONTROLS + (
     ControlDefinition("C18", "A response exceeding the declared byte envelope is detected", "traffic_envelope_probe", "detected"),
 )
 
-ASSURED_EGRESS_PROFILE_ID = "mirage-assured-egress-v0.4"
+ASSURED_EGRESS_PROFILE_ID = "mirage-assured-egress-v0.5"
 
 ASSURED_EGRESS_CONTROLS = SELECTIVE_EGRESS_CONTROLS + (
     ControlDefinition("C19", "Externally signed policy attestation matches the runtime policy digest", "signed_policy_probe", "verified"),
@@ -55,3 +55,13 @@ ASSURED_EGRESS_CONTROLS = SELECTIVE_EGRESS_CONTROLS + (
     ControlDefinition("C22", "A rebound destination remains unreachable from the mediator", "dns_rebinding_probe"),
     ControlDefinition("C23", "A live repository mediator has measured executable, package, configuration, and endpoint identity", "product_adapter_probe", "verified"),
 )
+
+# The live profile adds C24, C26, and C27 through transcript-aware verification.
+# C25 is reserved for a later valid-package fetch and has no Phase 1 result.
+LIVE_SESSION_PROFILE_ID = "mirage-live-session-v0.1"
+LIVE_SESSION_CONTROLS = ASSURED_EGRESS_CONTROLS
+LIVE_SESSION_RESERVED_CONTROL_IDS = ("C25",)
+PACKAGE_SESSION_PROFILE_ID = "mirage-live-session-v0.2"
+PACKAGE_SESSION_CONTROLS = ASSURED_EGRESS_CONTROLS
+ATTRIBUTED_SESSION_PROFILE_ID = "mirage-live-session-v0.3"
+ATTRIBUTED_SESSION_CONTROLS = ASSURED_EGRESS_CONTROLS

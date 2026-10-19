@@ -1,0 +1,47 @@
+name: Linux policy integration
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  policy-reference:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install Linux boundary tools and repository proxy
+        run: |
+          sudo apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y apt-cacher-ng iproute2 nftables util-linux python3-venv
+      - name: Install Mirage and run unit tests
+        run: |
+          python3 -m venv /tmp/mirage-venv
+          /tmp/mirage-venv/bin/python -m pip install .
+          /tmp/mirage-venv/bin/python -m unittest discover -s tests -v
+      - name: Verify live policy, privileges, and process identity
+        run: |
+          sudo /tmp/mirage-venv/bin/mirage policy-reference --output /tmp/mirage-policy.json
+          /tmp/mirage-venv/bin/python -c 'import json; x=json.load(open("/tmp/mirage-policy.json")); assert len(x["config_sha256"]) == 64; assert len(x["policy_snapshot"]["nftables"]) == 10'
+      - name: Run 100-trial assured campaign with synthetic CI authority
+        run: |
+          sudo /tmp/mirage-venv/bin/python scripts/ci_assured_campaign.py --policy /tmp/mirage-policy.json --output /tmp/mirage-campaign
+      - name: Run witnessed C25 package-fetch integration
+        run: |
+          curl --fail --location --silent --show-error https://deb.debian.org/debian/pool/main/h/hello/hello_2.10-3_amd64.deb --output /tmp/hello_2.10-3_amd64.deb
+          /tmp/mirage-venv/bin/python -c 'from pathlib import Path; import hashlib; p=Path("/tmp/hello_2.10-3_amd64.deb"); assert len(p.read_bytes()) == 53080 and hashlib.sha256(p.read_bytes()).hexdigest() == "2e6e2f1a0007dc43bc91c273fd36e91e40a4f1c2765a03eca68b70a42103878a"'
+          sudo /tmp/mirage-venv/bin/python scripts/ci_live_campaign.py --output /tmp/mirage-package-campaign --assurance-bundle /tmp/mirage-campaign/assurance-bundle.json --assurance-public-key /tmp/mirage-campaign/assurance-public.raw --package-artifact /tmp/hello_2.10-3_amd64.deb
+      - name: Preserve campaign evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mirage-assured-ci-campaign
+          path: /tmp/mirage-campaign/
+          if-no-files-found: ignore
+      - name: Preserve package-fetch evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mirage-package-ci-campaign
+          path: /tmp/mirage-package-campaign/
+          if-no-files-found: ignore

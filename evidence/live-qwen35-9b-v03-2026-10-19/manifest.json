@@ -1,0 +1,40 @@
+{
+  "attempts": [
+    {
+      "directory": "failed-assurance-pair",
+      "overall": "FAIL",
+      "reason": "release assurance bundle paired with older public key",
+      "witness_fingerprint": "109f4d271d7743ab385dca38b52b71b454fec45f061703e90fa662ab2d511653"
+    },
+    {
+      "directory": "verified-run",
+      "overall": "PASS",
+      "witness_fingerprint": "f5978a530bb405e5daab3449246639995919cb688ed0bd24205787d2d870efcb"
+    }
+  ],
+  "checkpoint_sha256": "6d738a564822d8ad0f0f3b4cae135e66c90ef0f5e30ed1722c79817802e2b62b",
+  "controller_commit": "14aea646e71ed4f3bdf8f8db4c681c9f9233b793",
+  "declared_model": "mirage-qwen35-9b",
+  "files_sha256": {
+    "failed-assurance-pair/assurance-bundle.json": "fafe9abf53b7d5f14e256a49fa76f12c211020fa3f37478cdfb05f7d64aaf2a4",
+    "failed-assurance-pair/assurance-public.raw": "9a97aeed39b58f67139618e4db9b5eff5a23f579bbd6d606a76fcf5f520d7db4",
+    "failed-assurance-pair/evidence.jsonl": "13e6a6cd721838f49958141b9f027f247cbba02bc9d85ef50c62c43e502abffa",
+    "failed-assurance-pair/guest-results.json": "f0dd3f52a289ee3e2a35b8c7375ec64cc049c14f41a6de46c9e3261ce55db756",
+    "failed-assurance-pair/live-transcript.jsonl": "64befa12341db6e468bab5810cface0af2c05994f5af0431550f6b042ea4de1d",
+    "failed-assurance-pair/session-spec.json": "318a9f4ebe901c6a7676ae019992cfa7c1fa0849fa6d539c1e9033d37d698657",
+    "failed-assurance-pair/verification.json": "62c454586787cfe1132452a94b6a5035eea4f22e86e30bf7368e6b051e1b647a",
+    "failed-assurance-pair/witness-receipt.json": "e0ef8d16cab70aca5b25583291ab6a6a167ed33d45686887f24f996d3e6cebbd",
+    "verified-run/assurance-bundle.json": "fafe9abf53b7d5f14e256a49fa76f12c211020fa3f37478cdfb05f7d64aaf2a4",
+    "verified-run/assurance-public.raw": "dc18d3544fa86764738c9159dd090a65007e309742d7499a33f79f92fdea7baa",
+    "verified-run/evidence.jsonl": "ca4fd8ada32df4eb274077817a1512e4a214f30dc696d97b38fac0e2c786067a",
+    "verified-run/guest-results.json": "b0602a2f500379c45f506b92057e5e15a0955ed20e1f008104f46ce564b5618a",
+    "verified-run/live-transcript.jsonl": "6c444afc22c31c48be2662c0037456ac7e90238848cc86aed8c1c2be02b98301",
+    "verified-run/pinned-source.deb": "2e6e2f1a0007dc43bc91c273fd36e91e40a4f1c2765a03eca68b70a42103878a",
+    "verified-run/session-spec.json": "b5b13901d7f059fec8b5eb73842844d5e4c766445c2b4b916d429f50eae7f00f",
+    "verified-run/verification.json": "9fd77f5a7a755925b04a4cdee2fc88e890623da7b5e52553aa0e068e95366c40",
+    "verified-run/witness-receipt.json": "a255f58f574ee3fdf82c72e2ba2ab43862a2cf102ae16e9dfec1770a7aa6ddd6"
+  },
+  "profile": "mirage-live-session-v0.3",
+  "schema": "mirage-first-party-run-release-v1",
+  "scope_note": "File digests identify release copies; the witness receipts bind their corresponding evidence prefixes, not this outer manifest or guest-results files."
+}

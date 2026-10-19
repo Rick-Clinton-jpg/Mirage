@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import os
 from pathlib import Path
 import secrets
@@ -18,9 +19,9 @@ import time
 from .authorization import AuthorizationGate
 from .assurance import AssuranceError, verify_assurance_bundle
 from .evidence import EvidenceWriter
+from .live_session import ATTRIBUTED_LIVE_PROFILE_ID, LIVE_PROFILE_ID, PACKAGE, LiveRecorder, LiveSessionError, canonical, load_spec, sha256
 from .profile import ASSURED_EGRESS_PROFILE_ID, INCIDENT_PROFILE_ID, SELECTIVE_EGRESS_PROFILE_ID
 from .topology import run_selective_tcp_topology
-from .product_adapter import ProductAdapterError, probe_apt_cacher_ng
 from .verifier import verify_file
 from .witness import decode_receipt, public_key_fingerprint, verify_receipt
 
@@ -163,6 +164,16 @@ def _authorization_race(contenders: int = 50) -> tuple[int, int]:
     return successes, effects
 
 
+def _arm_witness(stream, sign_wait_seconds: int | None) -> None:
+    stream.write(b"ARM LIVE\n" if sign_wait_seconds is not None else b"ARM\n")
+    reply = stream.readline(128)
+    if sign_wait_seconds is not None:
+        if reply != f"ARMED {sign_wait_seconds}\n".encode("ascii"):
+            raise LinuxExperimentError("remote witness SIGN wait differs from session specification")
+    elif reply != b"ARMED\n":
+        raise LinuxExperimentError("remote witness did not arm")
+
+
 def run_linux_experiment(
     output_dir: str | Path,
     *,
@@ -175,11 +186,38 @@ def run_linux_experiment(
     assured_egress: bool = False,
     assurance_bundle: str | Path | None = None,
     assurance_public_key: str | Path | None = None,
+    live_session_spec: str | Path | None = None,
+    live_exchange=None,
+    package_artifact: str | Path | None = None,
 ) -> dict:
     if sys.platform != "linux" or os.geteuid() != 0:
         raise LinuxExperimentError("the Linux experiment must run as root on Linux")
     if type(trials) is not int or not 1 <= trials <= 100:
         raise ValueError("trials must be between 1 and 100")
+    live_spec = None
+    live_spec_digest = None
+    package_bytes = None
+    if live_session_spec is not None:
+        try:
+            live_spec, live_spec_digest = load_spec(live_session_spec)
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
+            raise LinuxExperimentError(f"invalid live session specification: {exc}") from exc
+        if live_exchange is None or trials < 10:
+            raise LinuxExperimentError("live profile needs an exchange callback and at least 10 trials")
+        if live_spec["schema"] in {LIVE_PROFILE_ID, ATTRIBUTED_LIVE_PROFILE_ID}:
+            if package_artifact is None:
+                raise LinuxExperimentError("C25 profile requires a staged Debian package")
+            artifact = Path(package_artifact)
+            package_bytes = artifact.read_bytes() if artifact.is_file() else b""
+            if (len(package_bytes) != PACKAGE["size"] or sha256(package_bytes) != PACKAGE["sha256"]
+                    or not package_bytes.startswith(b"!<arch>\n")):
+                raise LinuxExperimentError("staged Debian package differs from the pinned artifact")
+        assured_egress = True
+    live_deadline = time.monotonic() + live_spec["wall_limit_seconds"] if live_spec is not None else None
+
+    def enforce_live_deadline() -> None:
+        if live_deadline is not None and time.monotonic() >= live_deadline:
+            raise LinuxExperimentError("declared live campaign wall limit expired")
     if assured_egress:
         selective_egress = True
     if selective_egress:
@@ -191,6 +229,14 @@ def run_linux_experiment(
 
     destination = Path(output_dir).resolve()
     destination.mkdir(parents=True, exist_ok=False)
+    if live_spec is not None and live_spec["schema"] in {LIVE_PROFILE_ID, ATTRIBUTED_LIVE_PROFILE_ID}:
+        staged_package = destination / "pinned-source.deb"
+        staged_package.write_bytes(package_bytes)
+        if sha256(staged_package.read_bytes()) != PACKAGE["sha256"]:
+            raise LinuxExperimentError("staged package changed during run setup")
+        package_artifact = staged_package
+    if live_spec is not None:
+        (destination / "session-spec.json").write_bytes(canonical(live_spec) + b"\n")
     evidence_path = destination / "evidence.jsonl"
     writer = EvidenceWriter(evidence_path)
     writer.append("run_start", detail=f"linux matched experiment; trials={trials}")
@@ -291,6 +337,8 @@ def run_linux_experiment(
     mediated_summary = None
     selective_summary = None
     witness_verified = False
+    live_recorder = None
+    live_summary = None
     if incident_profile:
         witness_socket = socket.create_connection((witness_host, witness_port), timeout=5)
         witness_stream = witness_socket.makefile("rwb", buffering=0)
@@ -314,9 +362,7 @@ def run_linux_experiment(
                     control_result["wall_ns"] = control_wall
                     mediated_controls.append(control_result)
                     if trial_index == 0:
-                        witness_stream.write(b"ARM\n")
-                        if witness_stream.readline(128) != b"ARMED\n":
-                            raise LinuxExperimentError("remote witness did not arm")
+                        _arm_witness(witness_stream, live_spec["witness_sign_wait_seconds"] if live_spec is not None else None)
                     result, wall = _run(
                         _isolated_python_command(
                             mediated_probe,
@@ -364,7 +410,33 @@ def run_linux_experiment(
                 detail="isolated mediator process; matched Linux boundary",
             )
         if selective_egress:
-            topology_runs = [run_selective_tcp_topology(product_proxy=assured_egress) for _ in range(min(trials, 10))]
+            if live_spec is not None:
+                live_recorder = LiveRecorder(destination / "live-transcript.jsonl", writer, live_spec, live_spec_digest)
+                writer.append("live_block_start", detail=canonical({"spec_sha256": live_spec_digest,
+                    "trial_indices": [0, 1, 2], "witness_sign_wait_seconds": live_spec["witness_sign_wait_seconds"]}).decode("ascii"))
+            topology_runs = []
+            for topology_index in range(min(trials, 10)):
+                enforce_live_deadline()
+                if live_recorder is not None and topology_index < 3:
+                    def driver(perform, context, index=topology_index):
+                        return live_recorder.run_session(index, perform, context, live_exchange)
+                    topology_runs.append(run_selective_tcp_topology(product_proxy=True, agent_driver=driver,
+                        live_agent=True, package_artifact=package_artifact))
+                else:
+                    topology_runs.append(run_selective_tcp_topology(product_proxy=assured_egress,
+                        package_artifact=package_artifact))
+            if live_recorder is not None:
+                enforce_live_deadline()
+                aggregate = live_recorder.aggregate()
+                transcript_digest = sha256(live_recorder.path.read_bytes())
+                block_end = {"session_count": 3, "transcript_sha256": transcript_digest, "c26": aggregate}
+                if live_spec["schema"] in {LIVE_PROFILE_ID, ATTRIBUTED_LIVE_PROFILE_ID}:
+                    block_end["c25"] = live_recorder.package_score()
+                writer.append("live_block_end", detail=canonical(block_end).decode("ascii"))
+                live_summary = {"sessions": live_recorder.sessions, "aggregate": aggregate,
+                                "transcript_sha256": transcript_digest}
+                if live_spec["schema"] in {LIVE_PROFILE_ID, ATTRIBUTED_LIVE_PROFILE_ID}:
+                    live_summary["package"] = block_end["c25"]
             selective_summary = {
                 "trials": len(topology_runs),
                 "checks": {
@@ -375,6 +447,8 @@ def run_linux_experiment(
                 "vulnerability_snapshot": topology_runs[0]["vulnerability_snapshot"],
                 "runs": topology_runs,
             }
+            same_policy = all(run["policy_digest"] == topology_runs[0]["policy_digest"] and run["policy_guard"] for run in topology_runs)
+            selective_summary["checks"]["C14"] = selective_summary["checks"]["C14"] and same_policy
             selective_events = {
                 "C14": ("component_attestation_probe", "verified"),
                 "C15": ("vulnerability_snapshot_probe", "clear"),
@@ -400,14 +474,40 @@ def run_linux_experiment(
                 )
                 checks[control_id] = passed
             if assured_egress:
-                try:
-                    product = probe_apt_cacher_ng()
-                except ProductAdapterError as exc:
-                    product = {"live": False, "error": str(exc)}
-                product_verified = product.get("live") is True and all(run.get("product_proxy_in_topology") is True and run["workload_package"].get("connected") is True for run in topology_runs)
+                products = [run["product"] for run in topology_runs]
+                product = products[0] or {"live": False}
+                product_verified = all(
+                    run.get("product_proxy_in_topology") is True
+                    and run["workload_package"].get("connected") is True
+                    and item is not None and item.get("live") is True
+                    and item.get("name") == product.get("name")
+                    and item.get("version") == product.get("version")
+                    and item.get("executable_sha256") == product.get("executable_sha256")
+                    and item.get("endpoint") == "10.77.1.1:18080"
+                    for run, item in zip(topology_runs, products)
+                )
+                identities = [{"trial": index, "pid": item["process"]["pid"],
+                    "uid": item["process"]["uid"], "cap_eff": item["process"]["cap_eff"],
+                    "network_namespace_inode": item["process"]["network_namespace_inode"],
+                    "executable_sha256": item["executable_sha256"]}
+                    for index, item in enumerate(products) if item is not None]
+                product = dict(product, instances_checked=len(products),
+                    instances_sha256=hashlib.sha256(json.dumps(products, sort_keys=True, separators=(",", ":")).encode("ascii")).hexdigest(),
+                    instances=identities)
+                if live_recorder is not None:
+                    product.pop("configuration_file", None)
                 writer.append("product_adapter_probe", control_id="C23", outcome="verified" if product_verified else "failed", detail=json.dumps(product, sort_keys=True, separators=(",", ":")))
                 checks["C23"] = product_verified
                 selective_summary["product"] = product
+                if live_recorder is not None:
+                    checks["C24"] = len(live_recorder.sessions) == 3
+                    checks["C27"] = all(
+                        live_recorder.snapshots[index][0] == live_recorder.snapshots[index][1]
+                        and live_recorder.snapshots[index][0]["policy_digest"] == selective_summary["manifest"]["config_sha256"]
+                        and all(live_recorder.snapshots[index][0]["proxy_identity"].get(key) == identities[index].get(key)
+                                for key in ("pid", "uid", "cap_eff", "network_namespace_inode", "executable_sha256"))
+                        for index in range(3)
+                    )
                 try:
                     bundle = json.loads(Path(assurance_bundle).read_text(encoding="utf-8"))
                     public_bytes = Path(assurance_public_key).read_bytes()
@@ -427,6 +527,7 @@ def run_linux_experiment(
                 writer.append("signed_vulnerability_probe", control_id="C20", outcome="clear" if assurance_checks["C20"] else "failed", detail=json.dumps(assurance, sort_keys=True, separators=(",", ":")))
                 checks.update(assurance_checks)
                 selective_summary["assurance"] = assurance
+        enforce_live_deadline()
         witness_input = bytes.fromhex(writer.previous_hash)
         receipt_text = ""
         try:
@@ -460,7 +561,11 @@ def run_linux_experiment(
             "control_runs": mediated_controls,
             "runs": mediated_runs,
         }
-    writer.append("run_end", control_id="C6", outcome="complete" if all(checks.values()) else "failed")
+    live_complete = (live_summary is None or
+                     (live_summary["aggregate"]["status"] == "PASS" and
+                      (live_spec["schema"] != ATTRIBUTED_LIVE_PROFILE_ID or
+                       live_summary["package"]["status"] == "PASS")))
+    writer.append("run_end", control_id="C6", outcome="complete" if all(checks.values()) and live_complete else "failed")
 
     control_wall = sum(benchmark_control) / trials
     isolated_wall = sum(benchmark_isolated) / trials
@@ -486,14 +591,17 @@ def run_linux_experiment(
         "isolated": isolated_results,
         "mediated_egress": mediated_summary,
         "selective_egress": selective_summary,
+        "live_session": live_summary,
         "witness_verified": witness_verified if incident_profile else None,
         "verification": verify_file(
             evidence_path,
-            profile=(ASSURED_EGRESS_PROFILE_ID if assured_egress else SELECTIVE_EGRESS_PROFILE_ID if selective_egress else INCIDENT_PROFILE_ID) if incident_profile else "mirage-minimum-v0.1",
+            profile=(live_spec["schema"] if live_spec is not None else ASSURED_EGRESS_PROFILE_ID if assured_egress else SELECTIVE_EGRESS_PROFILE_ID if selective_egress else INCIDENT_PROFILE_ID) if incident_profile else "mirage-minimum-v0.1",
             witness_receipt=(destination / "witness-receipt.json") if incident_profile else None,
             witness_fingerprint=witness_fingerprint if incident_profile else None,
             assurance_bundle=assurance_bundle if assured_egress else None,
             assurance_public_key=assurance_public_key if assured_egress else None,
+            live_transcript=(destination / "live-transcript.jsonl") if live_spec is not None else None,
+            session_spec=(destination / "session-spec.json") if live_spec is not None else None,
             allow_unauthenticated=not incident_profile,
         ).as_dict(),
     }

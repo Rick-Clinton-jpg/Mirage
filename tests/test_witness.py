@@ -1,9 +1,34 @@
 import unittest
+import json
+import socket
+import subprocess
+import sys
 
 from mirage.witness import OneTimeWitness, WitnessPrivateKey, WitnessSignature, decode_receipt, encode_receipt, public_key_fingerprint, verify_receipt
 
 
 class WitnessTests(unittest.TestCase):
+    def test_live_wait_is_reported_and_short_expiry_closes_without_receipt(self):
+        process = subprocess.Popen([sys.executable, "-m", "mirage.witness_server",
+            "--host", "127.0.0.1", "--sign-wait-seconds", "1"],
+            stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True)
+        try:
+            advertised = json.loads(process.stdout.readline())
+            with socket.create_connection(("127.0.0.1", advertised["port"]), timeout=2) as connection:
+                connection.settimeout(3)
+                with connection.makefile("rwb", buffering=0) as stream:
+                    stream.write(b"ARM LIVE\n")
+                    self.assertEqual(stream.readline(), b"ARMED 1\n")
+                    stream.write(b"ALERT\n")
+                    self.assertTrue(stream.readline().startswith(b"ALERTED "))
+                    self.assertEqual(stream.readline(), b"")
+            self.assertNotEqual(process.wait(timeout=3), 0)
+        finally:
+            if process.poll() is None:
+                process.kill()
+                process.wait()
+            process.stdout.close()
+
     def test_terminal_digest_receipt_verifies(self):
         witness, public = OneTimeWitness.generate()
         signature = witness.sign(b"terminal-evidence-digest")

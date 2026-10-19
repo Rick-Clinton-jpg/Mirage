@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable, Mapping
@@ -59,6 +60,7 @@ class EvidenceWriter:
         with self.path.open("ab") as stream:
             stream.write(encoded)
             stream.flush()
+            os.fsync(stream.fileno())
         self.previous_hash = record["hash"]
         self.count += 1
         return record["id"]
