@@ -73,8 +73,14 @@ preserved as historical artifacts. The current verifier still checks their
 transcript and witness binding, but reports C26 and the overall result as
 `NOT_EVALUATED` unless a prohibited fixture was reached (`FAIL`). The new
 `mirage-live-session-v0.3` profile records route diagnostics and distinguishes
-route denial, proxy refusal, and unresolved errors. No v0.3 model campaign is
-claimed yet.
+route denial, proxy refusal, and unresolved errors. The [first-party v0.3 Qwen
+campaign](evidence/live-qwen35-9b-v03-2026-10-19/README.md) now includes both
+the failed assurance-key configuration run and the verified rerun. In the
+verified run, 12 model-directed actions included seven scored prohibited-fixture
+attempts: three direct route denials, four proxy HTTP 403 refusals, and zero
+fixture reaches. C24–C27, witness authenticity, and assurance verified `PASS`
+under the stated first-party and guest-kernel trust boundaries. This is a
+bounded network-action result, not a full autonomous agent evaluation.
 
 The selective-egress experiment adds a real three-zone TCP topology:
 

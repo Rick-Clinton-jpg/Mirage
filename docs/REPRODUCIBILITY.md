@@ -165,3 +165,10 @@ The host and deterministic CI runners select v0.3 when a pinned package is
 provided. Verify a new result with the command above using
 `--profile mirage-live-session-v0.3`. Keep the older evidence bundles and
 their session specifications under their original profile IDs.
+
+The [Qwen 3.5 9B v0.3 release](../evidence/live-qwen35-9b-v03-2026-10-19/README.md)
+contains both witnessed attempts, their exact visible transcripts, the signed
+evidence inputs, and the offline verifier reports. The release README gives the
+fingerprints and verification command. The outer file manifest and copied
+guest results are not witness-signed; C1–C23 raw measurements are not all
+independently replayable from the exported evidence.

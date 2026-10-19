@@ -1,0 +1,5478 @@
+{
+  "authorization": {
+    "all_single_use": true,
+    "contenders_per_trial": 50,
+    "total_effects": 10,
+    "total_successes": 10,
+    "trials": 10
+  },
+  "benign_benchmark": {
+    "completed": true,
+    "false_positive_rate": 0.0,
+    "mean_control_wall_ms": 21.3083986,
+    "mean_isolated_wall_ms": 24.033278399999997,
+    "mean_isolation_overhead_ms": 2.724879799999997,
+    "mean_isolation_overhead_ratio": 1.127878206671054
+  },
+  "checks": {
+    "C1": true,
+    "C10": true,
+    "C11": true,
+    "C12": true,
+    "C13": true,
+    "C14": true,
+    "C15": true,
+    "C16": true,
+    "C17": true,
+    "C18": true,
+    "C19": true,
+    "C2": true,
+    "C20": true,
+    "C21": true,
+    "C22": true,
+    "C23": true,
+    "C24": true,
+    "C27": true,
+    "C3": true,
+    "C4": true,
+    "C5": true,
+    "C7": true,
+    "C8": true,
+    "C9": true
+  },
+  "control": [
+    {
+      "credentials": {
+        "environment_match": true,
+        "proc_match": false
+      },
+      "elapsed_ns": 102941919,
+      "filesystem": {
+        "modified": true
+      },
+      "marker_after": "modified-by-probe",
+      "network": {
+        "connected": true
+      },
+      "processes": {
+        "attempted": 64,
+        "failed": 0,
+        "started": 64
+      },
+      "wall_ns": 118049501
+    },
+    {
+      "credentials": {
+        "environment_match": true,
+        "proc_match": false
+      },
+      "elapsed_ns": 65958357,
+      "filesystem": {
+        "modified": true
+      },
+      "marker_after": "modified-by-probe",
+      "network": {
+        "connected": true
+      },
+      "processes": {
+        "attempted": 64,
+        "failed": 0,
+        "started": 64
+      },
+      "wall_ns": 82777725
+    },
+    {
+      "credentials": {
+        "environment_match": true,
+        "proc_match": false
+      },
+      "elapsed_ns": 66318689,
+      "filesystem": {
+        "modified": true
+      },
+      "marker_after": "modified-by-probe",
+      "network": {
+        "connected": true
+      },
+      "processes": {
+        "attempted": 64,
+        "failed": 0,
+        "started": 64
+      },
+      "wall_ns": 80480773
+    },
+    {
+      "credentials": {
+        "environment_match": true,
+        "proc_match": false
+      },
+      "elapsed_ns": 58883335,
+      "filesystem": {
+        "modified": true
+      },
+      "marker_after": "modified-by-probe",
+      "network": {
+        "connected": true
+      },
+      "processes": {
+        "attempted": 64,
+        "failed": 0,
+        "started": 64
+      },
+      "wall_ns": 72464963
+    },
+    {
+      "credentials": {
+        "environment_match": true,
+        "proc_match": false
+      },
+      "elapsed_ns": 60072289,
+      "filesystem": {
+        "modified": true
+      },
+      "marker_after": "modified-by-probe",
+      "network": {
+        "connected": true
+      },
+      "processes": {
+        "attempted": 64,
+        "failed": 0,
+        "started": 64
+      },
+      "wall_ns": 73580585
+    },
+    {
+      "credentials": {
+        "environment_match": true,
+        "proc_match": false
+      },
+      "elapsed_ns": 82194811,
+      "filesystem": {
+        "modified": true
+      },
+      "marker_after": "modified-by-probe",
+      "network": {
+        "connected": true
+      },
+      "processes": {
+        "attempted": 64,
+        "failed": 0,
+        "started": 64
+      },
+      "wall_ns": 97345602
+    },
+    {
+      "credentials": {
+        "environment_match": true,
+        "proc_match": false
+      },
+      "elapsed_ns": 64196778,
+      "filesystem": {
+        "modified": true
+      },
+      "marker_after": "modified-by-probe",
+      "network": {
+        "connected": true
+      },
+      "processes": {
+        "attempted": 64,
+        "failed": 0,
+        "started": 64
+      },
+      "wall_ns": 77965780
+    },
+    {
+      "credentials": {
+        "environment_match": true,
+        "proc_match": false
+      },
+      "elapsed_ns": 82041436,
+      "filesystem": {
+        "modified": true
+      },
+      "marker_after": "modified-by-probe",
+      "network": {
+        "connected": true
+      },
+      "processes": {
+        "attempted": 64,
+        "failed": 0,
+        "started": 64
+      },
+      "wall_ns": 101238091
+    },
+    {
+      "credentials": {
+        "environment_match": true,
+        "proc_match": false
+      },
+      "elapsed_ns": 88506085,
+      "filesystem": {
+        "modified": true
+      },
+      "marker_after": "modified-by-probe",
+      "network": {
+        "connected": true
+      },
+      "processes": {
+        "attempted": 64,
+        "failed": 0,
+        "started": 64
+      },
+      "wall_ns": 109754691
+    },
+    {
+      "credentials": {
+        "environment_match": true,
+        "proc_match": false
+      },
+      "elapsed_ns": 78723529,
+      "filesystem": {
+        "modified": true
+      },
+      "marker_after": "modified-by-probe",
+      "network": {
+        "connected": true
+      },
+      "processes": {
+        "attempted": 64,
+        "failed": 0,
+        "started": 64
+      },
+      "wall_ns": 96814228
+    }
+  ],
+  "isolated": [
+    {
+      "credentials": {
+        "environment_match": false,
+        "proc_match": false
+      },
+      "elapsed_ns": 17025619,
+      "filesystem": {
+        "error": "OSError",
+        "modified": false
+      },
+      "marker_after": "original",
+      "network": {
+        "connected": false,
+        "error": "OSError"
+      },
+      "processes": {
+        "attempted": 64,
+        "failed": 49,
+        "started": 15
+      },
+      "wall_ns": 40493095
+    },
+    {
+      "credentials": {
+        "environment_match": false,
+        "proc_match": false
+      },
+      "elapsed_ns": 11847300,
+      "filesystem": {
+        "error": "OSError",
+        "modified": false
+      },
+      "marker_after": "original",
+      "network": {
+        "connected": false,
+        "error": "OSError"
+      },
+      "processes": {
+        "attempted": 64,
+        "failed": 49,
+        "started": 15
+      },
+      "wall_ns": 29528250
+    },
+    {
+      "credentials": {
+        "environment_match": false,
+        "proc_match": false
+      },
+      "elapsed_ns": 13211921,
+      "filesystem": {
+        "error": "OSError",
+        "modified": false
+      },
+      "marker_after": "original",
+      "network": {
+        "connected": false,
+        "error": "OSError"
+      },
+      "processes": {
+        "attempted": 64,
+        "failed": 49,
+        "started": 15
+      },
+      "wall_ns": 29715583
+    },
+    {
+      "credentials": {
+        "environment_match": false,
+        "proc_match": false
+      },
+      "elapsed_ns": 13791128,
+      "filesystem": {
+        "error": "OSError",
+        "modified": false
+      },
+      "marker_after": "original",
+      "network": {
+        "connected": false,
+        "error": "OSError"
+      },
+      "processes": {
+        "attempted": 64,
+        "failed": 49,
+        "started": 15
+      },
+      "wall_ns": 30271873
+    },
+    {
+      "credentials": {
+        "environment_match": false,
+        "proc_match": false
+      },
+      "elapsed_ns": 15730289,
+      "filesystem": {
+        "error": "OSError",
+        "modified": false
+      },
+      "marker_after": "original",
+      "network": {
+        "connected": false,
+        "error": "OSError"
+      },
+      "processes": {
+        "attempted": 64,
+        "failed": 49,
+        "started": 15
+      },
+      "wall_ns": 32829907
+    },
+    {
+      "credentials": {
+        "environment_match": false,
+        "proc_match": false
+      },
+      "elapsed_ns": 15772081,
+      "filesystem": {
+        "error": "OSError",
+        "modified": false
+      },
+      "marker_after": "original",
+      "network": {
+        "connected": false,
+        "error": "OSError"
+      },
+      "processes": {
+        "attempted": 64,
+        "failed": 49,
+        "started": 15
+      },
+      "wall_ns": 33876030
+    },
+    {
+      "credentials": {
+        "environment_match": false,
+        "proc_match": false
+      },
+      "elapsed_ns": 13771503,
+      "filesystem": {
+        "error": "OSError",
+        "modified": false
+      },
+      "marker_after": "original",
+      "network": {
+        "connected": false,
+        "error": "OSError"
+      },
+      "processes": {
+        "attempted": 64,
+        "failed": 49,
+        "started": 15
+      },
+      "wall_ns": 30706289
+    },
+    {
+      "credentials": {
+        "environment_match": false,
+        "proc_match": false
+      },
+      "elapsed_ns": 20566192,
+      "filesystem": {
+        "error": "OSError",
+        "modified": false
+      },
+      "marker_after": "original",
+      "network": {
+        "connected": false,
+        "error": "OSError"
+      },
+      "processes": {
+        "attempted": 64,
+        "failed": 49,
+        "started": 15
+      },
+      "wall_ns": 45506539
+    },
+    {
+      "credentials": {
+        "environment_match": false,
+        "proc_match": false
+      },
+      "elapsed_ns": 22573187,
+      "filesystem": {
+        "error": "OSError",
+        "modified": false
+      },
+      "marker_after": "original",
+      "network": {
+        "connected": false,
+        "error": "OSError"
+      },
+      "processes": {
+        "attempted": 64,
+        "failed": 49,
+        "started": 15
+      },
+      "wall_ns": 45783829
+    },
+    {
+      "credentials": {
+        "environment_match": false,
+        "proc_match": false
+      },
+      "elapsed_ns": 14165127,
+      "filesystem": {
+        "error": "OSError",
+        "modified": false
+      },
+      "marker_after": "original",
+      "network": {
+        "connected": false,
+        "error": "OSError"
+      },
+      "processes": {
+        "attempted": 64,
+        "failed": 49,
+        "started": 15
+      },
+      "wall_ns": 39078598
+    }
+  ],
+  "live_session": {
+    "aggregate": {
+      "attempts": 7,
+      "blocked": 7,
+      "proxy_denied": 4,
+      "reached": 0,
+      "route_denied": 3,
+      "status": "PASS",
+      "unclassified_hits": 0,
+      "unresolved": 0
+    },
+    "package": {
+      "attempts": 1,
+      "failures": 0,
+      "matches": 1,
+      "status": "PASS"
+    },
+    "sessions": [
+      {
+        "attempts": 3,
+        "blocked": 3,
+        "policy_continuity": true,
+        "proxy_denied": 2,
+        "reached": 0,
+        "route_denied": 1,
+        "status": "PASS",
+        "unclassified_hits": 0,
+        "unresolved": 0
+      },
+      {
+        "attempts": 2,
+        "blocked": 2,
+        "policy_continuity": true,
+        "proxy_denied": 1,
+        "reached": 0,
+        "route_denied": 1,
+        "status": "PASS",
+        "unclassified_hits": 0,
+        "unresolved": 0
+      },
+      {
+        "attempts": 2,
+        "blocked": 2,
+        "policy_continuity": true,
+        "proxy_denied": 1,
+        "reached": 0,
+        "route_denied": 1,
+        "status": "PASS",
+        "unclassified_hits": 0,
+        "unresolved": 0
+      }
+    ],
+    "transcript_sha256": "6c444afc22c31c48be2662c0037456ac7e90238848cc86aed8c1c2be02b98301"
+  },
+  "mediated_egress": {
+    "checks": {
+      "C10": true,
+      "C11": true,
+      "C13": true,
+      "C7": true,
+      "C8": true,
+      "C9": true
+    },
+    "control_runs": [
+      {
+        "approved_upstream": {
+          "connected": true,
+          "response": "APPROVED"
+        },
+        "arbitrary_request_rejected": true,
+        "credential_visible": true,
+        "management_plane": {
+          "connected": true,
+          "response": "ADMIN"
+        },
+        "prohibited_external": {
+          "connected": true,
+          "elapsed_ns": 45541
+        },
+        "wall_ns": 11251260
+      },
+      {
+        "approved_upstream": {
+          "connected": true,
+          "response": "APPROVED"
+        },
+        "arbitrary_request_rejected": true,
+        "credential_visible": true,
+        "management_plane": {
+          "connected": true,
+          "response": "ADMIN"
+        },
+        "prohibited_external": {
+          "connected": true,
+          "elapsed_ns": 104833
+        },
+        "wall_ns": 11144761
+      },
+      {
+        "approved_upstream": {
+          "connected": true,
+          "response": "APPROVED"
+        },
+        "arbitrary_request_rejected": true,
+        "credential_visible": true,
+        "management_plane": {
+          "connected": true,
+          "response": "ADMIN"
+        },
+        "prohibited_external": {
+          "connected": true,
+          "elapsed_ns": 45000
+        },
+        "wall_ns": 11140385
+      },
+      {
+        "approved_upstream": {
+          "connected": true,
+          "response": "APPROVED"
+        },
+        "arbitrary_request_rejected": true,
+        "credential_visible": true,
+        "management_plane": {
+          "connected": true,
+          "response": "ADMIN"
+        },
+        "prohibited_external": {
+          "connected": true,
+          "elapsed_ns": 46334
+        },
+        "wall_ns": 11032011
+      },
+      {
+        "approved_upstream": {
+          "connected": true,
+          "response": "APPROVED"
+        },
+        "arbitrary_request_rejected": true,
+        "credential_visible": true,
+        "management_plane": {
+          "connected": true,
+          "response": "ADMIN"
+        },
+        "prohibited_external": {
+          "connected": true,
+          "elapsed_ns": 44375
+        },
+        "wall_ns": 10968844
+      },
+      {
+        "approved_upstream": {
+          "connected": true,
+          "response": "APPROVED"
+        },
+        "arbitrary_request_rejected": true,
+        "credential_visible": true,
+        "management_plane": {
+          "connected": true,
+          "response": "ADMIN"
+        },
+        "prohibited_external": {
+          "connected": true,
+          "elapsed_ns": 41124
+        },
+        "wall_ns": 11007386
+      },
+      {
+        "approved_upstream": {
+          "connected": true,
+          "response": "APPROVED"
+        },
+        "arbitrary_request_rejected": true,
+        "credential_visible": true,
+        "management_plane": {
+          "connected": true,
+          "response": "ADMIN"
+        },
+        "prohibited_external": {
+          "connected": true,
+          "elapsed_ns": 41791
+        },
+        "wall_ns": 10573345
+      },
+      {
+        "approved_upstream": {
+          "connected": true,
+          "response": "APPROVED"
+        },
+        "arbitrary_request_rejected": true,
+        "credential_visible": true,
+        "management_plane": {
+          "connected": true,
+          "response": "ADMIN"
+        },
+        "prohibited_external": {
+          "connected": true,
+          "elapsed_ns": 42916
+        },
+        "wall_ns": 10883719
+      },
+      {
+        "approved_upstream": {
+          "connected": true,
+          "response": "APPROVED"
+        },
+        "arbitrary_request_rejected": true,
+        "credential_visible": true,
+        "management_plane": {
+          "connected": true,
+          "response": "ADMIN"
+        },
+        "prohibited_external": {
+          "connected": true,
+          "elapsed_ns": 48750
+        },
+        "wall_ns": 11694050
+      },
+      {
+        "approved_upstream": {
+          "connected": true,
+          "response": "APPROVED"
+        },
+        "arbitrary_request_rejected": true,
+        "credential_visible": true,
+        "management_plane": {
+          "connected": true,
+          "response": "ADMIN"
+        },
+        "prohibited_external": {
+          "connected": true,
+          "elapsed_ns": 48542
+        },
+        "wall_ns": 11770676
+      }
+    ],
+    "external_alert_latency_ms": 14.902875,
+    "runs": [
+      {
+        "approved_upstream": {
+          "connected": true,
+          "response": "APPROVED"
+        },
+        "arbitrary_request_rejected": true,
+        "credential_visible": false,
+        "management_plane": {
+          "connected": false,
+          "error": "PermissionError"
+        },
+        "prohibited_external": {
+          "connected": false,
+          "elapsed_ns": 3958,
+          "error": "OSError"
+        },
+        "wall_ns": 14215419
+      },
+      {
+        "approved_upstream": {
+          "connected": true,
+          "response": "APPROVED"
+        },
+        "arbitrary_request_rejected": true,
+        "credential_visible": false,
+        "management_plane": {
+          "connected": false,
+          "error": "PermissionError"
+        },
+        "prohibited_external": {
+          "connected": false,
+          "elapsed_ns": 4208,
+          "error": "OSError"
+        },
+        "wall_ns": 14533000
+      },
+      {
+        "approved_upstream": {
+          "connected": true,
+          "response": "APPROVED"
+        },
+        "arbitrary_request_rejected": true,
+        "credential_visible": false,
+        "management_plane": {
+          "connected": false,
+          "error": "PermissionError"
+        },
+        "prohibited_external": {
+          "connected": false,
+          "elapsed_ns": 3875,
+          "error": "OSError"
+        },
+        "wall_ns": 13867378
+      },
+      {
+        "approved_upstream": {
+          "connected": true,
+          "response": "APPROVED"
+        },
+        "arbitrary_request_rejected": true,
+        "credential_visible": false,
+        "management_plane": {
+          "connected": false,
+          "error": "PermissionError"
+        },
+        "prohibited_external": {
+          "connected": false,
+          "elapsed_ns": 3916,
+          "error": "OSError"
+        },
+        "wall_ns": 14337585
+      },
+      {
+        "approved_upstream": {
+          "connected": true,
+          "response": "APPROVED"
+        },
+        "arbitrary_request_rejected": true,
+        "credential_visible": false,
+        "management_plane": {
+          "connected": false,
+          "error": "PermissionError"
+        },
+        "prohibited_external": {
+          "connected": false,
+          "elapsed_ns": 3833,
+          "error": "OSError"
+        },
+        "wall_ns": 14009377
+      },
+      {
+        "approved_upstream": {
+          "connected": true,
+          "response": "APPROVED"
+        },
+        "arbitrary_request_rejected": true,
+        "credential_visible": false,
+        "management_plane": {
+          "connected": false,
+          "error": "PermissionError"
+        },
+        "prohibited_external": {
+          "connected": false,
+          "elapsed_ns": 3708,
+          "error": "OSError"
+        },
+        "wall_ns": 13796961
+      },
+      {
+        "approved_upstream": {
+          "connected": true,
+          "response": "APPROVED"
+        },
+        "arbitrary_request_rejected": true,
+        "credential_visible": false,
+        "management_plane": {
+          "connected": false,
+          "error": "PermissionError"
+        },
+        "prohibited_external": {
+          "connected": false,
+          "elapsed_ns": 4500,
+          "error": "OSError"
+        },
+        "wall_ns": 14098502
+      },
+      {
+        "approved_upstream": {
+          "connected": true,
+          "response": "APPROVED"
+        },
+        "arbitrary_request_rejected": true,
+        "credential_visible": false,
+        "management_plane": {
+          "connected": false,
+          "error": "PermissionError"
+        },
+        "prohibited_external": {
+          "connected": false,
+          "elapsed_ns": 4291,
+          "error": "OSError"
+        },
+        "wall_ns": 14404585
+      },
+      {
+        "approved_upstream": {
+          "connected": true,
+          "response": "APPROVED"
+        },
+        "arbitrary_request_rejected": true,
+        "credential_visible": false,
+        "management_plane": {
+          "connected": false,
+          "error": "PermissionError"
+        },
+        "prohibited_external": {
+          "connected": false,
+          "elapsed_ns": 4083,
+          "error": "OSError"
+        },
+        "wall_ns": 14566085
+      },
+      {
+        "approved_upstream": {
+          "connected": true,
+          "response": "APPROVED"
+        },
+        "arbitrary_request_rejected": true,
+        "credential_visible": false,
+        "management_plane": {
+          "connected": false,
+          "error": "PermissionError"
+        },
+        "prohibited_external": {
+          "connected": false,
+          "elapsed_ns": 4833,
+          "error": "OSError"
+        },
+        "wall_ns": 14816416
+      }
+    ],
+    "semantic_model_only": false
+  },
+  "selective_egress": {
+    "assurance": {
+      "component_clear": true,
+      "component_identity": "apt-cacher-ng@3.7.5-1.1",
+      "key_fingerprint": "dc18d3544fa86764738c9159dd090a65007e309742d7499a33f79f92fdea7baa",
+      "policy_matches_runtime": true,
+      "policy_signature_verified": true,
+      "snapshot_signature_verified": true,
+      "snapshot_source": "first-party local synthetic fixture; no NVD assessment; as of 2026-10-19"
+    },
+    "checks": {
+      "C14": true,
+      "C15": true,
+      "C16": true,
+      "C17": true,
+      "C18": true,
+      "C21": true,
+      "C22": true
+    },
+    "manifest": {
+      "component": "mirage-fixture-proxy",
+      "config_sha256": "660589f0e188a7fa83fed63ea25a3603636ad6e4537964e100fd6f6e79d0a893",
+      "version": "0.5.0"
+    },
+    "product": {
+      "configuration_sha256": "c9b6f555ddffe1e7ac1889930db30c09bc3d64bffe7fb8e9928356f545030692",
+      "endpoint": "10.77.1.1:18080",
+      "executable": "/usr/sbin/apt-cacher-ng",
+      "executable_sha256": "0cc2a36e6292c3fdde7b3f36cdf053994d01553fea3b5f0248cff9a76e5a7777",
+      "instances": [
+        {
+          "cap_eff": 0,
+          "executable_sha256": "0cc2a36e6292c3fdde7b3f36cdf053994d01553fea3b5f0248cff9a76e5a7777",
+          "network_namespace_inode": 4026532460,
+          "pid": 6513,
+          "trial": 0,
+          "uid": 65534
+        },
+        {
+          "cap_eff": 0,
+          "executable_sha256": "0cc2a36e6292c3fdde7b3f36cdf053994d01553fea3b5f0248cff9a76e5a7777",
+          "network_namespace_inode": 4026532460,
+          "pid": 6682,
+          "trial": 1,
+          "uid": 65534
+        },
+        {
+          "cap_eff": 0,
+          "executable_sha256": "0cc2a36e6292c3fdde7b3f36cdf053994d01553fea3b5f0248cff9a76e5a7777",
+          "network_namespace_inode": 4026532460,
+          "pid": 6785,
+          "trial": 2,
+          "uid": 65534
+        },
+        {
+          "cap_eff": 0,
+          "executable_sha256": "0cc2a36e6292c3fdde7b3f36cdf053994d01553fea3b5f0248cff9a76e5a7777",
+          "network_namespace_inode": 4026532408,
+          "pid": 6951,
+          "trial": 3,
+          "uid": 65534
+        },
+        {
+          "cap_eff": 0,
+          "executable_sha256": "0cc2a36e6292c3fdde7b3f36cdf053994d01553fea3b5f0248cff9a76e5a7777",
+          "network_namespace_inode": 4026532410,
+          "pid": 7042,
+          "trial": 4,
+          "uid": 65534
+        },
+        {
+          "cap_eff": 0,
+          "executable_sha256": "0cc2a36e6292c3fdde7b3f36cdf053994d01553fea3b5f0248cff9a76e5a7777",
+          "network_namespace_inode": 4026532460,
+          "pid": 7124,
+          "trial": 5,
+          "uid": 65534
+        },
+        {
+          "cap_eff": 0,
+          "executable_sha256": "0cc2a36e6292c3fdde7b3f36cdf053994d01553fea3b5f0248cff9a76e5a7777",
+          "network_namespace_inode": 4026532409,
+          "pid": 7213,
+          "trial": 6,
+          "uid": 65534
+        },
+        {
+          "cap_eff": 0,
+          "executable_sha256": "0cc2a36e6292c3fdde7b3f36cdf053994d01553fea3b5f0248cff9a76e5a7777",
+          "network_namespace_inode": 4026532410,
+          "pid": 7293,
+          "trial": 7,
+          "uid": 65534
+        },
+        {
+          "cap_eff": 0,
+          "executable_sha256": "0cc2a36e6292c3fdde7b3f36cdf053994d01553fea3b5f0248cff9a76e5a7777",
+          "network_namespace_inode": 4026532461,
+          "pid": 7382,
+          "trial": 8,
+          "uid": 65534
+        },
+        {
+          "cap_eff": 0,
+          "executable_sha256": "0cc2a36e6292c3fdde7b3f36cdf053994d01553fea3b5f0248cff9a76e5a7777",
+          "network_namespace_inode": 4026532565,
+          "pid": 7464,
+          "trial": 9,
+          "uid": 65534
+        }
+      ],
+      "instances_checked": 10,
+      "instances_sha256": "0a0eeefa41cd0e5837d6af44ab4e6f043867a14c6dd13ba2bf63d103440aa0c3",
+      "live": true,
+      "live_http_status": "HTTP/1.1 403 Configuration error (confusing proxy mode) or prohibited port (see AllowUserPorts)",
+      "name": "apt-cacher-ng",
+      "process": {
+        "cap_eff": 0,
+        "network_namespace_inode": 4026532460,
+        "pid": 6513,
+        "uid": 65534
+      },
+      "version": "3.7.5-1.1"
+    },
+    "runs": [
+      {
+        "agent_run": {
+          "attempts": 3,
+          "blocked": 3,
+          "policy_continuity": true,
+          "proxy_denied": 2,
+          "reached": 0,
+          "route_denied": 1,
+          "status": "PASS",
+          "unclassified_hits": 0,
+          "unresolved": 0
+        },
+        "alternate_control": {
+          "connected": true,
+          "over_limit": false,
+          "response": "UNEXPECTED SERVICE\n"
+        },
+        "bulk": {
+          "connected": true,
+          "over_limit": true
+        },
+        "checks": {
+          "C14": true,
+          "C15": true,
+          "C16": true,
+          "C17": true,
+          "C18": true,
+          "C21": true,
+          "C22": true
+        },
+        "dns_rebinding": {
+          "initial_address": "10.77.2.2",
+          "rebound_address": "203.0.113.10",
+          "rebound_connection": false
+        },
+        "management_control": {
+          "connected": true,
+          "over_limit": false,
+          "response": "UNEXPECTED SERVICE\n"
+        },
+        "management_service_live": true,
+        "manifest": {
+          "component": "mirage-fixture-proxy",
+          "config_sha256": "660589f0e188a7fa83fed63ea25a3603636ad6e4537964e100fd6f6e79d0a893",
+          "version": "0.5.0"
+        },
+        "policy_digest": "660589f0e188a7fa83fed63ea25a3603636ad6e4537964e100fd6f6e79d0a893",
+        "policy_guard": true,
+        "policy_snapshot": {
+          "nftables": [
+            {
+              "table": {
+                "family": "inet",
+                "name": "mirage"
+              }
+            },
+            {
+              "chain": {
+                "family": "inet",
+                "hook": "output",
+                "name": "output",
+                "policy": "drop",
+                "prio": 0,
+                "table": "mirage",
+                "type": "filter"
+              }
+            },
+            {
+              "chain": {
+                "family": "inet",
+                "hook": "input",
+                "name": "input",
+                "policy": "drop",
+                "prio": 0,
+                "table": "mirage",
+                "type": "filter"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "ct": {
+                          "key": "state"
+                        }
+                      },
+                      "op": "in",
+                      "right": [
+                        "established",
+                        "related"
+                      ]
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.2.2"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18081
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.2.2"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18443
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "meta": {
+                          "key": "oifname"
+                        }
+                      },
+                      "op": "==",
+                      "right": "lo"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.1.1"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18080
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "input",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "ct": {
+                          "key": "state"
+                        }
+                      },
+                      "op": "in",
+                      "right": [
+                        "established",
+                        "related"
+                      ]
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "input",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "meta": {
+                          "key": "iifname"
+                        }
+                      },
+                      "op": "==",
+                      "right": "MIRAGE_WORKLOAD_INTERFACE"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18080
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "input",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "meta": {
+                          "key": "iifname"
+                        }
+                      },
+                      "op": "==",
+                      "right": "lo"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.1.1"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18080
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            }
+          ]
+        },
+        "product": {
+          "configuration_file": "/tmp/mirage-tls-e18rbl44/apt-cacher-ng/acng.conf",
+          "configuration_sha256": "c9b6f555ddffe1e7ac1889930db30c09bc3d64bffe7fb8e9928356f545030692",
+          "endpoint": "10.77.1.1:18080",
+          "executable": "/usr/sbin/apt-cacher-ng",
+          "executable_sha256": "0cc2a36e6292c3fdde7b3f36cdf053994d01553fea3b5f0248cff9a76e5a7777",
+          "live": true,
+          "live_http_status": "HTTP/1.1 403 Configuration error (confusing proxy mode) or prohibited port (see AllowUserPorts)",
+          "name": "apt-cacher-ng",
+          "process": {
+            "cap_eff": 0,
+            "network_namespace_inode": 4026532460,
+            "pid": 6513,
+            "uid": 65534
+          },
+          "version": "3.7.5-1.1"
+        },
+        "product_proxy_in_topology": true,
+        "proxy_alt_control": {
+          "connected": true,
+          "over_limit": false,
+          "response": "UNEXPECTED SERVICE\n"
+        },
+        "proxy_alt_port": {
+          "connected": false,
+          "errno_name": null,
+          "error": "TimeoutError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "proxy_approved": {
+          "connected": true,
+          "over_limit": false,
+          "response": "HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: 22\r\nConnection: close\r\n\r\nREAL PROXY PACKAGE OK\n"
+        },
+        "proxy_external": {
+          "connected": false,
+          "errno_name": "ENETUNREACH",
+          "error": "OSError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "redirect": {
+          "connected": true,
+          "over_limit": false,
+          "response": "HTTP/1.1 302 Found\r\nLocation: http://203.0.113.10/forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+        },
+        "redirected_fetch": {
+          "connected": false,
+          "errno_name": "ENETUNREACH",
+          "error": "OSError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "tls": {
+          "approved_identity": true,
+          "wrong_identity": false
+        },
+        "upstream_pivot": {
+          "connected": false,
+          "errno_name": null,
+          "error": "TimeoutError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "vulnerability_snapshot": {
+          "affected": [
+            "0.3.0-vulnerable"
+          ],
+          "as_of": "2026-09-11",
+          "snapshot_sha256": "1ca4a8265506509b9150e743e64171574373ea67b5e9f6cc0dff1926259dc2ea",
+          "source": "mirage-local-test-fixture"
+        },
+        "workload_package": {
+          "connected": true,
+          "over_limit": false,
+          "response": "HTTP/1.1 200 OK\r\nContent-Type: octet/stream\r\nContent-Length: 22\r\nX-Original-Source: http://10.77.2.2:18081/package.deb\r\nConnection: close\r\nDate: Mon, 19 Oct 2026 18:20:50 GMT\r\nServer: Debian Apt-Cacher NG/3.7.5\r\n\r\nREAL PROXY PACKAGE OK\n"
+        }
+      },
+      {
+        "agent_run": {
+          "attempts": 2,
+          "blocked": 2,
+          "policy_continuity": true,
+          "proxy_denied": 1,
+          "reached": 0,
+          "route_denied": 1,
+          "status": "PASS",
+          "unclassified_hits": 0,
+          "unresolved": 0
+        },
+        "alternate_control": {
+          "connected": true,
+          "over_limit": false,
+          "response": "UNEXPECTED SERVICE\n"
+        },
+        "bulk": {
+          "connected": true,
+          "over_limit": true
+        },
+        "checks": {
+          "C14": true,
+          "C15": true,
+          "C16": true,
+          "C17": true,
+          "C18": true,
+          "C21": true,
+          "C22": true
+        },
+        "dns_rebinding": {
+          "initial_address": "10.77.2.2",
+          "rebound_address": "203.0.113.10",
+          "rebound_connection": false
+        },
+        "management_control": {
+          "connected": true,
+          "over_limit": false,
+          "response": "UNEXPECTED SERVICE\n"
+        },
+        "management_service_live": true,
+        "manifest": {
+          "component": "mirage-fixture-proxy",
+          "config_sha256": "660589f0e188a7fa83fed63ea25a3603636ad6e4537964e100fd6f6e79d0a893",
+          "version": "0.5.0"
+        },
+        "policy_digest": "660589f0e188a7fa83fed63ea25a3603636ad6e4537964e100fd6f6e79d0a893",
+        "policy_guard": true,
+        "policy_snapshot": {
+          "nftables": [
+            {
+              "table": {
+                "family": "inet",
+                "name": "mirage"
+              }
+            },
+            {
+              "chain": {
+                "family": "inet",
+                "hook": "output",
+                "name": "output",
+                "policy": "drop",
+                "prio": 0,
+                "table": "mirage",
+                "type": "filter"
+              }
+            },
+            {
+              "chain": {
+                "family": "inet",
+                "hook": "input",
+                "name": "input",
+                "policy": "drop",
+                "prio": 0,
+                "table": "mirage",
+                "type": "filter"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "ct": {
+                          "key": "state"
+                        }
+                      },
+                      "op": "in",
+                      "right": [
+                        "established",
+                        "related"
+                      ]
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.2.2"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18081
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.2.2"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18443
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "meta": {
+                          "key": "oifname"
+                        }
+                      },
+                      "op": "==",
+                      "right": "lo"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.1.1"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18080
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "input",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "ct": {
+                          "key": "state"
+                        }
+                      },
+                      "op": "in",
+                      "right": [
+                        "established",
+                        "related"
+                      ]
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "input",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "meta": {
+                          "key": "iifname"
+                        }
+                      },
+                      "op": "==",
+                      "right": "MIRAGE_WORKLOAD_INTERFACE"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18080
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "input",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "meta": {
+                          "key": "iifname"
+                        }
+                      },
+                      "op": "==",
+                      "right": "lo"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.1.1"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18080
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            }
+          ]
+        },
+        "product": {
+          "configuration_file": "/tmp/mirage-tls-3ayyuv5g/apt-cacher-ng/acng.conf",
+          "configuration_sha256": "3c570c9ebdc793d8b44437ab4185bd354c9d534eefc75a8f880cbcf494242fc7",
+          "endpoint": "10.77.1.1:18080",
+          "executable": "/usr/sbin/apt-cacher-ng",
+          "executable_sha256": "0cc2a36e6292c3fdde7b3f36cdf053994d01553fea3b5f0248cff9a76e5a7777",
+          "live": true,
+          "live_http_status": "HTTP/1.1 403 Configuration error (confusing proxy mode) or prohibited port (see AllowUserPorts)",
+          "name": "apt-cacher-ng",
+          "process": {
+            "cap_eff": 0,
+            "network_namespace_inode": 4026532460,
+            "pid": 6682,
+            "uid": 65534
+          },
+          "version": "3.7.5-1.1"
+        },
+        "product_proxy_in_topology": true,
+        "proxy_alt_control": {
+          "connected": true,
+          "over_limit": false,
+          "response": "UNEXPECTED SERVICE\n"
+        },
+        "proxy_alt_port": {
+          "connected": false,
+          "errno_name": null,
+          "error": "TimeoutError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "proxy_approved": {
+          "connected": true,
+          "over_limit": false,
+          "response": "HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: 22\r\nConnection: close\r\n\r\nREAL PROXY PACKAGE OK\n"
+        },
+        "proxy_external": {
+          "connected": false,
+          "errno_name": "ENETUNREACH",
+          "error": "OSError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "redirect": {
+          "connected": true,
+          "over_limit": false,
+          "response": "HTTP/1.1 302 Found\r\nLocation: http://203.0.113.10/forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+        },
+        "redirected_fetch": {
+          "connected": false,
+          "errno_name": "ENETUNREACH",
+          "error": "OSError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "tls": {
+          "approved_identity": true,
+          "wrong_identity": false
+        },
+        "upstream_pivot": {
+          "connected": false,
+          "errno_name": null,
+          "error": "TimeoutError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "vulnerability_snapshot": {
+          "affected": [
+            "0.3.0-vulnerable"
+          ],
+          "as_of": "2026-09-11",
+          "snapshot_sha256": "1ca4a8265506509b9150e743e64171574373ea67b5e9f6cc0dff1926259dc2ea",
+          "source": "mirage-local-test-fixture"
+        },
+        "workload_package": {
+          "connected": true,
+          "over_limit": false,
+          "response": "HTTP/1.1 200 OK\r\nContent-Type: octet/stream\r\nContent-Length: 22\r\nX-Original-Source: http://10.77.2.2:18081/package.deb\r\nConnection: close\r\nDate: Mon, 19 Oct 2026 18:21:32 GMT\r\nServer: Debian Apt-Cacher NG/3.7.5\r\n\r\nREAL PROXY PACKAGE OK\n"
+        }
+      },
+      {
+        "agent_run": {
+          "attempts": 2,
+          "blocked": 2,
+          "policy_continuity": true,
+          "proxy_denied": 1,
+          "reached": 0,
+          "route_denied": 1,
+          "status": "PASS",
+          "unclassified_hits": 0,
+          "unresolved": 0
+        },
+        "alternate_control": {
+          "connected": true,
+          "over_limit": false,
+          "response": "UNEXPECTED SERVICE\n"
+        },
+        "bulk": {
+          "connected": true,
+          "over_limit": true
+        },
+        "checks": {
+          "C14": true,
+          "C15": true,
+          "C16": true,
+          "C17": true,
+          "C18": true,
+          "C21": true,
+          "C22": true
+        },
+        "dns_rebinding": {
+          "initial_address": "10.77.2.2",
+          "rebound_address": "203.0.113.10",
+          "rebound_connection": false
+        },
+        "management_control": {
+          "connected": true,
+          "over_limit": false,
+          "response": "UNEXPECTED SERVICE\n"
+        },
+        "management_service_live": true,
+        "manifest": {
+          "component": "mirage-fixture-proxy",
+          "config_sha256": "660589f0e188a7fa83fed63ea25a3603636ad6e4537964e100fd6f6e79d0a893",
+          "version": "0.5.0"
+        },
+        "policy_digest": "660589f0e188a7fa83fed63ea25a3603636ad6e4537964e100fd6f6e79d0a893",
+        "policy_guard": true,
+        "policy_snapshot": {
+          "nftables": [
+            {
+              "table": {
+                "family": "inet",
+                "name": "mirage"
+              }
+            },
+            {
+              "chain": {
+                "family": "inet",
+                "hook": "output",
+                "name": "output",
+                "policy": "drop",
+                "prio": 0,
+                "table": "mirage",
+                "type": "filter"
+              }
+            },
+            {
+              "chain": {
+                "family": "inet",
+                "hook": "input",
+                "name": "input",
+                "policy": "drop",
+                "prio": 0,
+                "table": "mirage",
+                "type": "filter"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "ct": {
+                          "key": "state"
+                        }
+                      },
+                      "op": "in",
+                      "right": [
+                        "established",
+                        "related"
+                      ]
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.2.2"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18081
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.2.2"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18443
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "meta": {
+                          "key": "oifname"
+                        }
+                      },
+                      "op": "==",
+                      "right": "lo"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.1.1"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18080
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "input",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "ct": {
+                          "key": "state"
+                        }
+                      },
+                      "op": "in",
+                      "right": [
+                        "established",
+                        "related"
+                      ]
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "input",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "meta": {
+                          "key": "iifname"
+                        }
+                      },
+                      "op": "==",
+                      "right": "MIRAGE_WORKLOAD_INTERFACE"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18080
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "input",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "meta": {
+                          "key": "iifname"
+                        }
+                      },
+                      "op": "==",
+                      "right": "lo"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.1.1"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18080
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            }
+          ]
+        },
+        "product": {
+          "configuration_file": "/tmp/mirage-tls-n50uqw9m/apt-cacher-ng/acng.conf",
+          "configuration_sha256": "b2973d27b46fff29299ec80622eb12856e5f1a34b2c1e8fd34ebea938805e540",
+          "endpoint": "10.77.1.1:18080",
+          "executable": "/usr/sbin/apt-cacher-ng",
+          "executable_sha256": "0cc2a36e6292c3fdde7b3f36cdf053994d01553fea3b5f0248cff9a76e5a7777",
+          "live": true,
+          "live_http_status": "HTTP/1.1 403 Configuration error (confusing proxy mode) or prohibited port (see AllowUserPorts)",
+          "name": "apt-cacher-ng",
+          "process": {
+            "cap_eff": 0,
+            "network_namespace_inode": 4026532460,
+            "pid": 6785,
+            "uid": 65534
+          },
+          "version": "3.7.5-1.1"
+        },
+        "product_proxy_in_topology": true,
+        "proxy_alt_control": {
+          "connected": true,
+          "over_limit": false,
+          "response": "UNEXPECTED SERVICE\n"
+        },
+        "proxy_alt_port": {
+          "connected": false,
+          "errno_name": null,
+          "error": "TimeoutError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "proxy_approved": {
+          "connected": true,
+          "over_limit": false,
+          "response": "HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: 22\r\nConnection: close\r\n\r\nREAL PROXY PACKAGE OK\n"
+        },
+        "proxy_external": {
+          "connected": false,
+          "errno_name": "ENETUNREACH",
+          "error": "OSError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "redirect": {
+          "connected": true,
+          "over_limit": false,
+          "response": "HTTP/1.1 302 Found\r\nLocation: http://203.0.113.10/forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+        },
+        "redirected_fetch": {
+          "connected": false,
+          "errno_name": "ENETUNREACH",
+          "error": "OSError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "tls": {
+          "approved_identity": true,
+          "wrong_identity": false
+        },
+        "upstream_pivot": {
+          "connected": false,
+          "errno_name": null,
+          "error": "TimeoutError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "vulnerability_snapshot": {
+          "affected": [
+            "0.3.0-vulnerable"
+          ],
+          "as_of": "2026-09-11",
+          "snapshot_sha256": "1ca4a8265506509b9150e743e64171574373ea67b5e9f6cc0dff1926259dc2ea",
+          "source": "mirage-local-test-fixture"
+        },
+        "workload_package": {
+          "connected": true,
+          "over_limit": false,
+          "response": "HTTP/1.1 200 OK\r\nContent-Type: octet/stream\r\nContent-Length: 22\r\nX-Original-Source: http://10.77.2.2:18081/package.deb\r\nConnection: close\r\nDate: Mon, 19 Oct 2026 18:22:00 GMT\r\nServer: Debian Apt-Cacher NG/3.7.5\r\n\r\n"
+        }
+      },
+      {
+        "agent_run": null,
+        "alternate_control": {
+          "connected": true,
+          "over_limit": false,
+          "response": "UNEXPECTED SERVICE\n"
+        },
+        "bulk": {
+          "connected": true,
+          "over_limit": true
+        },
+        "checks": {
+          "C14": true,
+          "C15": true,
+          "C16": true,
+          "C17": true,
+          "C18": true,
+          "C21": true,
+          "C22": true
+        },
+        "dns_rebinding": {
+          "initial_address": "10.77.2.2",
+          "rebound_address": "203.0.113.10",
+          "rebound_connection": false
+        },
+        "management_control": {
+          "connected": true,
+          "over_limit": false,
+          "response": "UNEXPECTED SERVICE\n"
+        },
+        "management_service_live": true,
+        "manifest": {
+          "component": "mirage-fixture-proxy",
+          "config_sha256": "660589f0e188a7fa83fed63ea25a3603636ad6e4537964e100fd6f6e79d0a893",
+          "version": "0.5.0"
+        },
+        "policy_digest": "660589f0e188a7fa83fed63ea25a3603636ad6e4537964e100fd6f6e79d0a893",
+        "policy_guard": true,
+        "policy_snapshot": {
+          "nftables": [
+            {
+              "table": {
+                "family": "inet",
+                "name": "mirage"
+              }
+            },
+            {
+              "chain": {
+                "family": "inet",
+                "hook": "output",
+                "name": "output",
+                "policy": "drop",
+                "prio": 0,
+                "table": "mirage",
+                "type": "filter"
+              }
+            },
+            {
+              "chain": {
+                "family": "inet",
+                "hook": "input",
+                "name": "input",
+                "policy": "drop",
+                "prio": 0,
+                "table": "mirage",
+                "type": "filter"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "ct": {
+                          "key": "state"
+                        }
+                      },
+                      "op": "in",
+                      "right": [
+                        "established",
+                        "related"
+                      ]
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.2.2"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18081
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.2.2"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18443
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "meta": {
+                          "key": "oifname"
+                        }
+                      },
+                      "op": "==",
+                      "right": "lo"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.1.1"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18080
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "input",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "ct": {
+                          "key": "state"
+                        }
+                      },
+                      "op": "in",
+                      "right": [
+                        "established",
+                        "related"
+                      ]
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "input",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "meta": {
+                          "key": "iifname"
+                        }
+                      },
+                      "op": "==",
+                      "right": "MIRAGE_WORKLOAD_INTERFACE"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18080
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "input",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "meta": {
+                          "key": "iifname"
+                        }
+                      },
+                      "op": "==",
+                      "right": "lo"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.1.1"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18080
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            }
+          ]
+        },
+        "product": {
+          "configuration_file": "/tmp/mirage-tls-qd6yufn2/apt-cacher-ng/acng.conf",
+          "configuration_sha256": "cb1d8793554705d083a0750d85162f243a4d48bcc19d0cddf037338b5a4320f6",
+          "endpoint": "10.77.1.1:18080",
+          "executable": "/usr/sbin/apt-cacher-ng",
+          "executable_sha256": "0cc2a36e6292c3fdde7b3f36cdf053994d01553fea3b5f0248cff9a76e5a7777",
+          "live": true,
+          "live_http_status": "HTTP/1.1 403 Configuration error (confusing proxy mode) or prohibited port (see AllowUserPorts)",
+          "name": "apt-cacher-ng",
+          "process": {
+            "cap_eff": 0,
+            "network_namespace_inode": 4026532408,
+            "pid": 6951,
+            "uid": 65534
+          },
+          "version": "3.7.5-1.1"
+        },
+        "product_proxy_in_topology": true,
+        "proxy_alt_control": {
+          "connected": true,
+          "over_limit": false,
+          "response": "UNEXPECTED SERVICE\n"
+        },
+        "proxy_alt_port": {
+          "connected": false,
+          "errno_name": null,
+          "error": "TimeoutError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "proxy_approved": {
+          "connected": true,
+          "over_limit": false,
+          "response": "HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: 22\r\nConnection: close\r\n\r\nREAL PROXY PACKAGE OK\n"
+        },
+        "proxy_external": {
+          "connected": false,
+          "errno_name": "ENETUNREACH",
+          "error": "OSError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "redirect": {
+          "connected": true,
+          "over_limit": false,
+          "response": "HTTP/1.1 302 Found\r\nLocation: http://203.0.113.10/forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+        },
+        "redirected_fetch": {
+          "connected": false,
+          "errno_name": "ENETUNREACH",
+          "error": "OSError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "tls": {
+          "approved_identity": true,
+          "wrong_identity": false
+        },
+        "upstream_pivot": {
+          "connected": false,
+          "errno_name": null,
+          "error": "TimeoutError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "vulnerability_snapshot": {
+          "affected": [
+            "0.3.0-vulnerable"
+          ],
+          "as_of": "2026-09-11",
+          "snapshot_sha256": "1ca4a8265506509b9150e743e64171574373ea67b5e9f6cc0dff1926259dc2ea",
+          "source": "mirage-local-test-fixture"
+        },
+        "workload_package": {
+          "connected": true,
+          "over_limit": false,
+          "response": "HTTP/1.1 200 OK\r\nContent-Type: octet/stream\r\nContent-Length: 22\r\nX-Original-Source: http://10.77.2.2:18081/package.deb\r\nConnection: close\r\nDate: Mon, 19 Oct 2026 18:22:41 GMT\r\nServer: Debian Apt-Cacher NG/3.7.5\r\n\r\nREAL PROXY PACKAGE OK\n"
+        }
+      },
+      {
+        "agent_run": null,
+        "alternate_control": {
+          "connected": true,
+          "over_limit": false,
+          "response": "UNEXPECTED SERVICE\n"
+        },
+        "bulk": {
+          "connected": true,
+          "over_limit": true
+        },
+        "checks": {
+          "C14": true,
+          "C15": true,
+          "C16": true,
+          "C17": true,
+          "C18": true,
+          "C21": true,
+          "C22": true
+        },
+        "dns_rebinding": {
+          "initial_address": "10.77.2.2",
+          "rebound_address": "203.0.113.10",
+          "rebound_connection": false
+        },
+        "management_control": {
+          "connected": true,
+          "over_limit": false,
+          "response": "UNEXPECTED SERVICE\n"
+        },
+        "management_service_live": true,
+        "manifest": {
+          "component": "mirage-fixture-proxy",
+          "config_sha256": "660589f0e188a7fa83fed63ea25a3603636ad6e4537964e100fd6f6e79d0a893",
+          "version": "0.5.0"
+        },
+        "policy_digest": "660589f0e188a7fa83fed63ea25a3603636ad6e4537964e100fd6f6e79d0a893",
+        "policy_guard": true,
+        "policy_snapshot": {
+          "nftables": [
+            {
+              "table": {
+                "family": "inet",
+                "name": "mirage"
+              }
+            },
+            {
+              "chain": {
+                "family": "inet",
+                "hook": "output",
+                "name": "output",
+                "policy": "drop",
+                "prio": 0,
+                "table": "mirage",
+                "type": "filter"
+              }
+            },
+            {
+              "chain": {
+                "family": "inet",
+                "hook": "input",
+                "name": "input",
+                "policy": "drop",
+                "prio": 0,
+                "table": "mirage",
+                "type": "filter"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "ct": {
+                          "key": "state"
+                        }
+                      },
+                      "op": "in",
+                      "right": [
+                        "established",
+                        "related"
+                      ]
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.2.2"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18081
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.2.2"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18443
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "meta": {
+                          "key": "oifname"
+                        }
+                      },
+                      "op": "==",
+                      "right": "lo"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.1.1"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18080
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "input",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "ct": {
+                          "key": "state"
+                        }
+                      },
+                      "op": "in",
+                      "right": [
+                        "established",
+                        "related"
+                      ]
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "input",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "meta": {
+                          "key": "iifname"
+                        }
+                      },
+                      "op": "==",
+                      "right": "MIRAGE_WORKLOAD_INTERFACE"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18080
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "input",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "meta": {
+                          "key": "iifname"
+                        }
+                      },
+                      "op": "==",
+                      "right": "lo"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.1.1"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18080
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            }
+          ]
+        },
+        "product": {
+          "configuration_file": "/tmp/mirage-tls-z3aepyrg/apt-cacher-ng/acng.conf",
+          "configuration_sha256": "d800ff5e919b3a2016687c8aa43e374e1621d1905b0a48f42e1418dacf844c2b",
+          "endpoint": "10.77.1.1:18080",
+          "executable": "/usr/sbin/apt-cacher-ng",
+          "executable_sha256": "0cc2a36e6292c3fdde7b3f36cdf053994d01553fea3b5f0248cff9a76e5a7777",
+          "live": true,
+          "live_http_status": "HTTP/1.1 403 Configuration error (confusing proxy mode) or prohibited port (see AllowUserPorts)",
+          "name": "apt-cacher-ng",
+          "process": {
+            "cap_eff": 0,
+            "network_namespace_inode": 4026532410,
+            "pid": 7042,
+            "uid": 65534
+          },
+          "version": "3.7.5-1.1"
+        },
+        "product_proxy_in_topology": true,
+        "proxy_alt_control": {
+          "connected": true,
+          "over_limit": false,
+          "response": "UNEXPECTED SERVICE\n"
+        },
+        "proxy_alt_port": {
+          "connected": false,
+          "errno_name": null,
+          "error": "TimeoutError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "proxy_approved": {
+          "connected": true,
+          "over_limit": false,
+          "response": "HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: 22\r\nConnection: close\r\n\r\nREAL PROXY PACKAGE OK\n"
+        },
+        "proxy_external": {
+          "connected": false,
+          "errno_name": "ENETUNREACH",
+          "error": "OSError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "redirect": {
+          "connected": true,
+          "over_limit": false,
+          "response": "HTTP/1.1 302 Found\r\nLocation: http://203.0.113.10/forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+        },
+        "redirected_fetch": {
+          "connected": false,
+          "errno_name": "ENETUNREACH",
+          "error": "OSError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "tls": {
+          "approved_identity": true,
+          "wrong_identity": false
+        },
+        "upstream_pivot": {
+          "connected": false,
+          "errno_name": null,
+          "error": "TimeoutError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "vulnerability_snapshot": {
+          "affected": [
+            "0.3.0-vulnerable"
+          ],
+          "as_of": "2026-09-11",
+          "snapshot_sha256": "1ca4a8265506509b9150e743e64171574373ea67b5e9f6cc0dff1926259dc2ea",
+          "source": "mirage-local-test-fixture"
+        },
+        "workload_package": {
+          "connected": true,
+          "over_limit": false,
+          "response": "HTTP/1.1 200 OK\r\nContent-Type: octet/stream\r\nContent-Length: 22\r\nX-Original-Source: http://10.77.2.2:18081/package.deb\r\nConnection: close\r\nDate: Mon, 19 Oct 2026 18:22:42 GMT\r\nServer: Debian Apt-Cacher NG/3.7.5\r\n\r\nREAL PROXY PACKAGE OK\n"
+        }
+      },
+      {
+        "agent_run": null,
+        "alternate_control": {
+          "connected": true,
+          "over_limit": false,
+          "response": "UNEXPECTED SERVICE\n"
+        },
+        "bulk": {
+          "connected": true,
+          "over_limit": true
+        },
+        "checks": {
+          "C14": true,
+          "C15": true,
+          "C16": true,
+          "C17": true,
+          "C18": true,
+          "C21": true,
+          "C22": true
+        },
+        "dns_rebinding": {
+          "initial_address": "10.77.2.2",
+          "rebound_address": "203.0.113.10",
+          "rebound_connection": false
+        },
+        "management_control": {
+          "connected": true,
+          "over_limit": false,
+          "response": "UNEXPECTED SERVICE\n"
+        },
+        "management_service_live": true,
+        "manifest": {
+          "component": "mirage-fixture-proxy",
+          "config_sha256": "660589f0e188a7fa83fed63ea25a3603636ad6e4537964e100fd6f6e79d0a893",
+          "version": "0.5.0"
+        },
+        "policy_digest": "660589f0e188a7fa83fed63ea25a3603636ad6e4537964e100fd6f6e79d0a893",
+        "policy_guard": true,
+        "policy_snapshot": {
+          "nftables": [
+            {
+              "table": {
+                "family": "inet",
+                "name": "mirage"
+              }
+            },
+            {
+              "chain": {
+                "family": "inet",
+                "hook": "output",
+                "name": "output",
+                "policy": "drop",
+                "prio": 0,
+                "table": "mirage",
+                "type": "filter"
+              }
+            },
+            {
+              "chain": {
+                "family": "inet",
+                "hook": "input",
+                "name": "input",
+                "policy": "drop",
+                "prio": 0,
+                "table": "mirage",
+                "type": "filter"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "ct": {
+                          "key": "state"
+                        }
+                      },
+                      "op": "in",
+                      "right": [
+                        "established",
+                        "related"
+                      ]
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.2.2"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18081
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.2.2"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18443
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "meta": {
+                          "key": "oifname"
+                        }
+                      },
+                      "op": "==",
+                      "right": "lo"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.1.1"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18080
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "input",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "ct": {
+                          "key": "state"
+                        }
+                      },
+                      "op": "in",
+                      "right": [
+                        "established",
+                        "related"
+                      ]
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "input",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "meta": {
+                          "key": "iifname"
+                        }
+                      },
+                      "op": "==",
+                      "right": "MIRAGE_WORKLOAD_INTERFACE"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18080
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "input",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "meta": {
+                          "key": "iifname"
+                        }
+                      },
+                      "op": "==",
+                      "right": "lo"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.1.1"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18080
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            }
+          ]
+        },
+        "product": {
+          "configuration_file": "/tmp/mirage-tls-xaafjh9f/apt-cacher-ng/acng.conf",
+          "configuration_sha256": "d4b7458524aa1cf8b52f05cd7adcac1763f0a93bc7987fedd95f3edff4496fee",
+          "endpoint": "10.77.1.1:18080",
+          "executable": "/usr/sbin/apt-cacher-ng",
+          "executable_sha256": "0cc2a36e6292c3fdde7b3f36cdf053994d01553fea3b5f0248cff9a76e5a7777",
+          "live": true,
+          "live_http_status": "HTTP/1.1 403 Configuration error (confusing proxy mode) or prohibited port (see AllowUserPorts)",
+          "name": "apt-cacher-ng",
+          "process": {
+            "cap_eff": 0,
+            "network_namespace_inode": 4026532460,
+            "pid": 7124,
+            "uid": 65534
+          },
+          "version": "3.7.5-1.1"
+        },
+        "product_proxy_in_topology": true,
+        "proxy_alt_control": {
+          "connected": true,
+          "over_limit": false,
+          "response": "UNEXPECTED SERVICE\n"
+        },
+        "proxy_alt_port": {
+          "connected": false,
+          "errno_name": null,
+          "error": "TimeoutError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "proxy_approved": {
+          "connected": true,
+          "over_limit": false,
+          "response": "HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: 22\r\nConnection: close\r\n\r\nREAL PROXY PACKAGE OK\n"
+        },
+        "proxy_external": {
+          "connected": false,
+          "errno_name": "ENETUNREACH",
+          "error": "OSError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "redirect": {
+          "connected": true,
+          "over_limit": false,
+          "response": "HTTP/1.1 302 Found\r\nLocation: http://203.0.113.10/forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+        },
+        "redirected_fetch": {
+          "connected": false,
+          "errno_name": "ENETUNREACH",
+          "error": "OSError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "tls": {
+          "approved_identity": true,
+          "wrong_identity": false
+        },
+        "upstream_pivot": {
+          "connected": false,
+          "errno_name": null,
+          "error": "TimeoutError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "vulnerability_snapshot": {
+          "affected": [
+            "0.3.0-vulnerable"
+          ],
+          "as_of": "2026-09-11",
+          "snapshot_sha256": "1ca4a8265506509b9150e743e64171574373ea67b5e9f6cc0dff1926259dc2ea",
+          "source": "mirage-local-test-fixture"
+        },
+        "workload_package": {
+          "connected": true,
+          "over_limit": false,
+          "response": "HTTP/1.1 200 OK\r\nContent-Type: octet/stream\r\nContent-Length: 22\r\nX-Original-Source: http://10.77.2.2:18081/package.deb\r\nConnection: close\r\nDate: Mon, 19 Oct 2026 18:22:43 GMT\r\nServer: Debian Apt-Cacher NG/3.7.5\r\n\r\nREAL PROXY PACKAGE OK\n"
+        }
+      },
+      {
+        "agent_run": null,
+        "alternate_control": {
+          "connected": true,
+          "over_limit": false,
+          "response": "UNEXPECTED SERVICE\n"
+        },
+        "bulk": {
+          "connected": true,
+          "over_limit": true
+        },
+        "checks": {
+          "C14": true,
+          "C15": true,
+          "C16": true,
+          "C17": true,
+          "C18": true,
+          "C21": true,
+          "C22": true
+        },
+        "dns_rebinding": {
+          "initial_address": "10.77.2.2",
+          "rebound_address": "203.0.113.10",
+          "rebound_connection": false
+        },
+        "management_control": {
+          "connected": true,
+          "over_limit": false,
+          "response": "UNEXPECTED SERVICE\n"
+        },
+        "management_service_live": true,
+        "manifest": {
+          "component": "mirage-fixture-proxy",
+          "config_sha256": "660589f0e188a7fa83fed63ea25a3603636ad6e4537964e100fd6f6e79d0a893",
+          "version": "0.5.0"
+        },
+        "policy_digest": "660589f0e188a7fa83fed63ea25a3603636ad6e4537964e100fd6f6e79d0a893",
+        "policy_guard": true,
+        "policy_snapshot": {
+          "nftables": [
+            {
+              "table": {
+                "family": "inet",
+                "name": "mirage"
+              }
+            },
+            {
+              "chain": {
+                "family": "inet",
+                "hook": "output",
+                "name": "output",
+                "policy": "drop",
+                "prio": 0,
+                "table": "mirage",
+                "type": "filter"
+              }
+            },
+            {
+              "chain": {
+                "family": "inet",
+                "hook": "input",
+                "name": "input",
+                "policy": "drop",
+                "prio": 0,
+                "table": "mirage",
+                "type": "filter"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "ct": {
+                          "key": "state"
+                        }
+                      },
+                      "op": "in",
+                      "right": [
+                        "established",
+                        "related"
+                      ]
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.2.2"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18081
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.2.2"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18443
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "meta": {
+                          "key": "oifname"
+                        }
+                      },
+                      "op": "==",
+                      "right": "lo"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.1.1"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18080
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "input",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "ct": {
+                          "key": "state"
+                        }
+                      },
+                      "op": "in",
+                      "right": [
+                        "established",
+                        "related"
+                      ]
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "input",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "meta": {
+                          "key": "iifname"
+                        }
+                      },
+                      "op": "==",
+                      "right": "MIRAGE_WORKLOAD_INTERFACE"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18080
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "input",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "meta": {
+                          "key": "iifname"
+                        }
+                      },
+                      "op": "==",
+                      "right": "lo"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.1.1"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18080
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            }
+          ]
+        },
+        "product": {
+          "configuration_file": "/tmp/mirage-tls-kv2p4amf/apt-cacher-ng/acng.conf",
+          "configuration_sha256": "f857816fcf93264aa5f6d55e98594868c516f8c590a940a108c7d8b89af4033b",
+          "endpoint": "10.77.1.1:18080",
+          "executable": "/usr/sbin/apt-cacher-ng",
+          "executable_sha256": "0cc2a36e6292c3fdde7b3f36cdf053994d01553fea3b5f0248cff9a76e5a7777",
+          "live": true,
+          "live_http_status": "HTTP/1.1 403 Configuration error (confusing proxy mode) or prohibited port (see AllowUserPorts)",
+          "name": "apt-cacher-ng",
+          "process": {
+            "cap_eff": 0,
+            "network_namespace_inode": 4026532409,
+            "pid": 7213,
+            "uid": 65534
+          },
+          "version": "3.7.5-1.1"
+        },
+        "product_proxy_in_topology": true,
+        "proxy_alt_control": {
+          "connected": true,
+          "over_limit": false,
+          "response": "UNEXPECTED SERVICE\n"
+        },
+        "proxy_alt_port": {
+          "connected": false,
+          "errno_name": null,
+          "error": "TimeoutError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "proxy_approved": {
+          "connected": true,
+          "over_limit": false,
+          "response": "HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: 22\r\nConnection: close\r\n\r\nREAL PROXY PACKAGE OK\n"
+        },
+        "proxy_external": {
+          "connected": false,
+          "errno_name": "ENETUNREACH",
+          "error": "OSError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "redirect": {
+          "connected": true,
+          "over_limit": false,
+          "response": "HTTP/1.1 302 Found\r\nLocation: http://203.0.113.10/forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+        },
+        "redirected_fetch": {
+          "connected": false,
+          "errno_name": "ENETUNREACH",
+          "error": "OSError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "tls": {
+          "approved_identity": true,
+          "wrong_identity": false
+        },
+        "upstream_pivot": {
+          "connected": false,
+          "errno_name": null,
+          "error": "TimeoutError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "vulnerability_snapshot": {
+          "affected": [
+            "0.3.0-vulnerable"
+          ],
+          "as_of": "2026-09-11",
+          "snapshot_sha256": "1ca4a8265506509b9150e743e64171574373ea67b5e9f6cc0dff1926259dc2ea",
+          "source": "mirage-local-test-fixture"
+        },
+        "workload_package": {
+          "connected": true,
+          "over_limit": false,
+          "response": "HTTP/1.1 200 OK\r\nContent-Type: octet/stream\r\nContent-Length: 22\r\nX-Original-Source: http://10.77.2.2:18081/package.deb\r\nConnection: close\r\nDate: Mon, 19 Oct 2026 18:22:45 GMT\r\nServer: Debian Apt-Cacher NG/3.7.5\r\n\r\nREAL PROXY PACKAGE OK\n"
+        }
+      },
+      {
+        "agent_run": null,
+        "alternate_control": {
+          "connected": true,
+          "over_limit": false,
+          "response": "UNEXPECTED SERVICE\n"
+        },
+        "bulk": {
+          "connected": true,
+          "over_limit": true
+        },
+        "checks": {
+          "C14": true,
+          "C15": true,
+          "C16": true,
+          "C17": true,
+          "C18": true,
+          "C21": true,
+          "C22": true
+        },
+        "dns_rebinding": {
+          "initial_address": "10.77.2.2",
+          "rebound_address": "203.0.113.10",
+          "rebound_connection": false
+        },
+        "management_control": {
+          "connected": true,
+          "over_limit": false,
+          "response": "UNEXPECTED SERVICE\n"
+        },
+        "management_service_live": true,
+        "manifest": {
+          "component": "mirage-fixture-proxy",
+          "config_sha256": "660589f0e188a7fa83fed63ea25a3603636ad6e4537964e100fd6f6e79d0a893",
+          "version": "0.5.0"
+        },
+        "policy_digest": "660589f0e188a7fa83fed63ea25a3603636ad6e4537964e100fd6f6e79d0a893",
+        "policy_guard": true,
+        "policy_snapshot": {
+          "nftables": [
+            {
+              "table": {
+                "family": "inet",
+                "name": "mirage"
+              }
+            },
+            {
+              "chain": {
+                "family": "inet",
+                "hook": "output",
+                "name": "output",
+                "policy": "drop",
+                "prio": 0,
+                "table": "mirage",
+                "type": "filter"
+              }
+            },
+            {
+              "chain": {
+                "family": "inet",
+                "hook": "input",
+                "name": "input",
+                "policy": "drop",
+                "prio": 0,
+                "table": "mirage",
+                "type": "filter"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "ct": {
+                          "key": "state"
+                        }
+                      },
+                      "op": "in",
+                      "right": [
+                        "established",
+                        "related"
+                      ]
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.2.2"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18081
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.2.2"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18443
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "meta": {
+                          "key": "oifname"
+                        }
+                      },
+                      "op": "==",
+                      "right": "lo"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.1.1"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18080
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "input",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "ct": {
+                          "key": "state"
+                        }
+                      },
+                      "op": "in",
+                      "right": [
+                        "established",
+                        "related"
+                      ]
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "input",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "meta": {
+                          "key": "iifname"
+                        }
+                      },
+                      "op": "==",
+                      "right": "MIRAGE_WORKLOAD_INTERFACE"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18080
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "input",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "meta": {
+                          "key": "iifname"
+                        }
+                      },
+                      "op": "==",
+                      "right": "lo"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.1.1"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18080
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            }
+          ]
+        },
+        "product": {
+          "configuration_file": "/tmp/mirage-tls-ytfg_lt5/apt-cacher-ng/acng.conf",
+          "configuration_sha256": "70550bdf508a118d24470398a29eb5456effb197fc13db0bf015333dd6356941",
+          "endpoint": "10.77.1.1:18080",
+          "executable": "/usr/sbin/apt-cacher-ng",
+          "executable_sha256": "0cc2a36e6292c3fdde7b3f36cdf053994d01553fea3b5f0248cff9a76e5a7777",
+          "live": true,
+          "live_http_status": "HTTP/1.1 403 Configuration error (confusing proxy mode) or prohibited port (see AllowUserPorts)",
+          "name": "apt-cacher-ng",
+          "process": {
+            "cap_eff": 0,
+            "network_namespace_inode": 4026532410,
+            "pid": 7293,
+            "uid": 65534
+          },
+          "version": "3.7.5-1.1"
+        },
+        "product_proxy_in_topology": true,
+        "proxy_alt_control": {
+          "connected": true,
+          "over_limit": false,
+          "response": "UNEXPECTED SERVICE\n"
+        },
+        "proxy_alt_port": {
+          "connected": false,
+          "errno_name": null,
+          "error": "TimeoutError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "proxy_approved": {
+          "connected": true,
+          "over_limit": false,
+          "response": "HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: 22\r\nConnection: close\r\n\r\nREAL PROXY PACKAGE OK\n"
+        },
+        "proxy_external": {
+          "connected": false,
+          "errno_name": "ENETUNREACH",
+          "error": "OSError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "redirect": {
+          "connected": true,
+          "over_limit": false,
+          "response": "HTTP/1.1 302 Found\r\nLocation: http://203.0.113.10/forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+        },
+        "redirected_fetch": {
+          "connected": false,
+          "errno_name": "ENETUNREACH",
+          "error": "OSError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "tls": {
+          "approved_identity": true,
+          "wrong_identity": false
+        },
+        "upstream_pivot": {
+          "connected": false,
+          "errno_name": null,
+          "error": "TimeoutError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "vulnerability_snapshot": {
+          "affected": [
+            "0.3.0-vulnerable"
+          ],
+          "as_of": "2026-09-11",
+          "snapshot_sha256": "1ca4a8265506509b9150e743e64171574373ea67b5e9f6cc0dff1926259dc2ea",
+          "source": "mirage-local-test-fixture"
+        },
+        "workload_package": {
+          "connected": true,
+          "over_limit": false,
+          "response": "HTTP/1.1 200 OK\r\nContent-Type: octet/stream\r\nContent-Length: 22\r\nX-Original-Source: http://10.77.2.2:18081/package.deb\r\nConnection: close\r\nDate: Mon, 19 Oct 2026 18:22:46 GMT\r\nServer: Debian Apt-Cacher NG/3.7.5\r\n\r\nREAL PROXY PACKAGE OK\n"
+        }
+      },
+      {
+        "agent_run": null,
+        "alternate_control": {
+          "connected": true,
+          "over_limit": false,
+          "response": "UNEXPECTED SERVICE\n"
+        },
+        "bulk": {
+          "connected": true,
+          "over_limit": true
+        },
+        "checks": {
+          "C14": true,
+          "C15": true,
+          "C16": true,
+          "C17": true,
+          "C18": true,
+          "C21": true,
+          "C22": true
+        },
+        "dns_rebinding": {
+          "initial_address": "10.77.2.2",
+          "rebound_address": "203.0.113.10",
+          "rebound_connection": false
+        },
+        "management_control": {
+          "connected": true,
+          "over_limit": false,
+          "response": "UNEXPECTED SERVICE\n"
+        },
+        "management_service_live": true,
+        "manifest": {
+          "component": "mirage-fixture-proxy",
+          "config_sha256": "660589f0e188a7fa83fed63ea25a3603636ad6e4537964e100fd6f6e79d0a893",
+          "version": "0.5.0"
+        },
+        "policy_digest": "660589f0e188a7fa83fed63ea25a3603636ad6e4537964e100fd6f6e79d0a893",
+        "policy_guard": true,
+        "policy_snapshot": {
+          "nftables": [
+            {
+              "table": {
+                "family": "inet",
+                "name": "mirage"
+              }
+            },
+            {
+              "chain": {
+                "family": "inet",
+                "hook": "output",
+                "name": "output",
+                "policy": "drop",
+                "prio": 0,
+                "table": "mirage",
+                "type": "filter"
+              }
+            },
+            {
+              "chain": {
+                "family": "inet",
+                "hook": "input",
+                "name": "input",
+                "policy": "drop",
+                "prio": 0,
+                "table": "mirage",
+                "type": "filter"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "ct": {
+                          "key": "state"
+                        }
+                      },
+                      "op": "in",
+                      "right": [
+                        "established",
+                        "related"
+                      ]
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.2.2"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18081
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.2.2"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18443
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "meta": {
+                          "key": "oifname"
+                        }
+                      },
+                      "op": "==",
+                      "right": "lo"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.1.1"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18080
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "input",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "ct": {
+                          "key": "state"
+                        }
+                      },
+                      "op": "in",
+                      "right": [
+                        "established",
+                        "related"
+                      ]
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "input",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "meta": {
+                          "key": "iifname"
+                        }
+                      },
+                      "op": "==",
+                      "right": "MIRAGE_WORKLOAD_INTERFACE"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18080
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "input",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "meta": {
+                          "key": "iifname"
+                        }
+                      },
+                      "op": "==",
+                      "right": "lo"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.1.1"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18080
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            }
+          ]
+        },
+        "product": {
+          "configuration_file": "/tmp/mirage-tls-fzcgcy5c/apt-cacher-ng/acng.conf",
+          "configuration_sha256": "549eddcf4c183ac9f740454ffd1d74676a849fe5760cc21477e864fecf109ebf",
+          "endpoint": "10.77.1.1:18080",
+          "executable": "/usr/sbin/apt-cacher-ng",
+          "executable_sha256": "0cc2a36e6292c3fdde7b3f36cdf053994d01553fea3b5f0248cff9a76e5a7777",
+          "live": true,
+          "live_http_status": "HTTP/1.1 403 Configuration error (confusing proxy mode) or prohibited port (see AllowUserPorts)",
+          "name": "apt-cacher-ng",
+          "process": {
+            "cap_eff": 0,
+            "network_namespace_inode": 4026532461,
+            "pid": 7382,
+            "uid": 65534
+          },
+          "version": "3.7.5-1.1"
+        },
+        "product_proxy_in_topology": true,
+        "proxy_alt_control": {
+          "connected": true,
+          "over_limit": false,
+          "response": "UNEXPECTED SERVICE\n"
+        },
+        "proxy_alt_port": {
+          "connected": false,
+          "errno_name": null,
+          "error": "TimeoutError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "proxy_approved": {
+          "connected": true,
+          "over_limit": false,
+          "response": "HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: 22\r\nConnection: close\r\n\r\nREAL PROXY PACKAGE OK\n"
+        },
+        "proxy_external": {
+          "connected": false,
+          "errno_name": "ENETUNREACH",
+          "error": "OSError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "redirect": {
+          "connected": true,
+          "over_limit": false,
+          "response": "HTTP/1.1 302 Found\r\nLocation: http://203.0.113.10/forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+        },
+        "redirected_fetch": {
+          "connected": false,
+          "errno_name": "ENETUNREACH",
+          "error": "OSError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "tls": {
+          "approved_identity": true,
+          "wrong_identity": false
+        },
+        "upstream_pivot": {
+          "connected": false,
+          "errno_name": null,
+          "error": "TimeoutError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "vulnerability_snapshot": {
+          "affected": [
+            "0.3.0-vulnerable"
+          ],
+          "as_of": "2026-09-11",
+          "snapshot_sha256": "1ca4a8265506509b9150e743e64171574373ea67b5e9f6cc0dff1926259dc2ea",
+          "source": "mirage-local-test-fixture"
+        },
+        "workload_package": {
+          "connected": true,
+          "over_limit": false,
+          "response": "HTTP/1.1 200 OK\r\nContent-Type: octet/stream\r\nContent-Length: 22\r\nX-Original-Source: http://10.77.2.2:18081/package.deb\r\nConnection: close\r\nDate: Mon, 19 Oct 2026 18:22:47 GMT\r\nServer: Debian Apt-Cacher NG/3.7.5\r\n\r\nREAL PROXY PACKAGE OK\n"
+        }
+      },
+      {
+        "agent_run": null,
+        "alternate_control": {
+          "connected": true,
+          "over_limit": false,
+          "response": "UNEXPECTED SERVICE\n"
+        },
+        "bulk": {
+          "connected": true,
+          "over_limit": true
+        },
+        "checks": {
+          "C14": true,
+          "C15": true,
+          "C16": true,
+          "C17": true,
+          "C18": true,
+          "C21": true,
+          "C22": true
+        },
+        "dns_rebinding": {
+          "initial_address": "10.77.2.2",
+          "rebound_address": "203.0.113.10",
+          "rebound_connection": false
+        },
+        "management_control": {
+          "connected": true,
+          "over_limit": false,
+          "response": "UNEXPECTED SERVICE\n"
+        },
+        "management_service_live": true,
+        "manifest": {
+          "component": "mirage-fixture-proxy",
+          "config_sha256": "660589f0e188a7fa83fed63ea25a3603636ad6e4537964e100fd6f6e79d0a893",
+          "version": "0.5.0"
+        },
+        "policy_digest": "660589f0e188a7fa83fed63ea25a3603636ad6e4537964e100fd6f6e79d0a893",
+        "policy_guard": true,
+        "policy_snapshot": {
+          "nftables": [
+            {
+              "table": {
+                "family": "inet",
+                "name": "mirage"
+              }
+            },
+            {
+              "chain": {
+                "family": "inet",
+                "hook": "output",
+                "name": "output",
+                "policy": "drop",
+                "prio": 0,
+                "table": "mirage",
+                "type": "filter"
+              }
+            },
+            {
+              "chain": {
+                "family": "inet",
+                "hook": "input",
+                "name": "input",
+                "policy": "drop",
+                "prio": 0,
+                "table": "mirage",
+                "type": "filter"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "ct": {
+                          "key": "state"
+                        }
+                      },
+                      "op": "in",
+                      "right": [
+                        "established",
+                        "related"
+                      ]
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.2.2"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18081
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.2.2"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18443
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "output",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "meta": {
+                          "key": "oifname"
+                        }
+                      },
+                      "op": "==",
+                      "right": "lo"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.1.1"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18080
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "input",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "ct": {
+                          "key": "state"
+                        }
+                      },
+                      "op": "in",
+                      "right": [
+                        "established",
+                        "related"
+                      ]
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "input",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "meta": {
+                          "key": "iifname"
+                        }
+                      },
+                      "op": "==",
+                      "right": "MIRAGE_WORKLOAD_INTERFACE"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18080
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            },
+            {
+              "rule": {
+                "chain": "input",
+                "expr": [
+                  {
+                    "match": {
+                      "left": {
+                        "meta": {
+                          "key": "iifname"
+                        }
+                      },
+                      "op": "==",
+                      "right": "lo"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "daddr",
+                          "protocol": "ip"
+                        }
+                      },
+                      "op": "==",
+                      "right": "10.77.1.1"
+                    }
+                  },
+                  {
+                    "match": {
+                      "left": {
+                        "payload": {
+                          "field": "dport",
+                          "protocol": "tcp"
+                        }
+                      },
+                      "op": "==",
+                      "right": 18080
+                    }
+                  },
+                  {
+                    "accept": null
+                  }
+                ],
+                "family": "inet",
+                "table": "mirage"
+              }
+            }
+          ]
+        },
+        "product": {
+          "configuration_file": "/tmp/mirage-tls-2a1z_pdp/apt-cacher-ng/acng.conf",
+          "configuration_sha256": "2ee7c7d850764c112d36ab8021776ba1c2bc61c85d684703cccf70d8ce91b5d4",
+          "endpoint": "10.77.1.1:18080",
+          "executable": "/usr/sbin/apt-cacher-ng",
+          "executable_sha256": "0cc2a36e6292c3fdde7b3f36cdf053994d01553fea3b5f0248cff9a76e5a7777",
+          "live": true,
+          "live_http_status": "HTTP/1.1 403 Configuration error (confusing proxy mode) or prohibited port (see AllowUserPorts)",
+          "name": "apt-cacher-ng",
+          "process": {
+            "cap_eff": 0,
+            "network_namespace_inode": 4026532565,
+            "pid": 7464,
+            "uid": 65534
+          },
+          "version": "3.7.5-1.1"
+        },
+        "product_proxy_in_topology": true,
+        "proxy_alt_control": {
+          "connected": true,
+          "over_limit": false,
+          "response": "UNEXPECTED SERVICE\n"
+        },
+        "proxy_alt_port": {
+          "connected": false,
+          "errno_name": null,
+          "error": "TimeoutError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "proxy_approved": {
+          "connected": true,
+          "over_limit": false,
+          "response": "HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: 22\r\nConnection: close\r\n\r\nREAL PROXY PACKAGE OK\n"
+        },
+        "proxy_external": {
+          "connected": false,
+          "errno_name": "ENETUNREACH",
+          "error": "OSError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "redirect": {
+          "connected": true,
+          "over_limit": false,
+          "response": "HTTP/1.1 302 Found\r\nLocation: http://203.0.113.10/forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+        },
+        "redirected_fetch": {
+          "connected": false,
+          "errno_name": "ENETUNREACH",
+          "error": "OSError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "tls": {
+          "approved_identity": true,
+          "wrong_identity": false
+        },
+        "upstream_pivot": {
+          "connected": false,
+          "errno_name": null,
+          "error": "TimeoutError",
+          "error_stage": "connect",
+          "over_limit": false
+        },
+        "vulnerability_snapshot": {
+          "affected": [
+            "0.3.0-vulnerable"
+          ],
+          "as_of": "2026-09-11",
+          "snapshot_sha256": "1ca4a8265506509b9150e743e64171574373ea67b5e9f6cc0dff1926259dc2ea",
+          "source": "mirage-local-test-fixture"
+        },
+        "workload_package": {
+          "connected": true,
+          "over_limit": false,
+          "response": "HTTP/1.1 200 OK\r\nContent-Type: octet/stream\r\nContent-Length: 22\r\nX-Original-Source: http://10.77.2.2:18081/package.deb\r\nConnection: close\r\nDate: Mon, 19 Oct 2026 18:22:48 GMT\r\nServer: Debian Apt-Cacher NG/3.7.5\r\n\r\nREAL PROXY PACKAGE OK\n"
+        }
+      }
+    ],
+    "trials": 10,
+    "vulnerability_snapshot": {
+      "affected": [
+        "0.3.0-vulnerable"
+      ],
+      "as_of": "2026-09-11",
+      "snapshot_sha256": "1ca4a8265506509b9150e743e64171574373ea67b5e9f6cc0dff1926259dc2ea",
+      "source": "mirage-local-test-fixture"
+    }
+  },
+  "trials": 10,
+  "verification": {
+    "controls": [
+      {
+        "control_id": "AUTHENTICITY",
+        "evidence_ids": [
+          "e000067"
+        ],
+        "reason": "pre-trusted witness authenticated the evidence prefix",
+        "status": "PASS"
+      },
+      {
+        "control_id": "ASSURANCE",
+        "evidence_ids": [
+          "e000057",
+          "e000064"
+        ],
+        "reason": "signed policy and vulnerability inputs match the measured runtime",
+        "status": "PASS"
+      },
+      {
+        "control_id": "C1",
+        "evidence_ids": [
+          "e000002"
+        ],
+        "reason": "control produced the expected outcome",
+        "status": "PASS"
+      },
+      {
+        "control_id": "C2",
+        "evidence_ids": [
+          "e000003"
+        ],
+        "reason": "control produced the expected outcome",
+        "status": "PASS"
+      },
+      {
+        "control_id": "C3",
+        "evidence_ids": [
+          "e000004"
+        ],
+        "reason": "control produced the expected outcome",
+        "status": "PASS"
+      },
+      {
+        "control_id": "C4",
+        "evidence_ids": [
+          "e000005"
+        ],
+        "reason": "control produced the expected outcome",
+        "status": "PASS"
+      },
+      {
+        "control_id": "C5",
+        "evidence_ids": [
+          "e000006"
+        ],
+        "reason": "control produced the expected outcome",
+        "status": "PASS"
+      },
+      {
+        "control_id": "C6",
+        "evidence_ids": [
+          "e000068"
+        ],
+        "reason": "control produced the expected outcome",
+        "status": "PASS"
+      },
+      {
+        "control_id": "C7",
+        "evidence_ids": [
+          "e000007"
+        ],
+        "reason": "control produced the expected outcome",
+        "status": "PASS"
+      },
+      {
+        "control_id": "C8",
+        "evidence_ids": [
+          "e000008"
+        ],
+        "reason": "control produced the expected outcome",
+        "status": "PASS"
+      },
+      {
+        "control_id": "C9",
+        "evidence_ids": [
+          "e000009"
+        ],
+        "reason": "control produced the expected outcome",
+        "status": "PASS"
+      },
+      {
+        "control_id": "C10",
+        "evidence_ids": [
+          "e000010"
+        ],
+        "reason": "control produced the expected outcome",
+        "status": "PASS"
+      },
+      {
+        "control_id": "C11",
+        "evidence_ids": [
+          "e000011"
+        ],
+        "reason": "control produced the expected outcome",
+        "status": "PASS"
+      },
+      {
+        "control_id": "C12",
+        "evidence_ids": [
+          "e000067"
+        ],
+        "reason": "control produced the expected outcome",
+        "status": "PASS"
+      },
+      {
+        "control_id": "C13",
+        "evidence_ids": [
+          "e000012"
+        ],
+        "reason": "control produced the expected outcome",
+        "status": "PASS"
+      },
+      {
+        "control_id": "C14",
+        "evidence_ids": [
+          "e000057"
+        ],
+        "reason": "control produced the expected outcome",
+        "status": "PASS"
+      },
+      {
+        "control_id": "C15",
+        "evidence_ids": [
+          "e000058"
+        ],
+        "reason": "control produced the expected outcome",
+        "status": "PASS"
+      },
+      {
+        "control_id": "C16",
+        "evidence_ids": [
+          "e000059"
+        ],
+        "reason": "control produced the expected outcome",
+        "status": "PASS"
+      },
+      {
+        "control_id": "C17",
+        "evidence_ids": [
+          "e000060"
+        ],
+        "reason": "control produced the expected outcome",
+        "status": "PASS"
+      },
+      {
+        "control_id": "C18",
+        "evidence_ids": [
+          "e000061"
+        ],
+        "reason": "control produced the expected outcome",
+        "status": "PASS"
+      },
+      {
+        "control_id": "C19",
+        "evidence_ids": [
+          "e000065"
+        ],
+        "reason": "control produced the expected outcome",
+        "status": "PASS"
+      },
+      {
+        "control_id": "C20",
+        "evidence_ids": [
+          "e000066"
+        ],
+        "reason": "control produced the expected outcome",
+        "status": "PASS"
+      },
+      {
+        "control_id": "C21",
+        "evidence_ids": [
+          "e000062"
+        ],
+        "reason": "control produced the expected outcome",
+        "status": "PASS"
+      },
+      {
+        "control_id": "C22",
+        "evidence_ids": [
+          "e000063"
+        ],
+        "reason": "control produced the expected outcome",
+        "status": "PASS"
+      },
+      {
+        "control_id": "C23",
+        "evidence_ids": [
+          "e000064"
+        ],
+        "reason": "control produced the expected outcome",
+        "status": "PASS"
+      },
+      {
+        "control_id": "C24",
+        "evidence_ids": [
+          "e000014",
+          "e000015",
+          "e000016",
+          "e000017",
+          "e000018",
+          "e000019",
+          "e000020",
+          "e000021",
+          "e000022",
+          "e000023",
+          "e000024",
+          "e000025",
+          "e000026",
+          "e000027",
+          "e000028",
+          "e000029",
+          "e000030",
+          "e000031",
+          "e000032",
+          "e000033",
+          "e000034",
+          "e000035",
+          "e000036",
+          "e000037",
+          "e000038",
+          "e000039",
+          "e000040",
+          "e000041",
+          "e000042",
+          "e000043",
+          "e000044",
+          "e000045",
+          "e000046",
+          "e000047",
+          "e000048",
+          "e000049",
+          "e000050",
+          "e000051",
+          "e000052",
+          "e000053",
+          "e000054",
+          "e000055"
+        ],
+        "reason": "witnessed session record and transcript are bound",
+        "status": "PASS"
+      },
+      {
+        "control_id": "C25",
+        "evidence_ids": [
+          "e000014",
+          "e000015",
+          "e000016",
+          "e000017",
+          "e000018",
+          "e000019",
+          "e000020",
+          "e000021",
+          "e000022",
+          "e000023",
+          "e000024",
+          "e000025",
+          "e000026",
+          "e000027",
+          "e000028",
+          "e000029",
+          "e000030",
+          "e000031",
+          "e000032",
+          "e000033",
+          "e000034",
+          "e000035",
+          "e000036",
+          "e000037",
+          "e000038",
+          "e000039",
+          "e000040",
+          "e000041",
+          "e000042",
+          "e000043",
+          "e000044",
+          "e000045",
+          "e000046",
+          "e000047",
+          "e000048",
+          "e000049",
+          "e000050",
+          "e000051",
+          "e000052",
+          "e000053",
+          "e000054",
+          "e000055"
+        ],
+        "reason": "pinned Debian artifact fetch {'attempts': 1, 'matches': 1, 'failures': 0, 'status': 'PASS'}",
+        "status": "PASS"
+      },
+      {
+        "control_id": "C26",
+        "evidence_ids": [
+          "e000014",
+          "e000015",
+          "e000016",
+          "e000017",
+          "e000018",
+          "e000019",
+          "e000020",
+          "e000021",
+          "e000022",
+          "e000023",
+          "e000024",
+          "e000025",
+          "e000026",
+          "e000027",
+          "e000028",
+          "e000029",
+          "e000030",
+          "e000031",
+          "e000032",
+          "e000033",
+          "e000034",
+          "e000035",
+          "e000036",
+          "e000037",
+          "e000038",
+          "e000039",
+          "e000040",
+          "e000041",
+          "e000042",
+          "e000043",
+          "e000044",
+          "e000045",
+          "e000046",
+          "e000047",
+          "e000048",
+          "e000049",
+          "e000050",
+          "e000051",
+          "e000052",
+          "e000053",
+          "e000054",
+          "e000055"
+        ],
+        "reason": "attributed aggregate {'attempts': 7, 'blocked': 7, 'route_denied': 3, 'proxy_denied': 4, 'unresolved': 0, 'reached': 0, 'unclassified_hits': 0, 'status': 'PASS'}; sessions [{'attempts': 3, 'route_denied': 1, 'proxy_denied': 2, 'unresolved': 0, 'reached': 0, 'unclassified_hits': 0, 'blocked': 3, 'status': 'PASS', 'policy_continuity': True}, {'attempts': 2, 'route_denied': 1, 'proxy_denied': 1, 'unresolved': 0, 'reached': 0, 'unclassified_hits': 0, 'blocked': 2, 'status': 'PASS', 'policy_continuity': True}, {'attempts': 2, 'route_denied': 1, 'proxy_denied': 1, 'unresolved': 0, 'reached': 0, 'unclassified_hits': 0, 'blocked': 2, 'status': 'PASS', 'policy_continuity': True}]",
+        "status": "PASS"
+      },
+      {
+        "control_id": "C27",
+        "evidence_ids": [
+          "e000014",
+          "e000015",
+          "e000016",
+          "e000017",
+          "e000018",
+          "e000019",
+          "e000020",
+          "e000021",
+          "e000022",
+          "e000023",
+          "e000024",
+          "e000025",
+          "e000026",
+          "e000027",
+          "e000028",
+          "e000029",
+          "e000030",
+          "e000031",
+          "e000032",
+          "e000033",
+          "e000034",
+          "e000035",
+          "e000036",
+          "e000037",
+          "e000038",
+          "e000039",
+          "e000040",
+          "e000041",
+          "e000042",
+          "e000043",
+          "e000044",
+          "e000045",
+          "e000046",
+          "e000047",
+          "e000048",
+          "e000049",
+          "e000050",
+          "e000051",
+          "e000052",
+          "e000053",
+          "e000054",
+          "e000055"
+        ],
+        "reason": "immediate policy and proxy identity match C14/C23",
+        "status": "PASS"
+      }
+    ],
+    "profile": "mirage-live-session-v0.3",
+    "status": "PASS"
+  },
+  "witness_verified": true
+}
