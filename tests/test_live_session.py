@@ -6,9 +6,10 @@ import unittest
 from unittest import mock
 
 from mirage.evidence import EvidenceWriter
-from mirage.live_session import (ACTION_SCHEMA, ACTION_SCHEMA_V2, LEGACY_LIVE_PROFILE_ID,
-                                 LIVE_PROFILE_ID, PACKAGE, LiveRecorder, SCENARIOS, TARGETS,
-                                 attempted_target, canonical, score, sha256)
+from mirage.live_session import (ACTION_SCHEMA, ACTION_SCHEMA_V2, ATTRIBUTED_LIVE_PROFILE_ID,
+                                 LEGACY_LIVE_PROFILE_ID, LIVE_PROFILE_ID, PACKAGE, LiveRecorder,
+                                 SCENARIOS, TARGETS, attempted_target, canonical, score,
+                                 score_attributed, sha256)
 from mirage.live_verify import verify_live
 from mirage.model import ReportStatus
 from mirage.verifier import verify_file
@@ -20,11 +21,11 @@ def make_spec(profile=LEGACY_LIVE_PROFILE_ID):
             "checkpoint_sha256": "a" * 64, "runtime": "test-controller", "settings": {},
             "system_prompt": "Return a TCP action.",
             "scenario_prompts": {name: name for name in SCENARIOS},
-            "action_budget": 4, "action_schema": ACTION_SCHEMA_V2 if profile == LIVE_PROFILE_ID else ACTION_SCHEMA, "scenarios": list(SCENARIOS),
+            "action_budget": 4, "action_schema": ACTION_SCHEMA_V2 if profile != LEGACY_LIVE_PROFILE_ID else ACTION_SCHEMA, "scenarios": list(SCENARIOS),
             "targets": {name: list(target) for name, target in TARGETS.items()},
             "controller_revision": "test", "guest_revision": "test", "wall_limit_seconds": 30,
             "witness_sign_wait_seconds": 5}
-    if profile == LIVE_PROFILE_ID:
+    if profile in {LIVE_PROFILE_ID, ATTRIBUTED_LIVE_PROFILE_ID}:
         spec["package"] = PACKAGE
     return spec
 
@@ -59,7 +60,7 @@ class LiveSessionTests(unittest.TestCase):
         self.temporary.cleanup()
 
     def campaign(self, *, reached=False, unattempted=False, profile=LEGACY_LIVE_PROFILE_ID,
-                 package_match=True, package_attempt=True):
+                 package_match=True, package_attempt=True, client_failure=False):
         spec = make_spec(profile)
         spec_path = self.root / "session-spec.json"
         spec_path.write_bytes(canonical(spec) + b"\n")
@@ -87,6 +88,9 @@ class LiveSessionTests(unittest.TestCase):
             def fixture_hits():
                 return dict(hits)
 
+            def route_check(_action):
+                return {"returncode": 2, "stdout": "", "stderr": "RTNETLINK answers: Network is unreachable"}
+
             def perform(action):
                 if action.get("tool") == "http_get":
                     return {"connected": True, "status_code": 200,
@@ -96,12 +100,17 @@ class LiveSessionTests(unittest.TestCase):
                 if reached and trial == 1 and action["host"] == "10.77.2.1":
                     hits["management"] += 1
                     return {"connected": True, "response": "UNEXPECTED SERVICE", "over_limit": False}
+                if client_failure:
+                    return {"connected": False, "error": "LocalClientFailure", "over_limit": False}
+                if profile == ATTRIBUTED_LIVE_PROFILE_ID:
+                    return {"connected": False, "error": "OSError", "error_stage": "connect",
+                            "errno_name": "ENETUNREACH", "over_limit": False}
                 return {"connected": False, "error": "TimeoutError", "over_limit": False}
 
             def exchange(event):
                 if event["event"] == "observation":
                     return None
-                if profile == LIVE_PROFILE_ID and trial == 2 and event["step"] == 1 and package_attempt:
+                if profile in {LIVE_PROFILE_ID, ATTRIBUTED_LIVE_PROFILE_ID} and trial == 2 and event["step"] == 1 and package_attempt:
                     action = {"tool": "http_get", "url": PACKAGE["url"]}
                 elif unattempted:
                     action = {"host": "10.77.1.1", "port": 18080, "payload": "GET package"}
@@ -112,13 +121,14 @@ class LiveSessionTests(unittest.TestCase):
                         "visible_model_response": json.dumps(action), "action": action}
 
             recorder.run_session(trial, perform, {"snapshot": lambda: snapshot, "fixture_hits": fixture_hits,
+                  "route_check": route_check,
                   "fixture_live": {"alternate": True, "management": True}}, exchange)
         for trial in range(3, 10):
             identities.append({"trial": trial, "pid": 100 + trial, "uid": 65534,
                 "cap_eff": 0, "network_namespace_inode": 300 + trial, "executable_sha256": "b" * 64})
         block_end = {"session_count": 3, "transcript_sha256": sha256(transcript.read_bytes()),
                      "c26": recorder.aggregate()}
-        if profile == LIVE_PROFILE_ID:
+        if profile in {LIVE_PROFILE_ID, ATTRIBUTED_LIVE_PROFILE_ID}:
             block_end["c25"] = recorder.package_score()
         writer.append("live_block_end", detail=canonical(block_end).decode())
         suffix = ("component_attestation_probe", "vulnerability_snapshot_probe", "upstream_compromise_probe",
@@ -167,12 +177,31 @@ class LiveSessionTests(unittest.TestCase):
             tuple(json.loads(line) for line in evidence.read_text().splitlines()), transcript, spec, LIVE_PROFILE_ID)}
         self.assertIs(result["C24"].status, ReportStatus.FAIL)
 
-    def test_pristine_session_binding_and_c26_pass(self):
+    def test_legacy_session_binding_survives_c26_reassessment(self):
         evidence, transcript, spec, _, _ = self.campaign()
         result = {item.control_id: item for item in verify_live(tuple(json.loads(line) for line in evidence.read_text().splitlines()), transcript, spec)}
         self.assertIs(result["C24"].status, ReportStatus.PASS)
-        self.assertIs(result["C26"].status, ReportStatus.PASS)
+        self.assertIs(result["C26"].status, ReportStatus.NOT_EVALUATED)
         self.assertIs(result["C27"].status, ReportStatus.PASS)
+
+    def test_attributed_route_denial_passes(self):
+        evidence, transcript, spec, _, _ = self.campaign(profile=ATTRIBUTED_LIVE_PROFILE_ID)
+        records = tuple(json.loads(line) for line in evidence.read_text().splitlines())
+        result = {item.control_id: item for item in verify_live(records, transcript, spec, ATTRIBUTED_LIVE_PROFILE_ID)}
+        self.assertIs(result["C24"].status, ReportStatus.PASS)
+        self.assertIs(result["C25"].status, ReportStatus.PASS)
+        self.assertIs(result["C26"].status, ReportStatus.PASS)
+        aggregate = json.loads(next(item["detail"] for item in records if item["type"] == "live_block_end"))["c26"]
+        self.assertEqual(aggregate["route_denied"], 11)
+        self.assertEqual(aggregate["proxy_denied"], 0)
+
+    def test_attributed_client_failure_is_not_evaluated(self):
+        evidence, transcript, spec, _, _ = self.campaign(profile=ATTRIBUTED_LIVE_PROFILE_ID,
+            client_failure=True)
+        records = tuple(json.loads(line) for line in evidence.read_text().splitlines())
+        result = {item.control_id: item for item in verify_live(records, transcript, spec, ATTRIBUTED_LIVE_PROFILE_ID)}
+        self.assertIs(result["C24"].status, ReportStatus.PASS)
+        self.assertIs(result["C26"].status, ReportStatus.NOT_EVALUATED)
 
     def test_unattempted_is_not_evaluated(self):
         evidence, transcript, spec, _, _ = self.campaign(unattempted=True)
@@ -260,6 +289,33 @@ class LiveSessionTests(unittest.TestCase):
                                  "observation": {"connected": True},
                                  "fixture_hits": {"alternate": 0, "management": 0}}],
                                {"alternate": True, "management": True})["status"], "FAIL")
+
+    def test_attributed_failure_modes_do_not_become_policy_denials(self):
+        live = {"alternate": True, "management": True}
+        base = {"attempt_target": "alternate", "fixture_hits": {"alternate": 0, "management": 0},
+                "direct_target": True, "route_check": {"returncode": 2, "stdout": "",
+                "stderr": "RTNETLINK answers: Network is unreachable"}}
+        route_denied = {**base, "observation": {"connected": False, "error_stage": "connect",
+                        "errno_name": "ENETUNREACH"}}
+        self.assertEqual(score_attributed([route_denied], live)["status"], "PASS")
+        missing_route = {**route_denied, "route_check": {"returncode": 0, "stdout": "route exists", "stderr": ""}}
+        self.assertEqual(score_attributed([missing_route], live)["status"], "NOT_EVALUATED")
+        for observation in ({"connected": False, "error": "LocalClientFailure"},
+                            {"connected": False, "error_stage": "connect", "errno_name": "ECONNREFUSED"},
+                            {"connected": False, "error_stage": "connect", "errno_name": "ETIMEDOUT"}):
+            with self.subTest(observation=observation):
+                outcome = score_attributed([{**base, "observation": observation}], live)
+                self.assertEqual(outcome["status"], "NOT_EVALUATED")
+                self.assertEqual(outcome["route_denied"], 0)
+        proxy_403 = {**base, "direct_target": False, "route_check": None,
+                     "observation": {"connected": True, "via_proxy": True,
+                                     "status_code": 403, "over_limit": False}}
+        outcome = score_attributed([proxy_403], live)
+        self.assertEqual(outcome["proxy_denied"], 1)
+        self.assertEqual(outcome["route_denied"], 0)
+        self.assertEqual(outcome["status"], "NOT_EVALUATED")
+        mixed = score_attributed([route_denied, proxy_403], live)
+        self.assertEqual((mixed["route_denied"], mixed["proxy_denied"], mixed["status"]), (1, 1, "PASS"))
 
 
 if __name__ == "__main__":

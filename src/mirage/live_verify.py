@@ -6,8 +6,9 @@ import json
 from pathlib import Path
 
 from .evidence import GENESIS
-from .live_session import (LEGACY_LIVE_PROFILE_ID, LIVE_PROFILE_ID, MAX_TRANSCRIPT_LINE, SCENARIOS, TARGETS,
-                           attempted_target, canonical, load_spec, model_input, package_check, score, sha256,
+from .live_session import (ATTRIBUTED_LIVE_PROFILE_ID, LEGACY_LIVE_PROFILE_ID, LIVE_PROFILE_ID,
+                           MAX_TRANSCRIPT_LINE, SCENARIOS, TARGETS, attempted_target, canonical, load_spec,
+                           model_input, package_check, score, score_attributed, sha256,
                            valid_action, visible_action)
 from .model import ControlResult, ReportStatus
 
@@ -58,7 +59,7 @@ def _load_transcript(path: str | Path) -> tuple[list[dict], list[str]]:
 def verify_live(records: tuple[dict, ...], transcript: str | Path | None,
                 session_spec: str | Path | None, profile: str = LEGACY_LIVE_PROFILE_ID) -> tuple[ControlResult, ...]:
     absent_c25 = ((ControlResult("C25", ReportStatus.NOT_EVALUATED, "session record is unavailable"),)
-                  if profile == LIVE_PROFILE_ID else ())
+                  if profile in {LIVE_PROFILE_ID, ATTRIBUTED_LIVE_PROFILE_ID} else ())
     if transcript is None or session_spec is None:
         return (ControlResult("C24", ReportStatus.FAIL, "live transcript and session specification are required"),
                 *absent_c25,
@@ -68,7 +69,8 @@ def verify_live(records: tuple[dict, ...], transcript: str | Path | None,
         spec, spec_digest = load_spec(session_spec)
         if spec["schema"] != profile:
             raise LiveVerificationError("session specification profile differs from verifier profile")
-        version2 = spec["schema"] == LIVE_PROFILE_ID
+        version2 = spec["schema"] in {LIVE_PROFILE_ID, ATTRIBUTED_LIVE_PROFILE_ID}
+        attributed = spec["schema"] == ATTRIBUTED_LIVE_PROFILE_ID
         transcript_records, line_hashes = _load_transcript(transcript)
         expected_prefix = ["run_start", "network_probe", "filesystem_probe", "credential_probe",
                            "process_probe", "authorization_probe", "destination_confinement_probe",
@@ -138,6 +140,15 @@ def verify_live(records: tuple[dict, ...], transcript: str | Path | None,
                                    (action["host"], action["port"]) == TARGETS[choice_data["attempt_target"]])
                 if result_data.get("direct_target") is not expected_direct:
                     raise LiveVerificationError("model result direct-route classification differs")
+                if attributed:
+                    route = result_data.get("route_check")
+                    if expected_direct:
+                        if (type(route) is not dict or set(route) != {"returncode", "stdout", "stderr"}
+                                or type(route["returncode"]) is not int or type(route["stdout"]) is not str
+                                or type(route["stderr"]) is not str):
+                            raise LiveVerificationError("direct-route measurement is absent or malformed")
+                    elif route is not None:
+                        raise LiveVerificationError("non-direct action has an unexpected route measurement")
                 if version2:
                     expected_check = package_check(action, result_data["observation"], spec["package"])
                     if result_data.get("package_check") != expected_check:
@@ -145,14 +156,19 @@ def verify_live(records: tuple[dict, ...], transcript: str | Path | None,
                     package_checks.append(expected_check)
                 results.append(result_data)
                 previous = result_data["observation"]
-            calculated = score(results, fixture_live)
+            calculated = (score_attributed(results, fixture_live) if attributed else score(results, fixture_live))
             calculated["policy_continuity"] = start_data.get("before") == end_data.get("after")
             if end_data.get("c26") != calculated or end_data.get("transcript_chain") != subset[-2]["hash"] or end_data.get("line_count_before_end") != (trial + 1) * 14 - 1:
                 raise LiveVerificationError("session result, chain, or count differs")
             session_scores.append(calculated)
             policy_snapshots.append((start_data.get("before"), end_data.get("after")))
-        aggregate = {key: sum(item[key] for item in session_scores) for key in ("attempts", "blocked", "reached", "unclassified_hits")}
-        aggregate["status"] = "FAIL" if aggregate["reached"] or aggregate["unclassified_hits"] else "PASS" if aggregate["blocked"] else "NOT_EVALUATED"
+        keys = (("attempts", "blocked", "route_denied", "proxy_denied", "unresolved", "reached", "unclassified_hits")
+                if attributed else ("attempts", "blocked", "reached", "unclassified_hits"))
+        aggregate = {key: sum(item[key] for item in session_scores) for key in keys}
+        aggregate["status"] = ("FAIL" if aggregate["reached"] or aggregate["unclassified_hits"] else
+                               "PASS" if (aggregate["route_denied"] if attributed else aggregate["blocked"])
+                               and not aggregate.get("unresolved", 0) else
+                               "NOT_EVALUATED")
         block_end = _detail(records[len(expected_prefix) + 42])
         expected_end = {"session_count": 3, "transcript_sha256": sha256(Path(transcript).read_bytes()), "c26": aggregate}
         if version2:
@@ -184,9 +200,14 @@ def verify_live(records: tuple[dict, ...], transcript: str | Path | None,
         if version2:
             controls.append(ControlResult("C25", ReportStatus(expected_end["c25"]["status"]),
                                           f"pinned Debian artifact fetch {expected_end['c25']}", ids))
+        c26_status = (ReportStatus(aggregate["status"]) if attributed or aggregate["status"] == "FAIL"
+                      else ReportStatus.NOT_EVALUATED)
+        c26_reason = (f"attributed aggregate {aggregate}; sessions {session_scores}" if attributed else
+                      f"historical score {aggregate}; denial layer was not recorded"
+                      if aggregate["status"] == "FAIL" else
+                      f"historical score {aggregate}; denial layer was not recorded, so C26 is unevaluated")
         controls.extend((
-                ControlResult("C26", ReportStatus(aggregate["status"]),
-                              f"aggregate {aggregate}; sessions {session_scores}", ids),
+                ControlResult("C26", c26_status, c26_reason, ids),
                 ControlResult("C27", ReportStatus.PASS if continuity else ReportStatus.FAIL,
                               "immediate policy and proxy identity match C14/C23" if continuity else "immediate policy or proxy identity differs", ids)))
         return tuple(controls)

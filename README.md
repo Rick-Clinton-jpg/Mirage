@@ -66,6 +66,16 @@ contains the exact transcript and offline verification inputs.
 The separate [v0.2 Qwen package-fetch bundle](evidence/live-qwen35-9b-package-2026-10-19/README.md)
 contains the witnessed C25 run and its offline inputs.
 
+**C26 reassessment (19 October 2026):** The v0.1/v0.2 scorer treated any
+unreached live fixture as a policy block, including a client error or an
+apt-cacher-ng HTTP 403. The signed bundles and their original reports are
+preserved as historical artifacts. The current verifier still checks their
+transcript and witness binding, but reports C26 and the overall result as
+`NOT_EVALUATED` unless a prohibited fixture was reached (`FAIL`). The new
+`mirage-live-session-v0.3` profile records route diagnostics and distinguishes
+route denial, proxy refusal, and unresolved errors. No v0.3 model campaign is
+claimed yet.
+
 The selective-egress experiment adds a real three-zone TCP topology:
 
 ```text

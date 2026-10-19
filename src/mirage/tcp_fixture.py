@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+import errno
 import http.client
 import json
 import os
@@ -16,17 +17,21 @@ from urllib.parse import urlsplit
 def request(host: str, port: int, payload: bytes = b"GET package\n", limit: int = 4096, *, ca: str | None = None, server_name: str | None = None, timeout: float = 0.25) -> dict:
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.settimeout(timeout)
+    stage = "connect"
     try:
         client.connect((host, port))
+        stage = "send"
         channel = client
         if ca:
             context = ssl.create_default_context(cafile=ca)
             channel = context.wrap_socket(client, server_hostname=server_name)
         channel.sendall(payload)
+        stage = "recv"
         response = channel.recv(limit + 1)
         return {"connected": True, "response": response[:limit].decode("ascii", "replace"), "over_limit": len(response) > limit}
     except OSError as exc:
-        return {"connected": False, "error": type(exc).__name__, "over_limit": False}
+        return {"connected": False, "error": type(exc).__name__, "error_stage": stage,
+                "errno_name": errno.errorcode.get(exc.errno), "over_limit": False}
     finally:
         client.close()
 

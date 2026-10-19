@@ -265,7 +265,13 @@ def run_selective_tcp_topology(*, product_proxy: bool = False, agent_driver=None
                     return {"alternate": alternate_hit_log.read_bytes().count(b"\n"),
                             "management": management_hit_log.read_bytes().count(b"\n")}
 
+                def route_check(action: dict) -> dict:
+                    result = _ns(workload, [_tool("ip"), "route", "get", action["host"]], check=False)
+                    return {"returncode": result.returncode, "stdout": result.stdout.strip()[:300],
+                            "stderr": result.stderr.strip()[:300]}
+
                 context = {"snapshot": snapshot, "fixture_hits": fixture_hits,
+                           "route_check": route_check,
                            "fixture_live": {"alternate": proxy_alt_control["connected"],
                                             "management": management_control["connected"]}}
                 agent_run = agent_driver(perform_agent_action, context)

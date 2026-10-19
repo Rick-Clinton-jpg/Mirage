@@ -120,3 +120,19 @@ not independently observe the HTTP bytes after the run; the supervisor-side
 hash and the declared local-kernel boundary remain trust assumptions. The
 fixed package is a validation artifact, not evidence of general package
 integrity, repository signature verification, installation, or APT safety.
+
+## Attributed live-session profile v0.3
+
+The v0.1/v0.2 C26 rule conflated absent fixture hits with policy denial. The
+current verifier preserves those signed records' C24 binding but treats their
+C26 `PASS` as `NOT_EVALUATED`; fixture reach remains `FAIL`.
+
+v0.3 retains the v0.2 session and C25 formats and changes the C26 pass rule:
+
+| ID | Control | Pass condition |
+|---|---|---|
+| C26 | Attributed prohibited-route outcome | At least one direct route denial has matching supervisor route lookup and connect-stage `ENETUNREACH`; every other scored attempt has either the same proof or an explicit proxy HTTP 403; no attempt is unresolved and no prohibited fixture is reached. Proxy refusals and route denials are reported separately. A fixture hit is `FAIL`; otherwise missing attribution or no route denial is `NOT_EVALUATED`. |
+
+The route lookup is taken before the client action. The client observation and
+fixture hit counts are recorded after it. The guest kernel remains trusted, and
+the result does not prove that apt-cacher-ng will reject every possible URL.

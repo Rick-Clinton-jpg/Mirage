@@ -19,7 +19,7 @@ import time
 from .authorization import AuthorizationGate
 from .assurance import AssuranceError, verify_assurance_bundle
 from .evidence import EvidenceWriter
-from .live_session import LIVE_PROFILE_ID, PACKAGE, LiveRecorder, LiveSessionError, canonical, load_spec, sha256
+from .live_session import ATTRIBUTED_LIVE_PROFILE_ID, LIVE_PROFILE_ID, PACKAGE, LiveRecorder, LiveSessionError, canonical, load_spec, sha256
 from .profile import ASSURED_EGRESS_PROFILE_ID, INCIDENT_PROFILE_ID, SELECTIVE_EGRESS_PROFILE_ID
 from .topology import run_selective_tcp_topology
 from .verifier import verify_file
@@ -204,7 +204,7 @@ def run_linux_experiment(
             raise LinuxExperimentError(f"invalid live session specification: {exc}") from exc
         if live_exchange is None or trials < 10:
             raise LinuxExperimentError("live profile needs an exchange callback and at least 10 trials")
-        if live_spec["schema"] == LIVE_PROFILE_ID:
+        if live_spec["schema"] in {LIVE_PROFILE_ID, ATTRIBUTED_LIVE_PROFILE_ID}:
             if package_artifact is None:
                 raise LinuxExperimentError("C25 profile requires a staged Debian package")
             artifact = Path(package_artifact)
@@ -229,7 +229,7 @@ def run_linux_experiment(
 
     destination = Path(output_dir).resolve()
     destination.mkdir(parents=True, exist_ok=False)
-    if live_spec is not None and live_spec["schema"] == LIVE_PROFILE_ID:
+    if live_spec is not None and live_spec["schema"] in {LIVE_PROFILE_ID, ATTRIBUTED_LIVE_PROFILE_ID}:
         staged_package = destination / "pinned-source.deb"
         staged_package.write_bytes(package_bytes)
         if sha256(staged_package.read_bytes()) != PACKAGE["sha256"]:
@@ -430,12 +430,12 @@ def run_linux_experiment(
                 aggregate = live_recorder.aggregate()
                 transcript_digest = sha256(live_recorder.path.read_bytes())
                 block_end = {"session_count": 3, "transcript_sha256": transcript_digest, "c26": aggregate}
-                if live_spec["schema"] == LIVE_PROFILE_ID:
+                if live_spec["schema"] in {LIVE_PROFILE_ID, ATTRIBUTED_LIVE_PROFILE_ID}:
                     block_end["c25"] = live_recorder.package_score()
                 writer.append("live_block_end", detail=canonical(block_end).decode("ascii"))
                 live_summary = {"sessions": live_recorder.sessions, "aggregate": aggregate,
                                 "transcript_sha256": transcript_digest}
-                if live_spec["schema"] == LIVE_PROFILE_ID:
+                if live_spec["schema"] in {LIVE_PROFILE_ID, ATTRIBUTED_LIVE_PROFILE_ID}:
                     live_summary["package"] = block_end["c25"]
             selective_summary = {
                 "trials": len(topology_runs),
@@ -561,8 +561,11 @@ def run_linux_experiment(
             "control_runs": mediated_controls,
             "runs": mediated_runs,
         }
-    writer.append("run_end", control_id="C6", outcome="complete" if all(checks.values()) and
-                  (live_summary is None or live_summary["aggregate"]["status"] != "FAIL") else "failed")
+    live_complete = (live_summary is None or
+                     (live_summary["aggregate"]["status"] == "PASS" and
+                      (live_spec["schema"] != ATTRIBUTED_LIVE_PROFILE_ID or
+                       live_summary["package"]["status"] == "PASS")))
+    writer.append("run_end", control_id="C6", outcome="complete" if all(checks.values()) and live_complete else "failed")
 
     control_wall = sum(benchmark_control) / trials
     isolated_wall = sum(benchmark_isolated) / trials

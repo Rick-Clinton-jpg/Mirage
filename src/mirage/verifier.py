@@ -9,7 +9,7 @@ from pathlib import Path
 from .assurance import AssuranceError, verify_assurance_bundle
 from .evidence import EvidenceError, load_records
 from .model import ControlResult, ReportStatus, VerificationReport
-from .profile import ASSURED_EGRESS_CONTROLS, ASSURED_EGRESS_PROFILE_ID, CONTROLS, INCIDENT_CONTROLS, INCIDENT_PROFILE_ID, LIVE_SESSION_CONTROLS, LIVE_SESSION_PROFILE_ID, PACKAGE_SESSION_CONTROLS, PACKAGE_SESSION_PROFILE_ID, PROFILE_ID, SELECTIVE_EGRESS_CONTROLS, SELECTIVE_EGRESS_PROFILE_ID
+from .profile import ASSURED_EGRESS_CONTROLS, ASSURED_EGRESS_PROFILE_ID, ATTRIBUTED_SESSION_CONTROLS, ATTRIBUTED_SESSION_PROFILE_ID, CONTROLS, INCIDENT_CONTROLS, INCIDENT_PROFILE_ID, LIVE_SESSION_CONTROLS, LIVE_SESSION_PROFILE_ID, PACKAGE_SESSION_CONTROLS, PACKAGE_SESSION_PROFILE_ID, PROFILE_ID, SELECTIVE_EGRESS_CONTROLS, SELECTIVE_EGRESS_PROFILE_ID
 from .live_verify import verify_live
 from .witness import decode_receipt, public_key_fingerprint, verify_receipt
 
@@ -23,10 +23,11 @@ PROFILES = {
     ASSURED_EGRESS_PROFILE_ID: ASSURED_EGRESS_CONTROLS,
     LIVE_SESSION_PROFILE_ID: LIVE_SESSION_CONTROLS,
     PACKAGE_SESSION_PROFILE_ID: PACKAGE_SESSION_CONTROLS,
+    ATTRIBUTED_SESSION_PROFILE_ID: ATTRIBUTED_SESSION_CONTROLS,
 }
 
 
-AUTHENTICATED_PROFILES = frozenset({INCIDENT_PROFILE_ID, SELECTIVE_EGRESS_PROFILE_ID, ASSURED_EGRESS_PROFILE_ID, LIVE_SESSION_PROFILE_ID, PACKAGE_SESSION_PROFILE_ID})
+AUTHENTICATED_PROFILES = frozenset({INCIDENT_PROFILE_ID, SELECTIVE_EGRESS_PROFILE_ID, ASSURED_EGRESS_PROFILE_ID, LIVE_SESSION_PROFILE_ID, PACKAGE_SESSION_PROFILE_ID, ATTRIBUTED_SESSION_PROFILE_ID})
 
 
 def verify_file(
@@ -98,7 +99,7 @@ def verify_file(
             except (OSError, UnicodeDecodeError, json.JSONDecodeError, TypeError, ValueError) as exc:
                 results.append(ControlResult("AUTHENTICITY", ReportStatus.FAIL, str(exc)))
 
-    if profile in (ASSURED_EGRESS_PROFILE_ID, LIVE_SESSION_PROFILE_ID, PACKAGE_SESSION_PROFILE_ID):
+    if profile in (ASSURED_EGRESS_PROFILE_ID, LIVE_SESSION_PROFILE_ID, PACKAGE_SESSION_PROFILE_ID, ATTRIBUTED_SESSION_PROFILE_ID):
         if assurance_bundle is None or assurance_public_key is None:
             results.append(ControlResult("ASSURANCE", ReportStatus.FAIL, "assured profile requires the signed assurance bundle and public key"))
         else:
@@ -140,7 +141,7 @@ def verify_file(
         reason = "control produced the expected outcome" if status is ReportStatus.PASS else f"unexpected outcome: {record['outcome']!r}"
         results.append(ControlResult(control.control_id, status, reason, (record["id"],)))
 
-    if profile in (LIVE_SESSION_PROFILE_ID, PACKAGE_SESSION_PROFILE_ID):
+    if profile in (LIVE_SESSION_PROFILE_ID, PACKAGE_SESSION_PROFILE_ID, ATTRIBUTED_SESSION_PROFILE_ID):
         results.extend(verify_live(records, live_transcript, session_spec, profile))
 
     starts = [record for record in records if record["type"] == "run_start"]

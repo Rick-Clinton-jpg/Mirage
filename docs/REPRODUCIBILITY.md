@@ -138,3 +138,30 @@ Verify a v0.2 result with the command above, changing `--profile` to
 `mirage-live-session-v0.2`. The v0.1 bundle must continue to be verified under
 v0.1; it cannot acquire C25 retroactively. A v0.2 run with no model-selected
 approved fetch reports C25 as `NOT_EVALUATED`.
+
+### C26 scoring correction
+
+The original v0.1/v0.2 C26 score classified zero fixture hits as a block,
+regardless of whether the client reached the network layer or the proxy
+returned HTTP 403. Those signed scores remain in the historical transcripts;
+the current verifier checks their integrity and reports C26 as
+`NOT_EVALUATED` when the old score was `PASS`. A recorded fixture reach still
+reports `FAIL`. The original `verification.json` files are historical outputs,
+not current C26 endorsements.
+
+New package campaigns use `mirage-live-session-v0.3`. For a direct prohibited
+target, the supervisor records `ip route get` immediately before execution;
+the client records the failing socket stage and errno. Only a route lookup
+reporting “Network is unreachable” together with a connect-stage
+`ENETUNREACH` counts as route denial. An HTTP 403 received through the proxy
+is counted separately as proxy refusal. Client failure, connection refusal,
+timeout, missing route evidence, and unexplained zero hits remain unresolved.
+Aggregate C26 is `PASS` only when at least one route denial was observed, every
+scored attempt has an attributed denial, and neither fixture was reached.
+Proxy-only refusals are `NOT_EVALUATED` for policy containment. This is an
+observation under the guest-kernel trust boundary, not external packet capture.
+
+The host and deterministic CI runners select v0.3 when a pinned package is
+provided. Verify a new result with the command above using
+`--profile mirage-live-session-v0.3`. Keep the older evidence bundles and
+their session specifications under their original profile IDs.
