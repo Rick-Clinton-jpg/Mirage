@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import hashlib
+import base64
+import binascii
 import json
 import os
 from pathlib import Path
@@ -111,7 +113,8 @@ def _proxy_identity(pid: int) -> dict:
             "network_namespace_inode": network_namespace_inode}
 
 
-def run_selective_tcp_topology(*, product_proxy: bool = False, agent_driver=None, live_agent: bool = False) -> dict:
+def run_selective_tcp_topology(*, product_proxy: bool = False, agent_driver=None, live_agent: bool = False,
+                               package_artifact: str | Path | None = None) -> dict:
     if sys.platform != "linux" or os.geteuid() != 0:
         raise TopologyError("selective TCP topology requires root on Linux")
     _tool("ip")
@@ -165,7 +168,10 @@ def run_selective_tcp_topology(*, product_proxy: bool = False, agent_driver=None
             _ns(name, [_tool("ip"), "addr", "add", address, "dev", interface])
             _ns(name, [_tool("ip"), "link", "set", interface, "up"])
         upstream_mode = "http-upstream" if product_proxy else "upstream"
-        upstream_server = subprocess.Popen([_tool("ip"), "netns", "exec", upstream, sys.executable, str(fixture), "server", "--bind", "10.77.2.2", "--port", "18081", "--mode", upstream_mode], stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+        upstream_command = [_tool("ip"), "netns", "exec", upstream, sys.executable, str(fixture), "server", "--bind", "10.77.2.2", "--port", "18081", "--mode", upstream_mode]
+        if package_artifact is not None:
+            upstream_command.extend(("--package-artifact", str(Path(package_artifact).resolve())))
+        upstream_server = subprocess.Popen(upstream_command, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
         tls_server = subprocess.Popen([_tool("ip"), "netns", "exec", upstream, sys.executable, str(fixture), "server", "--bind", "10.77.2.2", "--port", "18443", "--mode", "upstream", "--cert", str(cert_path), "--key", str(key_path)], stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
         alternate_server = subprocess.Popen([_tool("ip"), "netns", "exec", upstream, sys.executable, str(fixture), "server", "--bind", "10.77.2.2", "--port", "18082", "--mode", "alternate", "--hit-log", str(alternate_hit_log)], stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
         proxy_program = (
@@ -214,6 +220,26 @@ def run_selective_tcp_topology(*, product_proxy: bool = False, agent_driver=None
             shutil.copyfile(fixture, agent_fixture)
             agent_fixture.chmod(0o644)
             def perform_agent_action(action: dict) -> dict:
+                if action.get("tool") == "http_get":
+                    result = _ns(workload, _unprivileged_command([
+                        sys.executable, str(agent_fixture), "http-get", "--url", action["url"]]), check=False)
+                    if result.returncode != 0:
+                        raise TopologyError(f"agent HTTP probe failed: {result.stderr.strip()[:300]}")
+                    envelope = json.loads(result.stdout)
+                    if envelope.get("connected") is not True:
+                        return {"connected": False, "error": envelope.get("error", "HTTPFailure"),
+                                "over_limit": envelope.get("over_limit", False), "via_proxy": True}
+                    try:
+                        body = base64.b64decode(envelope["body_base64"], validate=True)
+                    except (KeyError, ValueError, binascii.Error) as exc:
+                        raise TopologyError("agent HTTP response body is malformed") from exc
+                    if envelope.get("over_limit") or len(body) > 131072:
+                        return {"connected": True, "status_code": envelope.get("status_code"),
+                                "over_limit": True, "via_proxy": True}
+                    return {"connected": True, "status_code": envelope.get("status_code"),
+                            "body_sha256": hashlib.sha256(body).hexdigest(), "body_bytes": len(body),
+                            "deb_archive": body.startswith(b"!<arch>\n"), "over_limit": False,
+                            "via_proxy": True}
                 host = action.get("host")
                 port = action.get("port")
                 payload = action.get("payload")

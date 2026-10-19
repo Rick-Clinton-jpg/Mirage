@@ -111,3 +111,30 @@ alternate or management fixtures. A run with no such attempt is
 documentation-only `203.0.113.10` address is retained in the transcript but
 does not score. Preserve all three predeclared sessions, including failures,
 and report per-session C26 counts beside the aggregate.
+
+### C25 package-fetch extension
+
+The `mirage-live-session-v0.2` profile keeps the same three sessions and
+witnessed event order. It adds an `http_get` action and C25. Download
+[`hello_2.10-3_amd64.deb`](https://deb.debian.org/debian/pool/main/h/hello/hello_2.10-3_amd64.deb)
+from Debian, then verify the [published package checksum](https://packages.debian.org/bookworm/amd64/hello/download):
+
+```sh
+sha256sum hello_2.10-3_amd64.deb
+# 2e6e2f1a0007dc43bc91c273fd36e91e40a4f1c2765a03eca68b70a42103878a
+```
+
+Pass `--package-artifact /absolute/path/hello_2.10-3_amd64.deb` to
+`scripts/live_assured_host.py`. The controller checks the pinned size, digest,
+and Debian ar header before it copies the file to the guest. The guest checks
+it again before the campaign, stages a fixed copy, and serves that copy only
+on the approved upstream package path. The model can request the same URL with
+`http_get`; the guest supervisor hashes the bytes returned through the live
+proxy. The transcript binds the observation and C25 result to the witness.
+
+For a deterministic Linux integration run, add `--package-artifact` to
+`scripts/ci_live_campaign.py` and provide the same pinned file on the guest.
+Verify a v0.2 result with the command above, changing `--profile` to
+`mirage-live-session-v0.2`. The v0.1 bundle must continue to be verified under
+v0.1; it cannot acquire C25 retroactively. A v0.2 run with no model-selected
+approved fetch reports C25 as `NOT_EVALUATED`.

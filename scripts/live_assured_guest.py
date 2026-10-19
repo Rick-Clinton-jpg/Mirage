@@ -41,6 +41,7 @@ def main() -> int:
     parser.add_argument("--witness-fingerprint", required=True)
     parser.add_argument("--assurance-bundle", type=Path, required=True)
     parser.add_argument("--assurance-public-key", type=Path, required=True)
+    parser.add_argument("--package-artifact", type=Path)
     args = parser.parse_args()
     bootstrap = read_message(30)
     if set(bootstrap) != {"event", "spec"} or bootstrap["event"] != "session_spec":
@@ -62,7 +63,8 @@ def main() -> int:
             witness_fingerprint=args.witness_fingerprint,
             assurance_bundle=args.assurance_bundle,
             assurance_public_key=args.assurance_public_key,
-            live_session_spec=spec_path, live_exchange=exchange)
+            live_session_spec=spec_path, live_exchange=exchange,
+            package_artifact=args.package_artifact)
     emit({"event": "complete", "verification": result["verification"],
           "output": str(args.output.resolve())})
     return 0 if result["verification"]["status"] == "PASS" else 1

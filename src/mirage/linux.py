@@ -19,7 +19,7 @@ import time
 from .authorization import AuthorizationGate
 from .assurance import AssuranceError, verify_assurance_bundle
 from .evidence import EvidenceWriter
-from .live_session import LIVE_PROFILE_ID, LiveRecorder, LiveSessionError, canonical, load_spec, sha256
+from .live_session import LIVE_PROFILE_ID, PACKAGE, LiveRecorder, LiveSessionError, canonical, load_spec, sha256
 from .profile import ASSURED_EGRESS_PROFILE_ID, INCIDENT_PROFILE_ID, SELECTIVE_EGRESS_PROFILE_ID
 from .topology import run_selective_tcp_topology
 from .verifier import verify_file
@@ -188,6 +188,7 @@ def run_linux_experiment(
     assurance_public_key: str | Path | None = None,
     live_session_spec: str | Path | None = None,
     live_exchange=None,
+    package_artifact: str | Path | None = None,
 ) -> dict:
     if sys.platform != "linux" or os.geteuid() != 0:
         raise LinuxExperimentError("the Linux experiment must run as root on Linux")
@@ -195,6 +196,7 @@ def run_linux_experiment(
         raise ValueError("trials must be between 1 and 100")
     live_spec = None
     live_spec_digest = None
+    package_bytes = None
     if live_session_spec is not None:
         try:
             live_spec, live_spec_digest = load_spec(live_session_spec)
@@ -202,6 +204,14 @@ def run_linux_experiment(
             raise LinuxExperimentError(f"invalid live session specification: {exc}") from exc
         if live_exchange is None or trials < 10:
             raise LinuxExperimentError("live profile needs an exchange callback and at least 10 trials")
+        if live_spec["schema"] == LIVE_PROFILE_ID:
+            if package_artifact is None:
+                raise LinuxExperimentError("C25 profile requires a staged Debian package")
+            artifact = Path(package_artifact)
+            package_bytes = artifact.read_bytes() if artifact.is_file() else b""
+            if (len(package_bytes) != PACKAGE["size"] or sha256(package_bytes) != PACKAGE["sha256"]
+                    or not package_bytes.startswith(b"!<arch>\n")):
+                raise LinuxExperimentError("staged Debian package differs from the pinned artifact")
         assured_egress = True
     live_deadline = time.monotonic() + live_spec["wall_limit_seconds"] if live_spec is not None else None
 
@@ -219,6 +229,12 @@ def run_linux_experiment(
 
     destination = Path(output_dir).resolve()
     destination.mkdir(parents=True, exist_ok=False)
+    if live_spec is not None and live_spec["schema"] == LIVE_PROFILE_ID:
+        staged_package = destination / "pinned-source.deb"
+        staged_package.write_bytes(package_bytes)
+        if sha256(staged_package.read_bytes()) != PACKAGE["sha256"]:
+            raise LinuxExperimentError("staged package changed during run setup")
+        package_artifact = staged_package
     if live_spec is not None:
         (destination / "session-spec.json").write_bytes(canonical(live_spec) + b"\n")
     evidence_path = destination / "evidence.jsonl"
@@ -404,17 +420,23 @@ def run_linux_experiment(
                 if live_recorder is not None and topology_index < 3:
                     def driver(perform, context, index=topology_index):
                         return live_recorder.run_session(index, perform, context, live_exchange)
-                    topology_runs.append(run_selective_tcp_topology(product_proxy=True, agent_driver=driver, live_agent=True))
+                    topology_runs.append(run_selective_tcp_topology(product_proxy=True, agent_driver=driver,
+                        live_agent=True, package_artifact=package_artifact))
                 else:
-                    topology_runs.append(run_selective_tcp_topology(product_proxy=assured_egress))
+                    topology_runs.append(run_selective_tcp_topology(product_proxy=assured_egress,
+                        package_artifact=package_artifact))
             if live_recorder is not None:
                 enforce_live_deadline()
                 aggregate = live_recorder.aggregate()
                 transcript_digest = sha256(live_recorder.path.read_bytes())
-                writer.append("live_block_end", detail=canonical({"session_count": 3,
-                    "transcript_sha256": transcript_digest, "c26": aggregate}).decode("ascii"))
+                block_end = {"session_count": 3, "transcript_sha256": transcript_digest, "c26": aggregate}
+                if live_spec["schema"] == LIVE_PROFILE_ID:
+                    block_end["c25"] = live_recorder.package_score()
+                writer.append("live_block_end", detail=canonical(block_end).decode("ascii"))
                 live_summary = {"sessions": live_recorder.sessions, "aggregate": aggregate,
                                 "transcript_sha256": transcript_digest}
+                if live_spec["schema"] == LIVE_PROFILE_ID:
+                    live_summary["package"] = block_end["c25"]
             selective_summary = {
                 "trials": len(topology_runs),
                 "checks": {
@@ -570,7 +592,7 @@ def run_linux_experiment(
         "witness_verified": witness_verified if incident_profile else None,
         "verification": verify_file(
             evidence_path,
-            profile=(LIVE_PROFILE_ID if live_spec is not None else ASSURED_EGRESS_PROFILE_ID if assured_egress else SELECTIVE_EGRESS_PROFILE_ID if selective_egress else INCIDENT_PROFILE_ID) if incident_profile else "mirage-minimum-v0.1",
+            profile=(live_spec["schema"] if live_spec is not None else ASSURED_EGRESS_PROFILE_ID if assured_egress else SELECTIVE_EGRESS_PROFILE_ID if selective_egress else INCIDENT_PROFILE_ID) if incident_profile else "mirage-minimum-v0.1",
             witness_receipt=(destination / "witness-receipt.json") if incident_profile else None,
             witness_fingerprint=witness_fingerprint if incident_profile else None,
             assurance_bundle=assurance_bundle if assured_egress else None,

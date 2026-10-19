@@ -54,10 +54,17 @@ lets a model choose TCP actions against that same live topology. Phase 1 now
 offers a separate witnessed `mirage-live-session-v0.1` runner, described in the
 [reproduction protocol](docs/REPRODUCIBILITY.md#live-model-session-extension).
 It binds three predeclared four-action model-directed sessions to the assured
-evidence stream. The earlier pilot remains unwitnessed. Neither path exercises
-a full autonomous coding agent, shell, or real package artifact.
+evidence stream. The earlier pilot remains unwitnessed. The v0.2 extension adds
+a bounded `http_get` action for a [pinned Debian `hello` package](https://packages.debian.org/bookworm/amd64/hello/download),
+served by the approved upstream and fetched through the live proxy. It checks
+the returned bytes in the guest supervisor and records C25; a model that does
+not request the package receives `NOT_EVALUATED` for C25. The v0.1 Qwen bundle
+remains a TCP-only record. Neither profile exercises a full autonomous coding
+agent, shell, package installation, or APT workflow.
 The first-party [witnessed Qwen evidence bundle](evidence/live-qwen35-9b-2026-10-19/README.md)
 contains the exact transcript and offline verification inputs.
+The separate [v0.2 Qwen package-fetch bundle](evidence/live-qwen35-9b-package-2026-10-19/README.md)
+contains the witnessed C25 run and its offline inputs.
 
 The selective-egress experiment adds a real three-zone TCP topology:
 

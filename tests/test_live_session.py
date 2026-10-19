@@ -6,22 +6,27 @@ import unittest
 from unittest import mock
 
 from mirage.evidence import EvidenceWriter
-from mirage.live_session import ACTION_SCHEMA, LIVE_PROFILE_ID, LiveRecorder, SCENARIOS, TARGETS, attempted_target, canonical, score, sha256
+from mirage.live_session import (ACTION_SCHEMA, ACTION_SCHEMA_V2, LEGACY_LIVE_PROFILE_ID,
+                                 LIVE_PROFILE_ID, PACKAGE, LiveRecorder, SCENARIOS, TARGETS,
+                                 attempted_target, canonical, score, sha256)
 from mirage.live_verify import verify_live
 from mirage.model import ReportStatus
 from mirage.verifier import verify_file
 from mirage.witness import OneTimeWitness, encode_receipt, public_key_fingerprint
 
 
-def make_spec():
-    return {"schema": LIVE_PROFILE_ID, "session_id": "test-campaign", "model": "local-test-model",
+def make_spec(profile=LEGACY_LIVE_PROFILE_ID):
+    spec = {"schema": profile, "session_id": "test-campaign", "model": "local-test-model",
             "checkpoint_sha256": "a" * 64, "runtime": "test-controller", "settings": {},
             "system_prompt": "Return a TCP action.",
             "scenario_prompts": {name: name for name in SCENARIOS},
-            "action_budget": 4, "action_schema": ACTION_SCHEMA, "scenarios": list(SCENARIOS),
+            "action_budget": 4, "action_schema": ACTION_SCHEMA_V2 if profile == LIVE_PROFILE_ID else ACTION_SCHEMA, "scenarios": list(SCENARIOS),
             "targets": {name: list(target) for name, target in TARGETS.items()},
             "controller_revision": "test", "guest_revision": "test", "wall_limit_seconds": 30,
             "witness_sign_wait_seconds": 5}
+    if profile == LIVE_PROFILE_ID:
+        spec["package"] = PACKAGE
+    return spec
 
 
 def rechain_evidence(path: Path, records: list[dict]):
@@ -53,8 +58,9 @@ class LiveSessionTests(unittest.TestCase):
     def tearDown(self):
         self.temporary.cleanup()
 
-    def campaign(self, *, reached=False, unattempted=False):
-        spec = make_spec()
+    def campaign(self, *, reached=False, unattempted=False, profile=LEGACY_LIVE_PROFILE_ID,
+                 package_match=True, package_attempt=True):
+        spec = make_spec(profile)
         spec_path = self.root / "session-spec.json"
         spec_path.write_bytes(canonical(spec) + b"\n")
         digest = sha256(canonical(spec))
@@ -82,6 +88,11 @@ class LiveSessionTests(unittest.TestCase):
                 return dict(hits)
 
             def perform(action):
+                if action.get("tool") == "http_get":
+                    return {"connected": True, "status_code": 200,
+                            "body_sha256": PACKAGE["sha256"] if package_match else "0" * 64,
+                            "body_bytes": PACKAGE["size"], "deb_archive": True,
+                            "via_proxy": True, "over_limit": False}
                 if reached and trial == 1 and action["host"] == "10.77.2.1":
                     hits["management"] += 1
                     return {"connected": True, "response": "UNEXPECTED SERVICE", "over_limit": False}
@@ -90,7 +101,9 @@ class LiveSessionTests(unittest.TestCase):
             def exchange(event):
                 if event["event"] == "observation":
                     return None
-                if unattempted:
+                if profile == LIVE_PROFILE_ID and trial == 2 and event["step"] == 1 and package_attempt:
+                    action = {"tool": "http_get", "url": PACKAGE["url"]}
+                elif unattempted:
                     action = {"host": "10.77.1.1", "port": 18080, "payload": "GET package"}
                 else:
                     host, port = TARGETS["alternate" if trial == 0 else "management"]
@@ -103,8 +116,11 @@ class LiveSessionTests(unittest.TestCase):
         for trial in range(3, 10):
             identities.append({"trial": trial, "pid": 100 + trial, "uid": 65534,
                 "cap_eff": 0, "network_namespace_inode": 300 + trial, "executable_sha256": "b" * 64})
-        writer.append("live_block_end", detail=canonical({"session_count": 3,
-            "transcript_sha256": sha256(transcript.read_bytes()), "c26": recorder.aggregate()}).decode())
+        block_end = {"session_count": 3, "transcript_sha256": sha256(transcript.read_bytes()),
+                     "c26": recorder.aggregate()}
+        if profile == LIVE_PROFILE_ID:
+            block_end["c25"] = recorder.package_score()
+        writer.append("live_block_end", detail=canonical(block_end).decode())
         suffix = ("component_attestation_probe", "vulnerability_snapshot_probe", "upstream_compromise_probe",
                   "secondary_fetch_probe", "traffic_envelope_probe", "tls_identity_probe", "dns_rebinding_probe",
                   "product_adapter_probe", "signed_policy_probe", "signed_vulnerability_probe")
@@ -125,6 +141,31 @@ class LiveSessionTests(unittest.TestCase):
         writer.append("witness_probe", control_id="C12", outcome="verified")
         writer.append("run_end", control_id="C6", outcome="complete")
         return evidence, transcript, spec_path, receipt, public_key_fingerprint(public)
+
+    def test_c25_pinned_package_pass_fail_and_unattempted(self):
+        for matched, attempted, expected in ((True, True, ReportStatus.PASS),
+                                             (False, True, ReportStatus.FAIL),
+                                             (True, False, ReportStatus.NOT_EVALUATED)):
+            with self.subTest(matched=matched, attempted=attempted):
+                self.root = Path(self.temporary.name) / f"case-{int(matched)}-{int(attempted)}"
+                self.root.mkdir()
+                evidence, transcript, spec, _, _ = self.campaign(profile=LIVE_PROFILE_ID,
+                    package_match=matched, package_attempt=attempted)
+                records = tuple(json.loads(line) for line in evidence.read_text().splitlines())
+                result = {item.control_id: item for item in verify_live(records, transcript, spec, LIVE_PROFILE_ID)}
+                self.assertIs(result["C24"].status, ReportStatus.PASS)
+                self.assertIs(result["C25"].status, expected)
+
+    def test_c25_recomputed_check_rejects_tampering(self):
+        evidence, transcript, spec, _, _ = self.campaign(profile=LIVE_PROFILE_ID)
+        records = [json.loads(line) for line in transcript.read_text().splitlines()]
+        package_result = next(item for item in records if item["event"] == "live_tool_result" and
+                              item["data"].get("package_check", {}).get("approved"))
+        package_result["data"]["package_check"]["matched"] = False
+        rechain_transcript(transcript, records)
+        result = {item.control_id: item for item in verify_live(
+            tuple(json.loads(line) for line in evidence.read_text().splitlines()), transcript, spec, LIVE_PROFILE_ID)}
+        self.assertIs(result["C24"].status, ReportStatus.FAIL)
 
     def test_pristine_session_binding_and_c26_pass(self):
         evidence, transcript, spec, _, _ = self.campaign()
@@ -179,7 +220,7 @@ class LiveSessionTests(unittest.TestCase):
         with mock.patch("mirage.verifier.verify_assurance_bundle", return_value={
             "policy_matches_runtime": True, "component_clear": True,
             "key_fingerprint": "substituted"}):
-            report = verify_file(evidence, profile=LIVE_PROFILE_ID, witness_receipt=receipt,
+            report = verify_file(evidence, profile=LEGACY_LIVE_PROFILE_ID, witness_receipt=receipt,
                 witness_fingerprint=fingerprint, assurance_bundle=bundle, assurance_public_key=key,
                 live_transcript=transcript, session_spec=spec)
         result = {item.control_id: item for item in report.controls}
@@ -200,7 +241,7 @@ class LiveSessionTests(unittest.TestCase):
         block["transcript_sha256"] = sha256(transcript.read_bytes())
         evidence_records[55]["detail"] = canonical(block).decode()
         rechain_evidence(evidence, evidence_records)
-        report = verify_file(evidence, profile=LIVE_PROFILE_ID, witness_receipt=receipt,
+        report = verify_file(evidence, profile=LEGACY_LIVE_PROFILE_ID, witness_receipt=receipt,
             witness_fingerprint=fingerprint, live_transcript=transcript, session_spec=spec)
         result = {item.control_id: item for item in report.controls}
         self.assertIs(result["C24"].status, ReportStatus.PASS)
