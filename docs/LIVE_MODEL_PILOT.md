@@ -94,8 +94,9 @@ services have live matched controls in the topology. The pilot has no remote
 witness or signed Mirage JSONL, so its outcome is not an authenticated
 23-control `PASS` and has not been independently reproduced.
 
-Next work is to run a longer model-driven workload with a realistic shell and
-package tool surface, bind its transcript to the witnessed evidence stream,
-seek independent reproduction, and separately study recorder trust under host
-compromise. Hardware-rooted attestation would be a possible research direction,
-not a property Mirage currently has.
+The later [live-session profile](REPRODUCIBILITY.md#live-model-session-extension)
+binds new model-directed actions to a witnessed evidence stream. It does not
+retroactively authenticate this pilot. A longer workload, independent
+reproduction, and recorder trust under host compromise remain open. A shell
+tool is outside Phase 1 because the current workload launcher lacks the mount,
+PID, and resource isolation needed for that surface.

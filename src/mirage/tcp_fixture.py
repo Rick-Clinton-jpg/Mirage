@@ -4,8 +4,10 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import socket
 import ssl
+from pathlib import Path
 
 
 def request(host: str, port: int, payload: bytes = b"GET package\n", limit: int = 4096, *, ca: str | None = None, server_name: str | None = None, timeout: float = 0.25) -> dict:
@@ -26,7 +28,7 @@ def request(host: str, port: int, payload: bytes = b"GET package\n", limit: int 
         client.close()
 
 
-def serve(bind: str, port: int, mode: str, *, cert: str | None = None, key: str | None = None) -> None:
+def serve(bind: str, port: int, mode: str, *, cert: str | None = None, key: str | None = None, hit_log: str | None = None) -> None:
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server.bind((bind, port))
@@ -43,6 +45,11 @@ def serve(bind: str, port: int, mode: str, *, cert: str | None = None, key: str 
                 continue
         with connection:
             payload = connection.recv(1024)
+            if hit_log is not None:
+                with Path(hit_log).open("ab") as log:
+                    log.write(b"hit\n")
+                    log.flush()
+                    os.fsync(log.fileno())
             if mode == "upstream":
                 if b"REDIRECT" in payload:
                     response = b"REDIRECT http://203.0.113.10/forbidden\n"
@@ -83,6 +90,7 @@ def main() -> int:
     server.add_argument("--mode", required=True)
     server.add_argument("--cert")
     server.add_argument("--key")
+    server.add_argument("--hit-log")
     forward = commands.add_parser("proxy")
     forward.add_argument("--bind", required=True)
     forward.add_argument("--port", required=True, type=int)
@@ -98,7 +106,7 @@ def main() -> int:
     client.add_argument("--timeout", default=0.25, type=float)
     args = parser.parse_args()
     if args.command == "server":
-        serve(args.bind, args.port, args.mode, cert=args.cert, key=args.key)
+        serve(args.bind, args.port, args.mode, cert=args.cert, key=args.key, hit_log=args.hit_log)
     elif args.command == "proxy":
         proxy(args.bind, args.port, args.upstream_host, args.upstream_port)
     else:

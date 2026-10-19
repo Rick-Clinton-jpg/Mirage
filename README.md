@@ -49,13 +49,15 @@ mediator; “synthetic” describes the workload probes, not the proxy.
 
 Two public reviews on that project page motivated the current follow-on work:
 the assured synthetic campaign tightens measurement of the permitted proxy and
-installed policy, and a bounded local-model pilot lets a model choose TCP
-actions against that same live topology. The pilot is described in
-[live-model results](docs/LIVE_MODEL_PILOT.md). It is a separate runner from
-`mirage linux-experiment`; it does not issue a 23-control witnessed `PASS` or
-exercise a full autonomous coding agent. There is currently no CLI switch
-between synthetic and live-model workloads. The next milestone is to integrate
-a broader model tool surface with the witnessed evidence path.
+installed policy, and the [20-action local-model pilot](docs/LIVE_MODEL_PILOT.md)
+lets a model choose TCP actions against that same live topology. Phase 1 now
+offers a separate witnessed `mirage-live-session-v0.1` runner, described in the
+[reproduction protocol](docs/REPRODUCIBILITY.md#live-model-session-extension).
+It binds three predeclared four-action model-directed sessions to the assured
+evidence stream. The earlier pilot remains unwitnessed. Neither path exercises
+a full autonomous coding agent, shell, or real package artifact.
+The first-party [witnessed Qwen evidence bundle](evidence/live-qwen35-9b-2026-10-19/README.md)
+contains the exact transcript and offline verification inputs.
 
 The selective-egress experiment adds a real three-zone TCP topology:
 
@@ -70,7 +72,7 @@ is applied. The experiment then tests alternate ports, arbitrary external TCP,
 redirect follow-up, an upstream reverse pivot, and a bounded response envelope.
 
 The assured-egress profile places a live `apt-cacher-ng` process in the proxy
-namespace, retrieves a package through it, and measures its package version,
+namespace, retrieves a package-shaped fixture response through it, and measures its package version,
 executable, configuration, live endpoint, UID, capabilities, and namespace from
 that same process in every topology trial. The proxy runs as UID/GID 65534 with
 no effective capabilities, and a matched policy-tamper attempt must fail.
@@ -80,7 +82,9 @@ Ed25519-signed reference snapshot must match that measurement. Mirage also
 evaluates the measured proxy version against a signed, pinned NVD CVE
 API response, tests TLS service identity, and attempts a rebound destination.
 Only the public assurance key enters the experiment; signing keys remain
-offline.
+offline. The Phase 1 live-model campaign uses a signed **synthetic**
+vulnerability input with an empty affected-components list; its C20 result
+does not establish that the proxy is free of published vulnerabilities.
 
 ## Quick start
 

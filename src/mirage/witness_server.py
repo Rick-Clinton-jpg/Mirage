@@ -14,7 +14,10 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=0)
+    parser.add_argument("--sign-wait-seconds", type=int, default=120)
     args = parser.parse_args(argv)
+    if not 1 <= args.sign_wait_seconds <= 7200:
+        parser.error("--sign-wait-seconds must be between 1 and 7200")
     witness, public = OneTimeWitness.generate()
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -26,15 +29,16 @@ def main(argv: list[str] | None = None) -> int:
         connection, _ = server.accept()
         with connection, connection.makefile("rwb", buffering=0) as stream:
             connection.settimeout(5)
-            if stream.readline(128) != b"ARM\n":
+            arm = stream.readline(128)
+            if arm not in (b"ARM\n", b"ARM LIVE\n"):
                 return 2
             armed_ns = time.monotonic_ns()
-            stream.write(b"ARMED\n")
+            stream.write((f"ARMED {args.sign_wait_seconds}\n".encode("ascii") if arm == b"ARM LIVE\n" else b"ARMED\n"))
             if stream.readline(128) != b"ALERT\n":
                 return 2
             alert_latency_ns = time.monotonic_ns() - armed_ns
             stream.write(f"ALERTED {alert_latency_ns}\n".encode("ascii"))
-            connection.settimeout(120)
+            connection.settimeout(args.sign_wait_seconds)
             line = stream.readline(256).strip().decode("ascii")
             if not line.startswith("SIGN "):
                 return 2

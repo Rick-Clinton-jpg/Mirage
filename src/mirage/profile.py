@@ -55,3 +55,9 @@ ASSURED_EGRESS_CONTROLS = SELECTIVE_EGRESS_CONTROLS + (
     ControlDefinition("C22", "A rebound destination remains unreachable from the mediator", "dns_rebinding_probe"),
     ControlDefinition("C23", "A live repository mediator has measured executable, package, configuration, and endpoint identity", "product_adapter_probe", "verified"),
 )
+
+# The live profile adds C24, C26, and C27 through transcript-aware verification.
+# C25 is reserved for a later valid-package fetch and has no Phase 1 result.
+LIVE_SESSION_PROFILE_ID = "mirage-live-session-v0.1"
+LIVE_SESSION_CONTROLS = ASSURED_EGRESS_CONTROLS
+LIVE_SESSION_RESERVED_CONTROL_IDS = ("C25",)

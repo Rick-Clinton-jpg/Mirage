@@ -95,7 +95,23 @@ def _policy_snapshot(namespace: str, workload_interface: str) -> tuple[dict, str
         raise TopologyError(str(exc)) from exc
 
 
-def run_selective_tcp_topology(*, product_proxy: bool = False, agent_driver=None) -> dict:
+def _proxy_identity(pid: int) -> dict:
+    proc = Path("/proc") / str(pid)
+    try:
+        status = (proc / "status").read_text(encoding="ascii")
+        uid = int(next(line for line in status.splitlines() if line.startswith("Uid:")).split()[1])
+        cap_eff = int(next(line for line in status.splitlines() if line.startswith("CapEff:")).split()[1], 16)
+        executable_sha256 = hashlib.sha256((proc / "exe").read_bytes()).hexdigest()
+        command_sha256 = hashlib.sha256((proc / "cmdline").read_bytes()).hexdigest()
+        network_namespace_inode = (proc / "ns/net").stat().st_ino
+    except (OSError, StopIteration, ValueError) as exc:
+        raise TopologyError("cannot snapshot the active proxy identity") from exc
+    return {"pid": pid, "uid": uid, "cap_eff": cap_eff,
+            "executable_sha256": executable_sha256, "cmdline_sha256": command_sha256,
+            "network_namespace_inode": network_namespace_inode}
+
+
+def run_selective_tcp_topology(*, product_proxy: bool = False, agent_driver=None, live_agent: bool = False) -> dict:
     if sys.platform != "linux" or os.geteuid() != 0:
         raise TopologyError("selective TCP topology requires root on Linux")
     _tool("ip")
@@ -120,6 +136,10 @@ def run_selective_tcp_topology(*, product_proxy: bool = False, agent_driver=None
             os.chown(path, 65534, 65534)
             path.chmod(0o700)
         product_pid = product_cache / "apt-cacher-ng.pid"
+        alternate_hit_log = Path(tls_directory) / "alternate-hits.log"
+        management_hit_log = Path(tls_directory) / "management-hits.log"
+        alternate_hit_log.touch()
+        management_hit_log.touch()
         if product_proxy:
             product_executable = _tool("apt-cacher-ng")
             (product_config / "acng.conf").write_text(
@@ -147,7 +167,7 @@ def run_selective_tcp_topology(*, product_proxy: bool = False, agent_driver=None
         upstream_mode = "http-upstream" if product_proxy else "upstream"
         upstream_server = subprocess.Popen([_tool("ip"), "netns", "exec", upstream, sys.executable, str(fixture), "server", "--bind", "10.77.2.2", "--port", "18081", "--mode", upstream_mode], stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
         tls_server = subprocess.Popen([_tool("ip"), "netns", "exec", upstream, sys.executable, str(fixture), "server", "--bind", "10.77.2.2", "--port", "18443", "--mode", "upstream", "--cert", str(cert_path), "--key", str(key_path)], stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
-        alternate_server = subprocess.Popen([_tool("ip"), "netns", "exec", upstream, sys.executable, str(fixture), "server", "--bind", "10.77.2.2", "--port", "18082", "--mode", "alternate"], stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+        alternate_server = subprocess.Popen([_tool("ip"), "netns", "exec", upstream, sys.executable, str(fixture), "server", "--bind", "10.77.2.2", "--port", "18082", "--mode", "alternate", "--hit-log", str(alternate_hit_log)], stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
         proxy_program = (
             [product_executable, "-c", str(product_config), "ForeGround=1"]
             if product_proxy else
@@ -155,7 +175,7 @@ def run_selective_tcp_topology(*, product_proxy: bool = False, agent_driver=None
         )
         proxy_command = [_tool("ip"), "netns", "exec", proxy, *_unprivileged_command(proxy_program)]
         proxy_server = subprocess.Popen(proxy_command, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
-        management_server = subprocess.Popen([_tool("ip"), "netns", "exec", proxy, sys.executable, str(fixture), "server", "--bind", "10.77.2.1", "--port", "19090", "--mode", "alternate"], stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+        management_server = subprocess.Popen([_tool("ip"), "netns", "exec", proxy, sys.executable, str(fixture), "server", "--bind", "10.77.2.1", "--port", "19090", "--mode", "alternate", "--hit-log", str(management_hit_log)], stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
         processes.extend((upstream_server, tls_server, alternate_server, proxy_server, management_server))
         time.sleep(0.1)
         if product_proxy and proxy_server.poll() is not None:
@@ -210,7 +230,21 @@ def run_selective_tcp_topology(*, product_proxy: bool = False, agent_driver=None
                 if result.returncode != 0:
                     raise TopologyError(f"agent probe failed: {result.stderr.strip()[:300]}")
                 return json.loads(result.stdout)
-            agent_run = agent_driver(perform_agent_action)
+            if live_agent:
+                def snapshot() -> dict:
+                    _, digest = _policy_snapshot(proxy, pw_proxy)
+                    return {"policy_digest": digest, "proxy_identity": _proxy_identity(proxy_server.pid)}
+
+                def fixture_hits() -> dict:
+                    return {"alternate": alternate_hit_log.read_bytes().count(b"\n"),
+                            "management": management_hit_log.read_bytes().count(b"\n")}
+
+                context = {"snapshot": snapshot, "fixture_hits": fixture_hits,
+                           "fixture_live": {"alternate": proxy_alt_control["connected"],
+                                            "management": management_control["connected"]}}
+                agent_run = agent_driver(perform_agent_action, context)
+            else:
+                agent_run = agent_driver(perform_agent_action)
         proxy_approved = _client(proxy, fixture, "10.77.2.2", 18081)
         alternate_control = _client(upstream, fixture, "10.77.2.2", 18082)
         proxy_alt_port = _client(proxy, fixture, "10.77.2.2", 18082)

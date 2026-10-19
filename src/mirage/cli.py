@@ -27,6 +27,8 @@ def main(argv: list[str] | None = None) -> int:
     verify.add_argument("--witness-fingerprint")
     verify.add_argument("--assurance-bundle")
     verify.add_argument("--assurance-public-key")
+    verify.add_argument("--live-transcript")
+    verify.add_argument("--session-spec")
     verify.add_argument("--integrity-only", action="store_true", help="explicitly permit unauthenticated minimum-profile format checking")
     experiment = commands.add_parser("linux-experiment", help="run matched Linux containment trials")
     experiment.add_argument("--output", required=True)
@@ -93,6 +95,8 @@ def main(argv: list[str] | None = None) -> int:
         witness_fingerprint=args.witness_fingerprint,
         assurance_bundle=args.assurance_bundle,
         assurance_public_key=args.assurance_public_key,
+        live_transcript=args.live_transcript,
+        session_spec=args.session_spec,
         allow_unauthenticated=args.integrity_only,
     )
     print(json.dumps(report.as_dict(), indent=2, sort_keys=True))
