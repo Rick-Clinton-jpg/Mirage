@@ -187,8 +187,8 @@ def run_selective_tcp_topology(*, product_proxy: bool = False, agent_driver=None
         if product_proxy and proxy_server.poll() is not None:
             diagnostic = proxy_server.stderr.read().decode("utf-8", "replace") if proxy_server.stderr else ""
             raise TopologyError(f"repository mediator failed to start: {diagnostic[:500]}")
-        management_control = _client(upstream, fixture, "10.77.2.1", 19090)
-        proxy_alt_control = _client(proxy, fixture, "10.77.2.2", 18082)
+        management_control = _client(upstream, fixture, "10.77.2.1", 19090, timeout=1.0)
+        proxy_alt_control = _client(proxy, fixture, "10.77.2.2", 18082, timeout=1.0)
         tls_identity_control = _tls_client(proxy, fixture, "10.77.2.2", 18443, ca_path, "approved.mirage.test")
         tls_wrong_identity = _tls_client(proxy, fixture, "10.77.2.2", 18443, ca_path, "rebound.mirage.test")
         _ns(proxy, [_tool("nft"), "add", "table", "inet", "mirage"])
@@ -271,8 +271,8 @@ def run_selective_tcp_topology(*, product_proxy: bool = False, agent_driver=None
                 agent_run = agent_driver(perform_agent_action, context)
             else:
                 agent_run = agent_driver(perform_agent_action)
-        proxy_approved = _client(proxy, fixture, "10.77.2.2", 18081)
-        alternate_control = _client(upstream, fixture, "10.77.2.2", 18082)
+        proxy_approved = _client(proxy, fixture, "10.77.2.2", 18081, timeout=1.0)
+        alternate_control = _client(upstream, fixture, "10.77.2.2", 18082, timeout=1.0)
         proxy_alt_port = _client(proxy, fixture, "10.77.2.2", 18082)
         proxy_external = _client(proxy, fixture, "203.0.113.10", 443)
         upstream_pivot = _client(upstream, fixture, "10.77.2.1", 19090)
